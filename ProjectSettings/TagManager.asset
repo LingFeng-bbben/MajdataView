@@ -47,3 +47,6 @@ TagManager:
   - name: Notes
     uniqueID: 182344715
     locked: 0
+  - name: Effect
+    uniqueID: 1918292637
+    locked: 0

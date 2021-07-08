@@ -23,6 +23,8 @@ public class StarDrop : MonoBehaviour
 
     public GameObject slide;
 
+    public GameObject tapEffect;
+
     public AudioSource audioSource;
 
     SpriteRenderer spriteRenderer;
@@ -50,7 +52,10 @@ public class StarDrop : MonoBehaviour
         var timing = audioSource.time - time;
         var distance = timing * speed + 4.8f;
 
-        if (timing > 0) Destroy(gameObject);
+        if (timing > 0) {
+            Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            Destroy(gameObject); 
+        }
 
         transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1))); //TODO:add some rotation for the star
         if (distance < 1.225f)

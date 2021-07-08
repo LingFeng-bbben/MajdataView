@@ -15,6 +15,8 @@ public class HoldDrop : MonoBehaviour
     public Sprite eachSpr;
 
 
+    public GameObject tapEffect;
+
     public AudioSource audioSource;
 
     SpriteRenderer spriteRenderer;
@@ -37,7 +39,10 @@ public class HoldDrop : MonoBehaviour
 
         var distance = timing * speed + 4.8f;
         var holdDistance = holdTime * speed + 4.8f;
-        if (holdTime > 0) Destroy(gameObject);
+        if (holdTime > 0) {
+            Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            Destroy(gameObject); 
+        }
 
         print(distance + "  " + holdDistance);
 

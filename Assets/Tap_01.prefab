@@ -102,3 +102,6 @@ MonoBehaviour:
   tapSpr: {fileID: 21300000, guid: c332bf4a60bcd5e4cb1bac9a38696049, type: 3}
   eachSpr: {fileID: 21300000, guid: 5a2c3c94c8c3e2848803c02965b1c832, type: 3}
   breakSpr: {fileID: 21300000, guid: eab54b673ac7b824f91b1f8bf900b69e, type: 3}
+  tapEffect: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
+    type: 3}
+  audioSource: {fileID: 0}
