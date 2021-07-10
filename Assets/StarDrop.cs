@@ -21,18 +21,24 @@ public class StarDrop : MonoBehaviour
     public Sprite eachSpr_Double;
     public Sprite breakSpr_Double;
 
+    public Sprite eachLine;
+    public Sprite breakLine;
+
     public GameObject slide;
-
     public GameObject tapEffect;
+    public GameObject tapLine;
 
-    public AudioSource audioSource;
+    AudioTimeProvider timeProvider;
 
     SpriteRenderer spriteRenderer;
+    SpriteRenderer lineSpriteRender;
     void Start()
     {
+        tapLine = Instantiate(tapLine);
+        tapLine.SetActive(false);
+        lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        audioSource = GameObject.Find("Player").GetComponent<AudioSource>();
-        //TODO: do something to instnate the slide bar
+        timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
     }
 
     // Update is called once per frame
@@ -41,23 +47,43 @@ public class StarDrop : MonoBehaviour
         if (isDouble)
         {
             spriteRenderer.sprite = tapSpr_Double;
-            if (isEach) spriteRenderer.sprite = eachSpr_Double;
-            if (isBreak) spriteRenderer.sprite = breakSpr_Double;
+            if (isEach)
+            {
+                lineSpriteRender.sprite = eachLine;
+                spriteRenderer.sprite = eachSpr_Double;
+            }
+            if (isBreak)
+            {
+                lineSpriteRender.sprite = breakLine;
+                spriteRenderer.sprite = breakSpr_Double;
+            }
         }
         else
         {
-            if (isEach) spriteRenderer.sprite = eachSpr;
-            if (isBreak) spriteRenderer.sprite = breakSpr;
+            if (isEach)
+            {
+                lineSpriteRender.sprite = eachLine;
+                spriteRenderer.sprite = eachSpr;
+            }
+            if (isBreak)
+            {
+                lineSpriteRender.sprite = breakLine;
+                spriteRenderer.sprite = breakSpr;
+            }
         }
-        var timing = audioSource.time - time;
+        var timing = timeProvider.AudioTime - time;
         var distance = timing * speed + 4.8f;
 
         if (timing > 0) {
             Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            Destroy(tapLine);
             Destroy(gameObject); 
         }
 
         transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1))); //TODO:add some rotation for the star
+
+        tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
+
         if (distance < 1.225f)
         {
 
@@ -68,6 +94,7 @@ public class StarDrop : MonoBehaviour
             distance = 1.225f;
             Vector3 pos = getPositionFromDistance(distance);
             transform.position = pos;
+            if (destScale > 0.3f) tapLine.SetActive(true);
         }
         else
         {
@@ -76,7 +103,9 @@ public class StarDrop : MonoBehaviour
             transform.position = pos;
             transform.localScale = new Vector3(1f, 1f);
         }
-
+        var lineScale = Mathf.Abs(distance / 4.8f);
+        tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+        lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 
     Vector3 getPositionFromDistance(float distance)

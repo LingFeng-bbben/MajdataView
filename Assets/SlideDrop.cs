@@ -21,7 +21,7 @@ public class SlideDrop : MonoBehaviour
     public int startPosition =1;
 
 
-    public AudioSource audioSource;
+    AudioTimeProvider timeProvider;
 
     List<GameObject> slideBars = new List<GameObject>();
 
@@ -30,7 +30,7 @@ public class SlideDrop : MonoBehaviour
 
     void Start()
     {
-        audioSource = GameObject.Find("Player").GetComponent<AudioSource>();
+        timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
     }
 
     private void OnEnable()
@@ -70,7 +70,7 @@ public class SlideDrop : MonoBehaviour
     {
         
 
-        var startiming = audioSource.time - timeStar;
+        var startiming = timeProvider.AudioTime - timeStar;
         if (startiming <= 0f)
         {
             var alpha = startiming * (speed / 3) + 1f;
@@ -83,7 +83,7 @@ public class SlideDrop : MonoBehaviour
             return;
         }
         star_slide.SetActive(true);
-        var timing = audioSource.time - time;
+        var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
         {
             var alpha = 1f-( -timing / (time - timeStar))+0.8f;

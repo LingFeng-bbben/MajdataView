@@ -14,26 +14,39 @@ public class HoldDrop : MonoBehaviour
     public Sprite tapSpr;
     public Sprite eachSpr;
 
+    public Sprite eachLine;
 
     public GameObject tapEffect;
+    public GameObject holdEffect;
 
-    public AudioSource audioSource;
+    public GameObject tapLine;
+
+    AudioTimeProvider timeProvider;
 
     SpriteRenderer spriteRenderer;
+    SpriteRenderer lineSpriteRender;
     void Start()
     {
-        audioSource = GameObject.Find("Player").GetComponent<AudioSource>();
+        holdEffect = Instantiate(holdEffect);
+        holdEffect.SetActive(false);
+        tapLine = Instantiate(tapLine);
+        tapLine.SetActive(false);
+        lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
+        timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isEach) spriteRenderer.sprite = eachSpr;
+        if (isEach) { 
+            spriteRenderer.sprite = eachSpr;
+            lineSpriteRender.sprite = eachLine;
+        }
 
         spriteRenderer.size = new Vector2(1.22f, 1.4f);
 
-        var timing = audioSource.time - time;
+        var timing = timeProvider.AudioTime - time;
         //var timing = time;
         var holdTime = timing - lastFor;
 
@@ -41,12 +54,17 @@ public class HoldDrop : MonoBehaviour
         var holdDistance = holdTime * speed + 4.8f;
         if (holdTime > 0) {
             Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            Destroy(tapLine);
+            Destroy(holdEffect);
             Destroy(gameObject); 
         }
 
         print(distance + "  " + holdDistance);
 
         transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
+        tapLine.transform.rotation = transform.rotation;
+        holdEffect.transform.position = getPositionFromDistance(4.8f);
+
         if (distance < 1.225f)
         {
 
@@ -57,6 +75,8 @@ public class HoldDrop : MonoBehaviour
             distance = 1.225f;
             Vector3 pos = getPositionFromDistance(distance);
             transform.position = pos;
+
+            if (destScale > 0.3f) tapLine.SetActive(true);
         }
         else
         {
@@ -64,6 +84,7 @@ public class HoldDrop : MonoBehaviour
             {
                 holdDistance = 1.225f;
                 distance = 4.8f;
+                holdEffect.SetActive(true);
             }
             if (holdDistance < 1.225f && distance < 4.8f)
             {
@@ -72,6 +93,7 @@ public class HoldDrop : MonoBehaviour
             if(holdDistance > 1.225f && distance > 4.8f)
             {
                 distance = 4.8f;
+                holdEffect.SetActive(true);
             }
             if (holdDistance > 1.225f && distance < 4.8f)
             {
@@ -83,7 +105,10 @@ public class HoldDrop : MonoBehaviour
             spriteRenderer.size = new Vector2(1.22f, size);
             transform.localScale = new Vector3(1f, 1f);
         }
-
+        var lineScale = Mathf.Abs(distance / 4.8f);
+        lineScale = lineScale >= 1f ? 0f : lineScale;
+        tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+        lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 
     Vector3 getPositionFromDistance(float distance)

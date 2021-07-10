@@ -44,9 +44,15 @@ TagManager:
   - name: HanteiLine
     uniqueID: 132456621
     locked: 0
+  - name: TapLines
+    uniqueID: 930548983
+    locked: 0
   - name: Notes
     uniqueID: 182344715
     locked: 0
   - name: Effect
     uniqueID: 1918292637
+    locked: 0
+  - name: Circle
+    uniqueID: 4128799799
     locked: 0

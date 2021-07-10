@@ -12,36 +12,52 @@ public class TapDrop : MonoBehaviour
     public bool isEach = false;
     public bool isBreak = false;
 
-    public Sprite tapSpr;
     public Sprite eachSpr;
     public Sprite breakSpr;
 
-    public GameObject tapEffect;
+    public Sprite eachLine;
+    public Sprite breakLine;
 
-    public AudioSource audioSource;
+    public GameObject tapEffect;
+    public GameObject tapLine;
+
+    AudioTimeProvider timeProvider;
 
     SpriteRenderer spriteRenderer;
+    SpriteRenderer lineSpriteRender;
     void Start()
     {
+        tapLine = Instantiate(tapLine);
+        tapLine.SetActive(false);
+        lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        audioSource = GameObject.Find("Player").GetComponent<AudioSource>();
+        timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isEach) spriteRenderer.sprite = eachSpr;
-        if (isBreak) spriteRenderer.sprite = breakSpr;
+        if (isEach) { 
+            spriteRenderer.sprite = eachSpr;
+            lineSpriteRender.sprite = eachLine;
+        }
+        if (isBreak) { 
+            spriteRenderer.sprite = breakSpr;
+            lineSpriteRender.sprite = breakLine;
+        }
 
-        var timing = audioSource.time - time;
+        var timing = timeProvider.AudioTime - time;
         var distance = timing * speed + 4.8f;
 
         if (timing > 0)
         {
             Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            Destroy(tapLine);
             Destroy(gameObject);
         }
         transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
+        tapLine.transform.rotation = transform.rotation;
+
         if (distance < 1.225f)
         {
 
@@ -52,6 +68,7 @@ public class TapDrop : MonoBehaviour
             distance = 1.225f;
             Vector3 pos = getPositionFromDistance(distance);
             transform.position = pos;
+            if (destScale > 0.3f) tapLine.SetActive(true);
         }
         else
         {
@@ -59,7 +76,9 @@ public class TapDrop : MonoBehaviour
             transform.position = pos;
             transform.localScale = new Vector3(1f, 1f);
         }
-
+        var lineScale = Mathf.Abs(distance / 4.8f);
+        tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+        lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 
     Vector3 getPositionFromDistance(float distance)

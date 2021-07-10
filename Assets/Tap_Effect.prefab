@@ -297,6 +297,7 @@ GameObject:
   - component: {fileID: 314035496818238884}
   - component: {fileID: 314035496818238887}
   - component: {fileID: 314035496818238886}
+  - component: {fileID: -3073955537556767875}
   m_Layer: 0
   m_Name: Tap_Effect
   m_TagString: Untagged
@@ -391,6 +392,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-3073955537556767875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314035496818238881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff4d7167d6265845aade36b6f37d48c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ifDestroy: 0
 --- !u!1 &314035497240898251
 GameObject:
   m_ObjectHideFlags: 0
