@@ -18,7 +18,7 @@ public class JsonDataLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        string json = System.IO.File.ReadAllText("majdata.json");
+        string json = System.IO.File.ReadAllText("D:/repos/MajdataView/MajdataView/majdata.json");
         MajLoadedData.timingList = JsonConvert.DeserializeObject<Majson>(json).timingList;
         notes = GameObject.Find("Notes");
         foreach(var timing in MajLoadedData.timingList)
@@ -95,7 +95,7 @@ public class JsonDataLoader : MonoBehaviour
                     }
                     var slideIndex = detectShapeFromText(note.noteContent);
                     bool isMirror = false;
-                    if (slideIndex < 1) { isMirror = true; slideIndex = -slideIndex; }
+                    if (slideIndex < 0) { isMirror = true; slideIndex = -slideIndex; }
 
                     var slide = Instantiate(slidePrefab[slideIndex], notes.transform);
                     var slide_star = Instantiate(star_slidePrefab, notes.transform);
@@ -158,9 +158,10 @@ public class JsonDataLoader : MonoBehaviour
             var digits = str.Split('-');
             int startPos = int.Parse(digits[0]);
             int endPos = int.Parse(digits[1]);
-            endPos = endPos - startPos ;
+            endPos = endPos - startPos;
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
+            print("DEBUG"+endPos);
             return endPos - 2;
         }
         if (content.Contains('>'))
