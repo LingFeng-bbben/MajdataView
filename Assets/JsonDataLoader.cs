@@ -56,6 +56,43 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.isBreak = true;
                         note.noteContent = note.noteContent.Replace("b", "");
                     }
+                    if (note.noteContent.Contains('w')) //wifi
+                    {
+                        var slideWifi = Instantiate(slidePrefab[36], notes.transform);
+                        var Wifi_star1 = Instantiate(star_slidePrefab, notes.transform);
+                        var Wifi_star2 = Instantiate(star_slidePrefab, notes.transform);
+                        var Wifi_star3 = Instantiate(star_slidePrefab, notes.transform);
+
+                        Wifi_star1.SetActive(false);
+                        Wifi_star2.SetActive(false);
+                        Wifi_star3.SetActive(false);
+
+                        slideWifi.SetActive(false);
+                        NDCompo.slide = slideWifi ;
+                        var WifiCompo = slideWifi.AddComponent<WifiDrop>();
+
+
+                        if (timing.noteList.Count > 1)
+                        {
+                            NDCompo.isEach = true;
+                            NDCompo.isDouble = true;
+                        }
+
+
+                        NDCompo.time = (float)timing.time;
+                        NDCompo.startPosition = note.startPosition;
+                        NDCompo.speed = speed;
+
+                        WifiCompo.speed = speed;
+                        WifiCompo.timeStar = (float)timing.time;
+                        WifiCompo.startPosition = note.startPosition;
+                        WifiCompo.star_slide[0] = Wifi_star1;
+                        WifiCompo.star_slide[1] = Wifi_star2;
+                        WifiCompo.star_slide[2] = Wifi_star3;
+                        WifiCompo.time = (float)note.slideStartTime;
+                        WifiCompo.LastFor = (float)note.slideTime;
+                        break;
+                    }
                     var slideIndex = detectShapeFromText(note.noteContent);
                     bool isMirror = false;
                     if (slideIndex < 1) { isMirror = true; slideIndex = -slideIndex; }
@@ -284,10 +321,6 @@ public class JsonDataLoader : MonoBehaviour
         if (content.Contains('z'))
         {
             return -35;
-        }
-        if (content.Contains('w'))
-        {
-            return 36; //
         }
         if (content.Contains('V'))
         {
