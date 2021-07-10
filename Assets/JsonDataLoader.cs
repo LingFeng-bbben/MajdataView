@@ -250,7 +250,7 @@ public class JsonDataLoader : MonoBehaviour
         }
         if (content.Contains('p'))
         {
-            /* (Mirror)
+            /* 
              * SlidePrefab 27 28 29 30 31 32 33 34
              * Star_Circle 1  2  3  4  5  6  7  8   希望开源以后有更多人来写
              */
@@ -287,7 +287,36 @@ public class JsonDataLoader : MonoBehaviour
         }
         if (content.Contains('w'))
         {
-            return 36;
+            return 36; //
+        }
+        if (content.Contains('V'))
+        {
+            /* 
+             * SlidePrefab 37  38  39  40
+             * Star_Circle 7-2 7-3 7-4 7-5
+             */
+            var str = content.Substring(0, 4);
+            var digits = str.Split('V');
+            int startPos = int.Parse(digits[0]);
+            int turnPos = int.Parse(digits[1][0].ToString());
+            int endPos = int.Parse(digits[1][1].ToString());
+           
+            turnPos = turnPos - startPos;
+            turnPos = turnPos < 0 ? turnPos + 8 : turnPos;
+            turnPos = turnPos > 8 ? turnPos - 8 : turnPos;
+            turnPos++;
+            endPos = endPos - startPos;
+            endPos = endPos < 0 ? endPos + 8 : endPos;
+            endPos = endPos > 8 ? endPos - 8 : endPos;
+            endPos++;
+            if (turnPos == 7)
+            {
+                return endPos + 35;
+            }
+            if (turnPos == 3)
+            {
+                return -(MirrorKeys(endPos) + 35);
+            }
         }
         return 0;
     }
