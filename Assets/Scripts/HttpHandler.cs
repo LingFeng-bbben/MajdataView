@@ -7,6 +7,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 
 public class HttpHandler : MonoBehaviour
 {
@@ -48,7 +49,7 @@ public class HttpHandler : MonoBehaviour
         print("exit listen");
     }
 
-    private void OnApplicationQuit()
+    private void OnDestroy()
     {
         http.Stop();
         print("server stoped");
@@ -58,12 +59,19 @@ public class HttpHandler : MonoBehaviour
     {
         if (request == "") return;
         var data = JsonConvert.DeserializeObject<EditRequestjson>(request);
+        var loader = GameObject.Find("DataLoader").GetComponent<JsonDataLoader>();
+        var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         if (data.control == EditorControlMethod.Start)
         {
-            var loader = GameObject.Find("DataLoader").GetComponent<JsonDataLoader>();
+            
             loader.LoadJson(File.ReadAllText(data.jsonPath));
-            var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
+            
             timeProvider.SetStartTime(data.startAt,data.startTime);
+        }
+        if(data.control == EditorControlMethod.Stop)
+        {
+            timeProvider.ResetStartTime();
+            SceneManager.LoadScene(0);
         }
         request = "";
     }

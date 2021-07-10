@@ -27,9 +27,10 @@ public class HoldDrop : MonoBehaviour
     SpriteRenderer lineSpriteRender;
     void Start()
     {
-        holdEffect = Instantiate(holdEffect);
+        var notes = GameObject.Find("Notes").transform;
+        holdEffect = Instantiate(holdEffect,notes);
         holdEffect.SetActive(false);
-        tapLine = Instantiate(tapLine);
+        tapLine = Instantiate(tapLine,notes);
         tapLine.SetActive(false);
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();

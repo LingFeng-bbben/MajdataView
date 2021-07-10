@@ -25,11 +25,6 @@ public class JsonDataLoader : MonoBehaviour
     {
         
         MajLoadedData.timingList = JsonConvert.DeserializeObject<Majson>(json).timingList;
-        notes = GameObject.Find("Notes");
-        for(int i= 0; i < notes.transform.childCount; i++)
-        {
-            Destroy(notes.transform.GetChild(i).gameObject);
-        }
         foreach (var timing in MajLoadedData.timingList)
         {
             for (int i = 0; i < timing.noteList.Count; i++)

@@ -106,15 +106,20 @@ public class SlideDrop : MonoBehaviour
             //print(process);
             var pos = (slidePositions.Count-1) * process;
             int index = (int)pos;
-            star_slide.transform.position = (slidePositions[index+1] - slidePositions[index])*(pos-index) + slidePositions[index]; //TODO add some runhua
-            //star_slide.transform.rotation = slideRotations[index];
-            star_slide.transform.rotation = Quaternion.Euler(
-                (slideRotations[index + 1].eulerAngles - slideRotations[index].eulerAngles) * (pos - index) + slideRotations[index].eulerAngles
-            );
-            for (int i = 0; i < pos; i++)
+            try
             {
-                slideBars[i].SetActive(false);
+                star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) + slidePositions[index]; 
+                                                                                                                                             //star_slide.transform.rotation = slideRotations[index];
+                star_slide.transform.rotation = Quaternion.Euler(
+                    (slideRotations[index + 1].eulerAngles - slideRotations[index].eulerAngles) * (pos - index) + slideRotations[index].eulerAngles
+                );
+                for (int i = 0; i < pos; i++)
+                {
+                    slideBars[i].SetActive(false);
+                }
             }
+            catch { }
+
         }
     }
 

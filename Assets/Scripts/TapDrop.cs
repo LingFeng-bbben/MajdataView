@@ -27,7 +27,8 @@ public class TapDrop : MonoBehaviour
     SpriteRenderer lineSpriteRender;
     void Start()
     {
-        tapLine = Instantiate(tapLine);
+        var notes = GameObject.Find("Notes").transform;
+        tapLine = Instantiate(tapLine,notes);
         tapLine.SetActive(false);
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
