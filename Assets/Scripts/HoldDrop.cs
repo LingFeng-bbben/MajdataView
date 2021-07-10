@@ -59,7 +59,7 @@ public class HoldDrop : MonoBehaviour
             Destroy(gameObject); 
         }
 
-        print(distance + "  " + holdDistance);
+        //print(distance + "  " + holdDistance);
 
         transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
         tapLine.transform.rotation = transform.rotation;

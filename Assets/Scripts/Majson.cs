@@ -40,3 +40,16 @@ class SimaiNote
     public double slideTime = 0d;
     public string noteContent;
 }
+
+class EditRequestjson
+{
+    public EditorControlMethod control;
+    public float startTime;
+    public long startAt;
+    public string jsonPath;
+}
+
+enum EditorControlMethod
+{
+    Start, Stop
+}

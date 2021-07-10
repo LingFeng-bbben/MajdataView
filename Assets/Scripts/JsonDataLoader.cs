@@ -28,7 +28,7 @@ public class JsonDataLoader : MonoBehaviour
         notes = GameObject.Find("Notes");
         for(int i= 0; i < notes.transform.childCount; i++)
         {
-            Destroy(notes.transform.GetChild(i));
+            Destroy(notes.transform.GetChild(i).gameObject);
         }
         foreach (var timing in MajLoadedData.timingList)
         {

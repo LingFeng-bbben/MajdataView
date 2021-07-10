@@ -103,7 +103,7 @@ public class SlideDrop : MonoBehaviour
                 Destroy(star_slide);
                 Destroy(gameObject);
             }
-            print(process);
+            //print(process);
             var pos = (slidePositions.Count-1) * process;
             int index = (int)pos;
             star_slide.transform.position = (slidePositions[index+1] - slidePositions[index])*(pos-index) + slidePositions[index]; //TODO add some runhua
