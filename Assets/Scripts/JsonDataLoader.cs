@@ -18,7 +18,7 @@ public class JsonDataLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        Application.targetFrameRate = 120;
     }
 
     public void LoadJson(string json)

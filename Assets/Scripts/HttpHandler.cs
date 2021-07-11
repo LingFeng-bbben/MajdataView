@@ -61,12 +61,16 @@ public class HttpHandler : MonoBehaviour
         var data = JsonConvert.DeserializeObject<EditRequestjson>(request);
         var loader = GameObject.Find("DataLoader").GetComponent<JsonDataLoader>();
         var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
+        var bgManager = GameObject.Find("Background").GetComponent<BGManager>();
+        var bgCover = GameObject.Find("BackgroundCover").GetComponent<SpriteRenderer>();
         if (data.control == EditorControlMethod.Start)
         {
             loader.speed = data.playSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath));
             
             timeProvider.SetStartTime(data.startAt,data.startTime);
+            bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);
+            bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
         }
         if(data.control == EditorControlMethod.Stop)
         {

@@ -48,6 +48,7 @@ class EditRequestjson
     public long startAt;
     public string jsonPath;
     public float playSpeed;
+     public float backgroundCover;
 }
 
 enum EditorControlMethod
