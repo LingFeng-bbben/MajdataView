@@ -63,7 +63,7 @@ public class HttpHandler : MonoBehaviour
         var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         if (data.control == EditorControlMethod.Start)
         {
-            
+            loader.speed = data.playSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath));
             
             timeProvider.SetStartTime(data.startAt,data.startTime);

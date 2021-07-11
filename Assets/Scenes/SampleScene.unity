@@ -261,7 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efd1419b6ac8fa144a80ef32faf2b84e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 15
+  speed: 10
   slideEach: {fileID: 21300000, guid: b53771872762fbf4686f8e2768bdda03, type: 3}
   starEach: {fileID: 21300000, guid: 18b858f24d67a4341ab427db18c00991, type: 3}
   tapPrefab: {fileID: 7955322054321000439, guid: 97d5979fe9de8fd4198fcafd1ba2d433,
