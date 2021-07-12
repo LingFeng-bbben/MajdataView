@@ -79,7 +79,7 @@ public class TapDrop : MonoBehaviour
         }
         var lineScale = Mathf.Abs(distance / 4.8f);
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
-        lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
+        //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 
     Vector3 getPositionFromDistance(float distance)

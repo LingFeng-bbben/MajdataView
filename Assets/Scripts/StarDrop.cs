@@ -8,6 +8,7 @@ public class StarDrop : MonoBehaviour
     public float time;
     public int startPosition = 1;
     public float speed = 1;
+    public float rotateSpeed = 1f;
 
     public bool isEach = false;
     public bool isBreak = false;
@@ -81,7 +82,7 @@ public class StarDrop : MonoBehaviour
             Destroy(gameObject); 
         }
 
-        transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1))); //TODO:add some rotation for the star
+        transform.Rotate(0f, 0f, 5f/rotateSpeed);
 
         tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
 
@@ -106,7 +107,7 @@ public class StarDrop : MonoBehaviour
         }
         var lineScale = Mathf.Abs(distance / 4.8f);
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
-        lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
+        //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 
     Vector3 getPositionFromDistance(float distance)

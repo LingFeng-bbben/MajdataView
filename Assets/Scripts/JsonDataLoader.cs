@@ -55,6 +55,8 @@ public class JsonDataLoader : MonoBehaviour
                     var GOnote = Instantiate(starPrefab, notes.transform);
                     var NDCompo = GOnote.GetComponent<StarDrop>();
 
+                    NDCompo.rotateSpeed = (float)note.slideTime;
+
                     if (note.isBreak)
                     {
                         NDCompo.isBreak = true;

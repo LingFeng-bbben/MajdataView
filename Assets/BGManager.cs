@@ -40,6 +40,7 @@ public class BGManager : MonoBehaviour
     {
         var provider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         while (provider.AudioTime <= 0) yield return new WaitForEndOfFrame();
+        videoPlayer.time = provider.offset;
         videoPlayer.Play();
     }
 

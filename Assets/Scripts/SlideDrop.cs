@@ -90,7 +90,7 @@ public class SlideDrop : MonoBehaviour
             alpha = alpha > 1f ? 1f : alpha;
             alpha = alpha < 0f ? 0f : alpha;
             spriteRenderer_star.color = new Color(1, 1, 1,alpha);
-            star_slide.transform.localScale = new Vector3(alpha, alpha,alpha);
+            star_slide.transform.localScale = new Vector3(alpha+0.4f, alpha + 0.4f, alpha + 0.4f);
             star_slide.transform.position = slidePositions[0];
             star_slide.transform.rotation = slideRotations[0];
         }
