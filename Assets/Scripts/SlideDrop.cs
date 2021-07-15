@@ -20,6 +20,7 @@ public class SlideDrop : MonoBehaviour
 
     public int startPosition =1;
 
+    public int sortIndex = 0;
 
     AudioTimeProvider timeProvider;
 
@@ -61,6 +62,8 @@ public class SlideDrop : MonoBehaviour
         {
             var sr = gm.GetComponent<SpriteRenderer>();
             sr.color = new Color(1f, 1f, 1f, 0f);
+            sr.sortingOrder += sortIndex;
+            sr.sortingLayerName = "Slide";
             if (isEach) sr.sprite = spriteEach;
         }
     }

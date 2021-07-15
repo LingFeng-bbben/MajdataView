@@ -50,6 +50,9 @@ TagManager:
   - name: TapLines
     uniqueID: 930548983
     locked: 0
+  - name: Slide
+    uniqueID: 1862298991
+    locked: 0
   - name: Notes
     uniqueID: 182344715
     locked: 0
