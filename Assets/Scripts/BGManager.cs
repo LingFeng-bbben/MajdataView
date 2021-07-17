@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Video;
 using System.IO;
+using System.Drawing;
 
 public class BGManager : MonoBehaviour
 {
@@ -23,6 +24,16 @@ public class BGManager : MonoBehaviour
             videoPlayer.url = "file://" + path + "/bg.mp4";
             videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
             StartCoroutine(waitFumenStart());
+            return;
+        }
+        if (File.Exists(path + "/Cover.jpg"))
+        {
+            StartCoroutine(loadPic(path + "/Cover.jpg"));
+            return;
+        }
+        if (File.Exists(path + "/Cover.png"))
+        {
+            StartCoroutine(loadPic(path + "/Cover.png"));
             return;
         }
         if (File.Exists(path + "/bg.jpg"))
@@ -46,12 +57,16 @@ public class BGManager : MonoBehaviour
 
     IEnumerator loadPic(string path)
     {
+
         UnityWebRequest req = UnityWebRequest.Get("file://"+path);
         yield return req.SendWebRequest();
-        
-        Texture2D texture = new Texture2D(1080,1080);
+        Image image = Image.FromFile(path);
+        Texture2D texture = new Texture2D(image.Width, image.Height);
         texture.LoadImage(req.downloadHandler.data);
-        spriteRender.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),new Vector2(0.5f,0.5f));
+        spriteRender.sprite = Sprite.Create(texture, new Rect(0, 0, image.Width, image.Width),new Vector2(0.5f,0.5f));
+        var scale = 1080f/(float)image.Width;
+        gameObject.transform.localScale = new Vector3(scale, scale, scale);
+        image.Dispose();
     }
 
     // Update is called once per frame
