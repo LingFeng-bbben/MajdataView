@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Newtonsoft.Json;
+using System;
+using UnityEngine.UI;
 
 public class JsonDataLoader : MonoBehaviour
 {
@@ -27,61 +29,111 @@ public class JsonDataLoader : MonoBehaviour
         MajLoadedData.timingList = JsonConvert.DeserializeObject<Majson>(json).timingList;
         foreach (var timing in MajLoadedData.timingList)
         {
-            for (int i = 0; i < timing.noteList.Count; i++)
-            {
-                var note = timing.noteList[i];
-                if (note.noteType == SimaiNoteType.Tap)
+            try {
+                for (int i = 0; i < timing.noteList.Count; i++)
                 {
-                    var GOnote = Instantiate(tapPrefab, notes.transform);
-                    var NDCompo = GOnote.GetComponent<TapDrop>();
-                    if (timing.noteList.Count > 1) NDCompo.isEach = true;
-                    if (note.isBreak) NDCompo.isBreak = true;
-                    NDCompo.time = (float)timing.time;
-                    NDCompo.startPosition = note.startPosition;
-                    NDCompo.speed = speed;
-                }
-                if (note.noteType == SimaiNoteType.Hold)
-                {
-                    var GOnote = Instantiate(holdPrefab, notes.transform);
-                    var NDCompo = GOnote.GetComponent<HoldDrop>();
-                    if (timing.noteList.Count > 1) NDCompo.isEach = true;
-                    NDCompo.time = (float)timing.time;
-                    NDCompo.lastFor = (float)note.holdTime;
-                    NDCompo.startPosition = note.startPosition;
-                    NDCompo.speed = speed;
-                }
-                if (note.noteType == SimaiNoteType.Slide)
-                {
-                    var GOnote = Instantiate(starPrefab, notes.transform);
-                    var NDCompo = GOnote.GetComponent<StarDrop>();
-
-                    NDCompo.rotateSpeed = (float)note.slideTime;
-
-                    if (note.isBreak)
+                    var note = timing.noteList[i];
+                    if (note.noteType == SimaiNoteType.Tap)
                     {
-                        NDCompo.isBreak = true;
-                        note.noteContent = note.noteContent.Replace("b", "");
+                        var GOnote = Instantiate(tapPrefab, notes.transform);
+                        var NDCompo = GOnote.GetComponent<TapDrop>();
+                        if (timing.noteList.Count > 1) NDCompo.isEach = true;
+                        if (note.isBreak) NDCompo.isBreak = true;
+                        NDCompo.time = (float)timing.time;
+                        NDCompo.startPosition = note.startPosition;
+                        NDCompo.speed = speed;
                     }
-                    if (note.noteContent.Contains('w')) //wifi
+                    if (note.noteType == SimaiNoteType.Hold)
                     {
-                        var slideWifi = Instantiate(slidePrefab[36], notes.transform);
-                        var Wifi_star1 = Instantiate(star_slidePrefab, notes.transform);
-                        var Wifi_star2 = Instantiate(star_slidePrefab, notes.transform);
-                        var Wifi_star3 = Instantiate(star_slidePrefab, notes.transform);
+                        var GOnote = Instantiate(holdPrefab, notes.transform);
+                        var NDCompo = GOnote.GetComponent<HoldDrop>();
+                        if (timing.noteList.Count > 1) NDCompo.isEach = true;
+                        NDCompo.time = (float)timing.time;
+                        NDCompo.lastFor = (float)note.holdTime;
+                        NDCompo.startPosition = note.startPosition;
+                        NDCompo.speed = speed;
+                    }
+                    if (note.noteType == SimaiNoteType.Slide)
+                    {
+                        var GOnote = Instantiate(starPrefab, notes.transform);
+                        var NDCompo = GOnote.GetComponent<StarDrop>();
 
-                        Wifi_star1.SetActive(false);
-                        Wifi_star2.SetActive(false);
-                        Wifi_star3.SetActive(false);
+                        NDCompo.rotateSpeed = (float)note.slideTime;
 
-                        slideWifi.SetActive(false);
-                        NDCompo.slide = slideWifi;
-                        var WifiCompo = slideWifi.AddComponent<WifiDrop>();
+                        if (note.isBreak)
+                        {
+                            NDCompo.isBreak = true;
+                            note.noteContent = note.noteContent.Replace("b", "");
+                        }
+                        if (note.noteContent.Contains('w')) //wifi
+                        {
+                            var slideWifi = Instantiate(slidePrefab[36], notes.transform);
+                            var Wifi_star1 = Instantiate(star_slidePrefab, notes.transform);
+                            var Wifi_star2 = Instantiate(star_slidePrefab, notes.transform);
+                            var Wifi_star3 = Instantiate(star_slidePrefab, notes.transform);
+
+                            Wifi_star1.SetActive(false);
+                            Wifi_star2.SetActive(false);
+                            Wifi_star3.SetActive(false);
+
+                            slideWifi.SetActive(false);
+                            NDCompo.slide = slideWifi;
+                            var WifiCompo = slideWifi.AddComponent<WifiDrop>();
+
+
+                            if (timing.noteList.Count > 1)
+                            {
+                                NDCompo.isEach = true;
+                                NDCompo.isDouble = true;
+                            }
+
+
+                            NDCompo.time = (float)timing.time;
+                            NDCompo.startPosition = note.startPosition;
+                            NDCompo.speed = speed;
+
+                            WifiCompo.speed = speed;
+                            WifiCompo.timeStar = (float)timing.time;
+                            WifiCompo.startPosition = note.startPosition;
+                            WifiCompo.star_slide[0] = Wifi_star1;
+                            WifiCompo.star_slide[1] = Wifi_star2;
+                            WifiCompo.star_slide[2] = Wifi_star3;
+                            WifiCompo.time = (float)note.slideStartTime;
+                            WifiCompo.LastFor = (float)note.slideTime;
+                            break;
+                        }
+                        var slideIndex = detectShapeFromText(note.noteContent);
+                        bool isMirror = false;
+                        if (slideIndex < 0) { isMirror = true; slideIndex = -slideIndex; }
+
+                        var slide = Instantiate(slidePrefab[slideIndex], notes.transform);
+                        var slide_star = Instantiate(star_slidePrefab, notes.transform);
+
+
+                        slide_star.SetActive(false);
+                        slide.SetActive(false);
+                        NDCompo.slide = slide;
+                        var SliCompo = slide.AddComponent<SlideDrop>();
 
 
                         if (timing.noteList.Count > 1)
                         {
                             NDCompo.isEach = true;
-                            NDCompo.isDouble = true;
+
+                            if (timing.noteList.FindAll(
+                                o => o.noteType == SimaiNoteType.Slide &&
+                                o.startPosition == note.startPosition).Count
+                                > 1)
+                            {
+                                NDCompo.isDouble = true;
+                            }
+                            if (timing.noteList.FindAll(
+                                o => o.noteType == SimaiNoteType.Slide).Count
+                                > 1)
+                            {
+                                SliCompo.isEach = true;
+                                slide_star.GetComponent<SpriteRenderer>().sprite = starEach;
+                            }
                         }
 
 
@@ -89,65 +141,20 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.startPosition = note.startPosition;
                         NDCompo.speed = speed;
 
-                        WifiCompo.speed = speed;
-                        WifiCompo.timeStar = (float)timing.time;
-                        WifiCompo.startPosition = note.startPosition;
-                        WifiCompo.star_slide[0] = Wifi_star1;
-                        WifiCompo.star_slide[1] = Wifi_star2;
-                        WifiCompo.star_slide[2] = Wifi_star3;
-                        WifiCompo.time = (float)note.slideStartTime;
-                        WifiCompo.LastFor = (float)note.slideTime;
-                        break;
+                        SliCompo.spriteEach = slideEach;
+                        SliCompo.isMirror = isMirror;
+                        SliCompo.speed = speed;
+                        SliCompo.timeStar = (float)timing.time;
+                        SliCompo.startPosition = note.startPosition;
+                        SliCompo.star_slide = slide_star;
+                        SliCompo.time = (float)note.slideStartTime;
+                        SliCompo.LastFor = (float)note.slideTime;
+                        SliCompo.sortIndex = -7000 + (int)(timing.time * -10) + i * 1;
                     }
-                    var slideIndex = detectShapeFromText(note.noteContent);
-                    bool isMirror = false;
-                    if (slideIndex < 0) { isMirror = true; slideIndex = -slideIndex; }
-
-                    var slide = Instantiate(slidePrefab[slideIndex], notes.transform);
-                    var slide_star = Instantiate(star_slidePrefab, notes.transform);
-
-
-                    slide_star.SetActive(false);
-                    slide.SetActive(false);
-                    NDCompo.slide = slide;
-                    var SliCompo = slide.AddComponent<SlideDrop>();
-
-
-                    if (timing.noteList.Count > 1)
-                    {
-                        NDCompo.isEach = true;
-
-                        if (timing.noteList.FindAll(
-                            o => o.noteType == SimaiNoteType.Slide &&
-                            o.startPosition == note.startPosition).Count
-                            > 1)
-                        {
-                            NDCompo.isDouble = true;
-                        }
-                        if (timing.noteList.FindAll(
-                            o => o.noteType == SimaiNoteType.Slide).Count
-                            > 1)
-                        {
-                            SliCompo.isEach = true;
-                            slide_star.GetComponent<SpriteRenderer>().sprite = starEach;
-                        }
-                    }
-
-
-                    NDCompo.time = (float)timing.time;
-                    NDCompo.startPosition = note.startPosition;
-                    NDCompo.speed = speed;
-
-                    SliCompo.spriteEach = slideEach;
-                    SliCompo.isMirror = isMirror;
-                    SliCompo.speed = speed;
-                    SliCompo.timeStar = (float)timing.time;
-                    SliCompo.startPosition = note.startPosition;
-                    SliCompo.star_slide = slide_star;
-                    SliCompo.time = (float)note.slideStartTime;
-                    SliCompo.LastFor = (float)note.slideTime;
-                    SliCompo.sortIndex =-7000+ (int)(timing.time * -10) + i * 1;
                 }
+            }catch(Exception e)
+            {
+                GameObject.Find("ErrText").GetComponent<Text>().text = "在第"+(timing.rawTextPositionY+1 )+"行发现问题：\n"+e.Message;
             }
         }
     }
