@@ -1,5 +1,5 @@
 # MajdataView&Edit
-Alpha5.0
+Alpha5.1
 
 ***
 **注意：快捷键已改变**
