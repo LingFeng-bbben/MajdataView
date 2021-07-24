@@ -1,14 +1,13 @@
 # MajdataView&Edit
-Alpha5.1
-
-***
-**注意：快捷键已改变**
-***
+Alpha5.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 ## 更新内容
-1. 发送到查看器的快捷键
-2. View内的时间和错误显示
-3. Edit内的错误显示
+1. 拖拽打开谱面文件
+2. 兼容性改善(为不兼容的驱动启用cpu渲染，解决低版本系统样式显示问题)
+3. 修复变速时候的小节线问题
+4. 修复文本跟随时的卡顿问题
+5. 修复自定义星星时长的问题
+6. 在本地播放时禁用导出按钮
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -20,14 +19,21 @@ Alpha5.1
 6. bg.mp4/bg.jpg/bg.png可设为背景
 
 ## 快捷键列表
+把焦点放在文本框上这些快捷键才能起作用。
 |快捷键|功能|备注|
 |--|--|--|
+|Ctrl+左键|选定进度| |
 |Ctrl+S|保存| |
+|Ctrl+Z|撤销| |
 |Ctrl+Shift+C|播放/停止|适用于在写谱时重复听一个段落的情况|
 |Ctrl+Shift+X|播放/暂停|适用于总览谱面的情况|
 |Ctrl+Shift+Z|发送到编辑器| |
+***
+**注意：A5.1起快捷键已改变**
+***
 
 ## 已知问题
 1. Wifi不会黄
 2. View暂不支持DX特性
 3. 不支持动态比特率的mp3文件
+4. 高DPI显示问题
