@@ -59,9 +59,9 @@ TagManager:
   - name: Effect
     uniqueID: 1918292637
     locked: 0
-  - name: Circle
-    uniqueID: 4128799799
-    locked: 0
   - name: UI
     uniqueID: 2089748817
+    locked: 0
+  - name: Circle
+    uniqueID: 4128799799
     locked: 0

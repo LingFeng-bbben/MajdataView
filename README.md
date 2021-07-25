@@ -1,13 +1,10 @@
 # MajdataView&Edit
-Alpha5.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+Alpha5.3 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 ## 更新内容
-1. 拖拽打开谱面文件
-2. 兼容性改善(为不兼容的驱动启用cpu渲染，解决低版本系统样式显示问题)
-3. 修复变速时候的小节线问题
-4. 修复文本跟随时的卡顿问题
-5. 修复自定义星星时长的问题
-6. 在本地播放时禁用导出按钮
+1. 兼容wmv文件
+2. 从头开始播放会触发显示信息的动画
+3. 星星表现微调
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -16,7 +13,7 @@ Alpha5.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=St
 4. 双击窗口空白处可唤起Viewer，
    且自动与Editor对齐
 5. 点击发送到查看器开始播放预览
-6. bg.mp4/bg.jpg/bg.png可设为背景
+6. bg.mp4/bg.wmv/bg.jpg/bg.png可设为背景
 
 ## 快捷键列表
 把焦点放在文本框上这些快捷键才能起作用。

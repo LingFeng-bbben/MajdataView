@@ -16,6 +16,8 @@ public class HttpHandler : MonoBehaviour
     Task listen;
     string request = "";
 
+    GameObject SongDetail;
+
     void Start()
     {
         http.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
@@ -24,6 +26,9 @@ public class HttpHandler : MonoBehaviour
         listen = new Task(httpListen);
         listen.Start();
         print("server started");
+
+        SongDetail = GameObject.Find("CanvasSongDetail");
+        SongDetail.SetActive(false);
     }
 
     void httpListen()
@@ -63,6 +68,7 @@ public class HttpHandler : MonoBehaviour
         var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         var bgManager = GameObject.Find("Background").GetComponent<BGManager>();
         var bgCover = GameObject.Find("BackgroundCover").GetComponent<SpriteRenderer>();
+
         if (data.control == EditorControlMethod.Start)
         {
             loader.speed = data.playSpeed;
@@ -71,6 +77,11 @@ public class HttpHandler : MonoBehaviour
             timeProvider.SetStartTime(data.startAt,data.startTime);
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
+
+            if(data.startTime == 0f)
+            {
+                SongDetail.SetActive(true);
+            }
         }
         if(data.control == EditorControlMethod.Stop)
         {

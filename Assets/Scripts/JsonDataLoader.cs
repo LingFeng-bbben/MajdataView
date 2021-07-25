@@ -17,6 +17,14 @@ public class JsonDataLoader : MonoBehaviour
     public GameObject notes;
     public GameObject star_slidePrefab;
     public GameObject[] slidePrefab;
+
+    public Text diffText;
+    public Text levelText;
+    public Text titleText;
+    public Text artistText;
+    public Text designText;
+    public RawImage cardImage;
+    public Color[] diffColors = new Color[7];
     // Start is called before the first frame update
     void Start()
     {
@@ -25,9 +33,16 @@ public class JsonDataLoader : MonoBehaviour
 
     public void LoadJson(string json)
     {
-        
-        MajLoadedData.timingList = JsonConvert.DeserializeObject<Majson>(json).timingList;
-        foreach (var timing in MajLoadedData.timingList)
+        var loadedData = JsonConvert.DeserializeObject<Majson>(json);
+
+        diffText.text = loadedData.difficulty;
+        levelText.text = loadedData.level;
+        titleText.text = loadedData.title;
+        artistText.text = loadedData.artist;
+        designText.text = loadedData.designer;
+        cardImage.color = diffColors[loadedData.diffNum];
+
+        foreach (var timing in loadedData.timingList)
         {
             try {
                 for (int i = 0; i < timing.noteList.Count; i++)
