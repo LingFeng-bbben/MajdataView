@@ -91,7 +91,7 @@ public class HoldDrop : MonoBehaviour
             {
                 holdDistance = 1.225f;
             }
-            if(holdDistance > 1.225f && distance > 4.8f)
+            if(holdDistance >= 1.225f && distance > 4.8f)
             {
                 distance = 4.8f;
                 holdEffect.SetActive(true);

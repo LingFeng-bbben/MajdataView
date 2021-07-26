@@ -15,7 +15,11 @@ public class AudioTimeProvider : MonoBehaviour
     {
         ticks = _ticks;
         offset = _offset;
-        StartCoroutine(waitToStart());
+        AudioTime = offset;
+        var dateTime = new DateTime(ticks);
+        var seconds = (dateTime - DateTime.Now).TotalSeconds;
+        startTime = Time.realtimeSinceStartup + (float)seconds;
+        isStart = true;
     }
 
     public void ResetStartTime()
@@ -24,20 +28,9 @@ public class AudioTimeProvider : MonoBehaviour
         isStart = false;
     }
 
-    IEnumerator waitToStart()
-    {
-        while (DateTime.Now.Ticks < ticks)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-        startTime = Time.realtimeSinceStartup;
-        isStart = true;
-    }
-
     // Update is called once per frame
     void Update()
     {
-        
         if(isStart)
         AudioTime = Time.realtimeSinceStartup-startTime +offset;
     }

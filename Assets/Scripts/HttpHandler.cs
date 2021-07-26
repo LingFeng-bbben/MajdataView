@@ -72,7 +72,7 @@ public class HttpHandler : MonoBehaviour
         if (data.control == EditorControlMethod.Start)
         {
             loader.speed = data.playSpeed;
-            loader.LoadJson(File.ReadAllText(data.jsonPath));
+            loader.LoadJson(File.ReadAllText(data.jsonPath),data.startTime);
             
             timeProvider.SetStartTime(data.startAt,data.startTime);
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);

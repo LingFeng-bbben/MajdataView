@@ -31,7 +31,7 @@ public class JsonDataLoader : MonoBehaviour
         Application.targetFrameRate = 120;
     }
 
-    public void LoadJson(string json)
+    public void LoadJson(string json, float ignoreOffset)
     {
         var loadedData = JsonConvert.DeserializeObject<Majson>(json);
 
@@ -45,6 +45,7 @@ public class JsonDataLoader : MonoBehaviour
         foreach (var timing in loadedData.timingList)
         {
             try {
+                if (timing.time < ignoreOffset) continue;
                 for (int i = 0; i < timing.noteList.Count; i++)
                 {
                     var note = timing.noteList[i];
