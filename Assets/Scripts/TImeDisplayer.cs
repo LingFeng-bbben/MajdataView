@@ -15,11 +15,13 @@ public class TImeDisplayer : MonoBehaviour
     }
 
     // Update is called once per frame
+
     void Update()
     {
-        int minute = (int)timeProvider.AudioTime / 60;
-        int second = (int)timeProvider.AudioTime - (60 * minute);
-        double mili = (timeProvider.AudioTime - (int)timeProvider.AudioTime) * 10000;
+        int timenowInt = (int)timeProvider.AudioTime;
+        int minute = timenowInt / 60;
+        int second = timenowInt - (60 * minute);
+        double mili = (timeProvider.AudioTime - timenowInt) * 10000;
         text.text = string.Format("{0}:{1:00}.{2:0000}", minute, second, mili);
     }
 }

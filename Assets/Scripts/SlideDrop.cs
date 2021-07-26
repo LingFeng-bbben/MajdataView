@@ -79,12 +79,10 @@ public class SlideDrop : MonoBehaviour
             var alpha = startiming * (speed / 3) + 1f;
             alpha = alpha > 1f ? 1f : alpha;
             alpha = alpha < 0f ? 0f : alpha;
-            foreach (var gm in slideBars)
-            {
-                gm.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, alpha);
-            }
+            setSlideBarAlpha(alpha);
             return;
         }
+        setSlideBarAlpha(1f);
         star_slide.SetActive(true);
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
@@ -125,7 +123,13 @@ public class SlideDrop : MonoBehaviour
 
         }
     }
-
+    void setSlideBarAlpha(float alpha)
+    {
+        foreach (var gm in slideBars)
+        {
+            gm.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, alpha);
+        }
+    }
     Vector3 getPositionFromDistance(float distance)
     {
         return new Vector3(

@@ -33,22 +33,32 @@ public class TapDrop : MonoBehaviour
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
+
+        if (isEach)
+        {
+            spriteRenderer.sprite = eachSpr;
+            lineSpriteRender.sprite = eachLine;
+        }
+        if (isBreak)
+        {
+            spriteRenderer.sprite = breakSpr;
+            lineSpriteRender.sprite = breakLine;
+        }
+        spriteRenderer.forceRenderingOff = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isEach) { 
-            spriteRenderer.sprite = eachSpr;
-            lineSpriteRender.sprite = eachLine;
-        }
-        if (isBreak) { 
-            spriteRenderer.sprite = breakSpr;
-            lineSpriteRender.sprite = breakLine;
-        }
-
         var timing = timeProvider.AudioTime - time;
         var distance = timing * speed + 4.8f;
+        var destScale = distance * 0.4f + 0.51f;
+        if (destScale < 0f) { 
+            destScale = 0f;
+            return;
+        }
+        spriteRenderer.forceRenderingOff = false;
+
 
         if (timing > 0)
         {
@@ -61,9 +71,6 @@ public class TapDrop : MonoBehaviour
 
         if (distance < 1.225f)
         {
-
-            var destScale = distance*0.4f +0.51f;
-            if (destScale < 0f) destScale = 0f;
             transform.localScale = new Vector3(destScale, destScale);
 
             distance = 1.225f;

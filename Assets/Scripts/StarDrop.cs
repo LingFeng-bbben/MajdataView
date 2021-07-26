@@ -41,11 +41,6 @@ public class StarDrop : MonoBehaviour
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
         if (isDouble)
         {
             spriteRenderer.sprite = tapSpr_Double;
@@ -73,8 +68,21 @@ public class StarDrop : MonoBehaviour
                 spriteRenderer.sprite = breakSpr;
             }
         }
+        spriteRenderer.forceRenderingOff = true;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         var timing = timeProvider.AudioTime - time;
         var distance = timing * speed + 4.8f;
+        var destScale = distance * 0.4f + 0.51f;
+        if (destScale < 0f) { 
+            destScale = 0f;
+            return;
+        }
+        spriteRenderer.forceRenderingOff = false;
+
 
         if (timing > 0) {
             Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
@@ -89,8 +97,7 @@ public class StarDrop : MonoBehaviour
         if (distance < 1.225f)
         {
 
-            var destScale = distance * 0.4f + 0.51f;
-            if (destScale < 0f) destScale = 0f;
+
             transform.localScale = new Vector3(destScale, destScale);
 
             distance = 1.225f;
