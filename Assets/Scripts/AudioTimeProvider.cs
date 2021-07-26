@@ -9,7 +9,7 @@ public class AudioTimeProvider : MonoBehaviour
 
     float startTime;
     long ticks = 0;
-    bool isStart = false;
+    public bool isStart = false;
     public float offset = 0f;
     public void SetStartTime(long _ticks, float _offset)
     {

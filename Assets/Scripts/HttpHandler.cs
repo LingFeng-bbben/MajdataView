@@ -18,6 +18,7 @@ public class HttpHandler : MonoBehaviour
 
     GameObject SongDetail;
 
+
     void Start()
     {
         http.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
@@ -62,6 +63,7 @@ public class HttpHandler : MonoBehaviour
 
     private void Update()
     {
+        
         if (request == "") return;
         var data = JsonConvert.DeserializeObject<EditRequestjson>(request);
         var loader = GameObject.Find("DataLoader").GetComponent<JsonDataLoader>();
