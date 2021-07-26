@@ -11,6 +11,7 @@ public class TapDrop : MonoBehaviour
 
     public bool isEach = false;
     public bool isBreak = false;
+    public bool isEX = false;
 
     public Sprite eachSpr;
     public Sprite breakSpr;
@@ -21,10 +22,14 @@ public class TapDrop : MonoBehaviour
     public GameObject tapEffect;
     public GameObject tapLine;
 
+    public Color exEffectTap;
+    public Color exEffectEach;
+
     AudioTimeProvider timeProvider;
 
     SpriteRenderer spriteRenderer;
     SpriteRenderer lineSpriteRender;
+    SpriteRenderer exSpriteRender;
     void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -32,12 +37,21 @@ public class TapDrop : MonoBehaviour
         tapLine.SetActive(false);
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-
+        
+        if (isEX)
+        {
+            exSpriteRender.color = exEffectTap;
+        }
         if (isEach)
         {
             spriteRenderer.sprite = eachSpr;
             lineSpriteRender.sprite = eachLine;
+            if (isEX)
+            {
+                exSpriteRender.color = exEffectEach;
+            }
         }
         if (isBreak)
         {
@@ -45,6 +59,7 @@ public class TapDrop : MonoBehaviour
             lineSpriteRender.sprite = breakLine;
         }
         spriteRenderer.forceRenderingOff = true;
+        exSpriteRender.forceRenderingOff = true;
     }
 
     // Update is called once per frame
@@ -58,7 +73,7 @@ public class TapDrop : MonoBehaviour
             return;
         }
         spriteRenderer.forceRenderingOff = false;
-
+        if(isEX) exSpriteRender.forceRenderingOff = false;
 
         if (timing > 0)
         {

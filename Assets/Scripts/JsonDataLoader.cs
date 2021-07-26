@@ -54,7 +54,8 @@ public class JsonDataLoader : MonoBehaviour
                         var GOnote = Instantiate(tapPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TapDrop>();
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
-                        if (note.isBreak) NDCompo.isBreak = true;
+                        NDCompo.isBreak = note.isBreak;
+                        NDCompo.isEX = note.isEx;
                         NDCompo.time = (float)timing.time;
                         NDCompo.startPosition = note.startPosition;
                         NDCompo.speed = speed;
@@ -68,6 +69,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.lastFor = (float)note.holdTime;
                         NDCompo.startPosition = note.startPosition;
                         NDCompo.speed = speed;
+                        NDCompo.isEX = note.isEx;
                     }
                     if (note.noteType == SimaiNoteType.Slide)
                     {
@@ -75,12 +77,8 @@ public class JsonDataLoader : MonoBehaviour
                         var NDCompo = GOnote.GetComponent<StarDrop>();
 
                         NDCompo.rotateSpeed = (float)note.slideTime;
-
-                        if (note.isBreak)
-                        {
-                            NDCompo.isBreak = true;
-                            note.noteContent = note.noteContent.Replace("b", "");
-                        }
+                        NDCompo.isEX = note.isEx;
+                        NDCompo.isBreak = note.isBreak;
                         if (note.noteContent.Contains('w')) //wifi
                         {
                             var slideWifi = Instantiate(slidePrefab[36], notes.transform);
@@ -320,7 +318,7 @@ public class JsonDataLoader : MonoBehaviour
         {
             /* 
              * SlidePrefab 27 28 29 30 31 32 33 34
-             * Star_Circle 1  2  3  4  5  6  7  8   希望开源以后有更多人来写
+             * Star_Circle 1  2  3  4  5  6  7  8  
              */
             var str = content.Substring(0, 3);
             var digits = str.Split('p');

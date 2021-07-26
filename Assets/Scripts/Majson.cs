@@ -35,6 +35,7 @@ class SimaiNote
     public SimaiNoteType noteType;
     public bool isBreak = false;
     public bool isHanabi = false;
+    public bool isEx = false;
     public int startPosition = 1; //键位（1-8）
     public char touchArea = ' ';
     public double holdTime = 0d;

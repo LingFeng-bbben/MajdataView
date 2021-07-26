@@ -10,6 +10,7 @@ public class HoldDrop : MonoBehaviour
     public float speed = 1;
 
     public bool isEach = false;
+    public bool isEX = false;
 
     public Sprite tapSpr;
     public Sprite eachSpr;
@@ -21,26 +22,44 @@ public class HoldDrop : MonoBehaviour
 
     public GameObject tapLine;
 
+    public Color exEffectTap;
+    public Color exEffectEach;
+
     AudioTimeProvider timeProvider;
 
     SpriteRenderer spriteRenderer;
     SpriteRenderer lineSpriteRender;
+    SpriteRenderer exSpriteRender;
     void Start()
     {
         var notes = GameObject.Find("Notes").transform;
         holdEffect = Instantiate(holdEffect,notes);
         holdEffect.SetActive(false);
+        
         tapLine = Instantiate(tapLine,notes);
         tapLine.SetActive(false);
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
+        
+        exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (isEX)
+        {
+            exSpriteRender.color = exEffectTap;
+        }
         if (isEach)
         {
             spriteRenderer.sprite = eachSpr;
             lineSpriteRender.sprite = eachLine;
+            if (isEX)
+            {
+                exSpriteRender.color = exEffectEach;
+            }
         }
         spriteRenderer.forceRenderingOff = true;
+        exSpriteRender.forceRenderingOff = true;
     }
 
     // Update is called once per frame
@@ -54,6 +73,7 @@ public class HoldDrop : MonoBehaviour
             return;
         }
         spriteRenderer.forceRenderingOff = false;
+        if (isEX) exSpriteRender.forceRenderingOff = false;
 
         spriteRenderer.size = new Vector2(1.22f, 1.4f);
 
@@ -113,6 +133,7 @@ public class HoldDrop : MonoBehaviour
         var lineScale = Mathf.Abs(distance / 4.8f);
         lineScale = lineScale >= 1f ? 0f : lineScale;
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+        exSpriteRender.size = spriteRenderer.size;
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 

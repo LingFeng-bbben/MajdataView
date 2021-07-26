@@ -13,6 +13,7 @@ public class StarDrop : MonoBehaviour
     public bool isEach = false;
     public bool isBreak = false;
     public bool isDouble = false;
+    public bool isEX = false;
 
     public Sprite tapSpr;
     public Sprite eachSpr;
@@ -29,10 +30,15 @@ public class StarDrop : MonoBehaviour
     public GameObject tapEffect;
     public GameObject tapLine;
 
+    public Color exEffectTap;
+    public Color exEffectEach;
+    public Sprite exSpriteDouble;
+
     AudioTimeProvider timeProvider;
 
     SpriteRenderer spriteRenderer;
     SpriteRenderer lineSpriteRender;
+    SpriteRenderer exSpriteRender;
     void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -40,14 +46,24 @@ public class StarDrop : MonoBehaviour
         tapLine.SetActive(false);
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         if (isDouble)
         {
+            exSpriteRender.sprite = exSpriteDouble;
             spriteRenderer.sprite = tapSpr_Double;
+            if (isEX)
+            {
+                exSpriteRender.color = exEffectTap;
+            }
             if (isEach)
             {
                 lineSpriteRender.sprite = eachLine;
                 spriteRenderer.sprite = eachSpr_Double;
+                if (isEX)
+                {
+                    exSpriteRender.color = exEffectEach;
+                }
             }
             if (isBreak)
             {
@@ -57,10 +73,18 @@ public class StarDrop : MonoBehaviour
         }
         else
         {
+            if (isEX)
+            {
+                exSpriteRender.color = exEffectTap;
+            }
             if (isEach)
             {
                 lineSpriteRender.sprite = eachLine;
                 spriteRenderer.sprite = eachSpr;
+                if (isEX)
+                {
+                    exSpriteRender.color = exEffectEach;
+                }
             }
             if (isBreak)
             {
@@ -69,6 +93,7 @@ public class StarDrop : MonoBehaviour
             }
         }
         spriteRenderer.forceRenderingOff = true;
+        exSpriteRender.forceRenderingOff = true;
     }
 
     // Update is called once per frame
@@ -82,7 +107,7 @@ public class StarDrop : MonoBehaviour
             return;
         }
         spriteRenderer.forceRenderingOff = false;
-
+        if (isEX) exSpriteRender.forceRenderingOff = false;
 
         if (timing > 0) {
             Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
