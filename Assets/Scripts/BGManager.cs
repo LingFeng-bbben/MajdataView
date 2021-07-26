@@ -63,6 +63,7 @@ public class BGManager : MonoBehaviour
         videoPlayer.Pause();
         while (provider.AudioTime <= 0) yield return new WaitForEndOfFrame();
         videoPlayer.Play();
+        videoPlayer.time = provider.offset;
     }
 
     IEnumerator loadPic(string path)
