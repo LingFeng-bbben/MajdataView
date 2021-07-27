@@ -7,14 +7,16 @@ public class TouchHoldDrop : MonoBehaviour
     public float time;
     public float lastFor = 1f;
     public float speed = 1;
+    public bool isFirework;
 
     public GameObject tapEffect;
     public GameObject holdEffect;
+    public GameObject fireworkEffect;
 
     AudioTimeProvider timeProvider;
 
     public GameObject[] fans;
-    SpriteRenderer[] fansSprite = new SpriteRenderer[5];
+    SpriteRenderer[] fansSprite = new SpriteRenderer[6];
     public SpriteMask mask;
 
     // Start is called before the first frame update
@@ -26,7 +28,7 @@ public class TouchHoldDrop : MonoBehaviour
 
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 6; i++)
         {
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
         }
@@ -36,13 +38,14 @@ public class TouchHoldDrop : MonoBehaviour
     void Update()
     {
         var timing = timeProvider.AudioTime - time;
-        var pow = Mathf.Pow(-timing * speed, 0.1f) - 0.4f;
+        //var pow = Mathf.Pow(-timing * speed, 0.1f) - 0.4f;
+        var pow = -Mathf.Exp(8 * timing - 0.6f) + 0.5f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
         if (timing > lastFor)
         {
             Instantiate(tapEffect, transform.position, transform.rotation);
-
+            if(isFirework) Instantiate(fireworkEffect, transform.position, transform.rotation);
             Destroy(holdEffect);
             Destroy(gameObject);
         }
@@ -50,10 +53,15 @@ public class TouchHoldDrop : MonoBehaviour
         if (pow > 0.4f)
         {
             SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((timing*5+ 1.6f), 0f, 1f)));
+            fans[5].SetActive(false);
+            mask.enabled = false;
         }
         else
         {
+            fans[5].SetActive(true);
+            mask.enabled = true;
             SetfanColor(Color.white);
+            mask.alphaCutoff = Mathf.Clamp(0.91f * (1 - ((lastFor - timing) / lastFor)), 0f, 1f);
         }
         
         if (float.IsNaN(distance)) distance = 0f;
@@ -64,7 +72,7 @@ public class TouchHoldDrop : MonoBehaviour
             fans[i].transform.position = pos;
         }
 
-        mask.alphaCutoff = Mathf.Clamp(0.91f * (1 - ((lastFor - timing) / lastFor)), 0f, 1f);
+        
 
     }
 

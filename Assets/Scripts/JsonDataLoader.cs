@@ -80,6 +80,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.time = (float)timing.time;
                         NDCompo.lastFor = (float)note.holdTime;
                         NDCompo.speed = 0.2f;
+                        NDCompo.isFirework = note.isHanabi;
                     }
                     if (note.noteType == SimaiNoteType.Touch)
                     {
@@ -90,6 +91,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.startPosition = note.startPosition;
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.speed = 0.2f;
+                        NDCompo.isFirework = note.isHanabi;
                     }
                     if (note.noteType == SimaiNoteType.Slide)
                     {

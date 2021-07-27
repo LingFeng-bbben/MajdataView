@@ -8,11 +8,14 @@ public class TouchDrop : MonoBehaviour
     public float speed = 1;
     public char areaPosition;
     public bool isEach;
+    public bool isFirework;
 
     public int startPosition;
 
     public GameObject tapEffect;
     public GameObject justEffect;
+    public GameObject fireworkEffect;
+
     public Sprite faneachSprite;
     public Sprite pointEachSprite;
     AudioTimeProvider timeProvider;
@@ -42,13 +45,14 @@ public class TouchDrop : MonoBehaviour
     {
         var timing = timeProvider.AudioTime - time;
         //var timing = time;
-        var pow = Mathf.Pow(-timing * speed, 0.1f)-0.4f;
+        //var pow = Mathf.Pow(-timing * speed, 0.1f)-0.4f;
+        var pow = -Mathf.Exp(8 * timing - 0.6f) + 0.5f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
         if (timing > 0.05f)
         {
             Instantiate(tapEffect, transform.position, transform.rotation);
-
+            if (isFirework) Instantiate(fireworkEffect, transform.position, transform.rotation);
             Destroy(gameObject);
         }
         if (timing > 0f)
@@ -58,7 +62,7 @@ public class TouchDrop : MonoBehaviour
 
         if (pow > 0.4f)
         {
-            SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((timing * 4 + 2.5f), 0f, 1f)));
+            SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((timing * 6 + 2.5f), 0f, 1f)));
         }
         else
         {
@@ -92,7 +96,7 @@ public class TouchDrop : MonoBehaviour
         if (area == 'B')
         {
             var angle = (-index * (Mathf.PI / 4)) + ((Mathf.PI * 5) / 8);
-            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle))*2.21f;
+            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle))*2.3f;
         }
         if (area == 'A')
         {
@@ -102,7 +106,7 @@ public class TouchDrop : MonoBehaviour
         if (area == 'E')
         {
             var angle = (-index * (Mathf.PI / 4)) + ((Mathf.PI * 6) / 8);
-            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 3.1f;
+            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 3.0f;
         }
         if (area == 'D')
         {
