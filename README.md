@@ -1,10 +1,9 @@
 # MajdataView&Edit
-Alpha5.3 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+Alpha6.0 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 ## 更新内容
-1. 兼容wmv文件
-2. 从头开始播放会触发显示信息的动画
-3. 星星表现微调
+1. 兼容DX特性（EX,touch等）
+2. 增加各种特效音（参见SFX文件夹）
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -31,6 +30,8 @@ Alpha5.3 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=St
 
 ## 已知问题
 1. Wifi不会黄
-2. View暂不支持DX特性
-3. 不支持动态比特率的mp3文件
-4. 高DPI显示问题
+2. 重叠touch问题
+3. touch无法调整速度
+4. 不支持动态比特率的mp3文件
+5. 高DPI显示问题
+6. 潜在的性能问题
