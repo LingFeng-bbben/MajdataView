@@ -36,7 +36,7 @@ public class TouchHoldDrop : MonoBehaviour
     void Update()
     {
         var timing = timeProvider.AudioTime - time;
-        var pow = Mathf.Pow(-timing * speed, 0.5f);
+        var pow = Mathf.Pow(-timing * speed, 0.1f) - 0.4f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
         if (timing > lastFor)

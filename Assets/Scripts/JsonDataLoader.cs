@@ -15,6 +15,7 @@ public class JsonDataLoader : MonoBehaviour
     public GameObject holdPrefab;
     public GameObject starPrefab;
     public GameObject touchHoldPrefab;
+    public GameObject touchPrefab;
     public GameObject notes;
     public GameObject star_slidePrefab;
     public GameObject[] slidePrefab;
@@ -78,7 +79,17 @@ public class JsonDataLoader : MonoBehaviour
                         var NDCompo = GOnote.GetComponent<TouchHoldDrop>();
                         NDCompo.time = (float)timing.time;
                         NDCompo.lastFor = (float)note.holdTime;
-                        //NDCompo.speed = speed;
+                        NDCompo.speed = 0.2f;
+                    }
+                    if (note.noteType == SimaiNoteType.Touch)
+                    {
+                        var GOnote = Instantiate(touchPrefab, notes.transform);
+                        var NDCompo = GOnote.GetComponent<TouchDrop>();
+                        NDCompo.time = (float)timing.time;
+                        NDCompo.areaPosition = note.touchArea;
+                        NDCompo.startPosition = note.startPosition;
+                        if (timing.noteList.Count > 1) NDCompo.isEach = true;
+                        NDCompo.speed = 0.2f;
                     }
                     if (note.noteType == SimaiNoteType.Slide)
                     {
