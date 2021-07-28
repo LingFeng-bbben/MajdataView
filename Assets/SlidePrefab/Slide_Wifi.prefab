@@ -582,6 +582,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 939556807493482885}
+  - component: {fileID: 949524724861288052}
   m_Layer: 0
   m_Name: Slide_Wifi
   m_TagString: Untagged
@@ -614,6 +615,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &949524724861288052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5120502090728662693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dce01e6efa89ca542a1491788bab73ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  star_slidePrefab: {fileID: 3082733108601366817, guid: 42156a3b3ae4d054da74641cd739534f,
+    type: 3}
+  eachSlide:
+  - {fileID: -2104979366251557822, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -5508730858329978074, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 1660827000066962834, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -3035267430650131031, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -439320201241764418, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 5960795151959469272, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 6048690973988703305, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -3748293275541971110, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -3300150129828961110, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 5821571336286938200, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 4201695303700987197, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  eachStar: {fileID: 21300000, guid: 18b858f24d67a4341ab427db18c00991, type: 3}
+  time: 0
+  timeStar: 0
+  LastFor: 1
+  speed: 0
+  isEach: 0
+  startPosition: 1
 --- !u!1 &6050344087625599061
 GameObject:
   m_ObjectHideFlags: 0

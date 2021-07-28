@@ -5,14 +5,19 @@ using UnityEngine;
 public class WifiDrop : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject[] star_slide = new GameObject[3];
+    public GameObject star_slidePrefab;
+    GameObject[] star_slide = new GameObject[3];
 
     SpriteRenderer[] spriteRenderer_star = new SpriteRenderer[3];
+
+    public Sprite[] eachSlide = new Sprite[11];
+    public Sprite eachStar;
 
     public float time;
     public float timeStar;
     public float LastFor = 1f;
     public float speed;
+    public bool isEach;
 
     public int startPosition = 1;
 
@@ -20,6 +25,7 @@ public class WifiDrop : MonoBehaviour
     AudioTimeProvider timeProvider;
 
     List<GameObject> slideBars = new List<GameObject>();
+    List<SpriteRenderer> sbRender = new List<SpriteRenderer>();
 
     Vector3 SlidePositionStart = new Vector3();
     Vector3[] SlidePositionEnd = new Vector3[3];
@@ -33,21 +39,28 @@ public class WifiDrop : MonoBehaviour
     private void OnEnable()
     {
         transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
+        var notes = GameObject.Find("Notes").transform;
         for (int i = 0; i < star_slide.Length; i++)
         {
+            star_slide[i] = Instantiate(star_slidePrefab, notes);
             spriteRenderer_star[i] = star_slide[i].GetComponent<SpriteRenderer>();
+            if (isEach) spriteRenderer_star[i].sprite = eachStar;
             star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i+3+startPosition)));
             SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3+startPosition);
+            star_slide[i].SetActive(false);
         }
+        slideBars.Clear();
         for (int i = 0; i < transform.childCount; i++)
         {
             slideBars.Add(transform.GetChild(i).gameObject);
         }
         SlidePositionStart = getPositionFromDistance(4.8f);
 
-        foreach (var gm in slideBars)
+        for (int i = 0; i < slideBars.Count; i++)
         {
-            var sr = gm.GetComponent<SpriteRenderer>();
+            var sr = slideBars[i].GetComponent<SpriteRenderer>();
+            if (isEach) sr.sprite = eachSlide[i];
+            sbRender.Add(sr);
             sr.color = new Color(1f, 1f, 1f, 0f);
         }
     }
@@ -63,9 +76,9 @@ public class WifiDrop : MonoBehaviour
             var alpha = startiming * (speed / 3) + 1f;
             alpha = alpha > 1f ? 1f : alpha;
             alpha = alpha < 0f ? 0f : alpha;
-            foreach (var gm in slideBars)
+            foreach (var sr in sbRender)
             {
-                gm.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, alpha);
+               sr.color = new Color(1f, 1f, 1f, alpha);
             }
             return;
         }
@@ -95,7 +108,6 @@ public class WifiDrop : MonoBehaviour
                     Destroy(star_slide[i]);
                 Destroy(gameObject);
             }
-            print(process);
             var pos = (slideBars.Count - 1) * process;
             for (int i = 0; i < star_slide.Length; i++)
             {
