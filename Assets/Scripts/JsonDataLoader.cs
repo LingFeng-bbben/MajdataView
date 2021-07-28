@@ -136,7 +136,7 @@ public class JsonDataLoader : MonoBehaviour
                             WifiCompo.star_slide[2] = Wifi_star3;
                             WifiCompo.time = (float)note.slideStartTime;
                             WifiCompo.LastFor = (float)note.slideTime;
-                            break;
+                            continue;
                         }
                         var slideIndex = detectShapeFromText(note.noteContent);
                         bool isMirror = false;
