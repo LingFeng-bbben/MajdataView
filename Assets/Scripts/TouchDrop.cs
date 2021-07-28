@@ -36,6 +36,10 @@ public class TouchDrop : MonoBehaviour
             SetfanSprite(faneachSprite);
             fansSprite[4].sprite = pointEachSprite;
         }
+        if (isFirework) { 
+            fireworkEffect = Instantiate(fireworkEffect, transform.position, transform.rotation);
+            fireworkEffect.SetActive(false);
+        }
         justEffect.SetActive(false);
         transform.position = GetAreaPos(startPosition, areaPosition);
     }
@@ -52,11 +56,12 @@ public class TouchDrop : MonoBehaviour
         if (timing > 0.05f)
         {
             Instantiate(tapEffect, transform.position, transform.rotation);
-            if (isFirework) Instantiate(fireworkEffect, transform.position, transform.rotation);
+            
             Destroy(gameObject);
         }
         if (timing > 0f)
         {
+            fireworkEffect.SetActive(true);
             justEffect.SetActive(true);
         }
 

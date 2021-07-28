@@ -34,21 +34,21 @@ public class WifiDrop : MonoBehaviour
     void Start()
     {
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-    }
-
-    private void OnEnable()
-    {
-        transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
         var notes = GameObject.Find("Notes").transform;
         for (int i = 0; i < star_slide.Length; i++)
         {
             star_slide[i] = Instantiate(star_slidePrefab, notes);
             spriteRenderer_star[i] = star_slide[i].GetComponent<SpriteRenderer>();
             if (isEach) spriteRenderer_star[i].sprite = eachStar;
-            star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i+3+startPosition)));
-            SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3+startPosition);
+            star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i + 3 + startPosition)));
+            SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
             star_slide[i].SetActive(false);
         }
+    }
+
+    private void OnEnable()
+    {
+        transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
         slideBars.Clear();
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -68,8 +68,6 @@ public class WifiDrop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
         var startiming = timeProvider.AudioTime - timeStar;
         if (startiming <= 0f)
         {
@@ -82,8 +80,10 @@ public class WifiDrop : MonoBehaviour
             }
             return;
         }
+
         foreach (var star in star_slide)
             star.SetActive(true);
+
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
         {
