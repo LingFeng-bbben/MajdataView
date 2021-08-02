@@ -1,6 +1,8 @@
 # MajdataView&Edit
 Alpha6.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
+点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
+
 ## 更新内容
 1. 调音台，更改各个声音的音量大小(设置->调音台)
 2. 保存各谱面的编辑位置，速度设置等(majSetting.json)
