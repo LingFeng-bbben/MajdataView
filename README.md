@@ -1,11 +1,11 @@
 # MajdataView&Edit
-Alpha6.1 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+Alpha6.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 ## 更新内容
-1. 支持黄色Wifi，修复Wifi有关bug
-2. 高分屏优化
-3. 一键镜像
-4. Viewer内右上角按钮控制全屏
+1. 调音台，更改各个声音的音量大小(设置->调音台)
+2. 保存各谱面的编辑位置，速度设置等(majSetting.json)
+3. 修正Touch镜像问题（感谢小e）
+4. 修正comboBox难度名称展示
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
