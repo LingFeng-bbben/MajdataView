@@ -56,5 +56,5 @@ class EditRequestjson
 
 enum EditorControlMethod
 {
-    Start, Stop
+    Start, Stop, OpStart
 }

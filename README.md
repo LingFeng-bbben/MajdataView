@@ -1,13 +1,14 @@
 # MajdataView&Edit
-Alpha6.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+Alpha6.3 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
 
 ## 更新内容
-1. 调音台，更改各个声音的音量大小(设置->调音台)
-2. 保存各谱面的编辑位置，速度设置等(majSetting.json)
-3. 修正Touch镜像问题（感谢小e）
-4. 修正comboBox难度名称展示
+1. 修复Edit issue#12
+2. 自定义快捷键
+3. 支持offset
+4. 现在播放谱面View会一直显示，而开始画面
+   只有点击录制模式才会出现
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -28,9 +29,8 @@ Alpha6.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=St
 |Ctrl+Shift+C|播放/停止|适用于在写谱时重复听一个段落的情况|
 |Ctrl+Shift+X|播放/暂停|适用于总览谱面的情况|
 |Ctrl+Shift+Z|发送到编辑器| |
-***
-**注意：A5.1起快捷键已改变**
-***
+要更改快捷键的话，请编辑EditorSetting.json
+如“Ctrl+Space”
 
 ## 已知问题
 1. 一键镜像对Touch会发生错位

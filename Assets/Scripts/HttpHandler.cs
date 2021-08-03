@@ -79,13 +79,19 @@ public class HttpHandler : MonoBehaviour
             timeProvider.SetStartTime(data.startAt,data.startTime);
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
-
-            if(data.startTime == 0f)
-            {
-                SongDetail.SetActive(true);
-            }
         }
-        if(data.control == EditorControlMethod.Stop)
+        if (data.control == EditorControlMethod.OpStart)
+        {
+            loader.speed = data.playSpeed;
+            loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
+
+            timeProvider.SetStartTime(data.startAt, data.startTime);
+            bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);
+            bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
+
+            SongDetail.SetActive(true);
+        }
+        if (data.control == EditorControlMethod.Stop)
         {
             timeProvider.ResetStartTime();
             SceneManager.LoadScene(0);
