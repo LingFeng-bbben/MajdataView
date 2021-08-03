@@ -33,9 +33,8 @@ Alpha6.3 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=St
 如“Ctrl+Space”
 
 ## 已知问题
-1. 一键镜像对Touch会发生错位
-2. 重叠touch问题
-3. touch无法调整速度
-4. 不支持动态比特率的mp3文件
-5. 高DPI显示问题
-6. 潜在的性能问题
+1. 重叠touch问题
+2. touch无法调整速度
+3. **不支持动态比特率的mp3文件**
+4. 高DPI显示问题
+5. 潜在的性能问题(hold释放音)
