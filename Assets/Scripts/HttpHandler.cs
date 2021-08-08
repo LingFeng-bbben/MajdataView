@@ -15,6 +15,7 @@ public class HttpHandler : MonoBehaviour
     HttpListener http = new HttpListener();
     Task listen;
     string request = "";
+    private bool m_JsonLoaded = false;
 
     GameObject SongDetail;
 
@@ -41,7 +42,12 @@ public class HttpHandler : MonoBehaviour
             StreamReader reader = new StreamReader(context.Request.InputStream);
             var data = reader.ReadToEnd();
             print(data);
+            m_JsonLoaded = false;
             request = data;
+            while (!m_JsonLoaded)
+            {
+                Thread.Sleep(33);
+            }
 
             context.Response.StatusCode = 200;
             StreamWriter stream = new StreamWriter(context.Response.OutputStream);
@@ -49,8 +55,6 @@ public class HttpHandler : MonoBehaviour
             stream.WriteLine("Hello!!!");
             stream.Close();
             context.Response.Close();
-
-
         }
         print("exit listen");
     }
@@ -74,17 +78,21 @@ public class HttpHandler : MonoBehaviour
         if (data.control == EditorControlMethod.Start)
         {
             loader.speed = data.playSpeed;
-            loader.LoadJson(File.ReadAllText(data.jsonPath),data.startTime);
+            loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
+            m_JsonLoaded = true;
             
             timeProvider.SetStartTime(data.startAt,data.startTime);
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
+            //SoundManager.Instance.PlayAudio(data.bgmPath,data.startTime);
         }
         if (data.control == EditorControlMethod.OpStart)
         {
             loader.speed = data.playSpeed;
+ 
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
-
+            m_JsonLoaded = true;
+            
             timeProvider.SetStartTime(data.startAt, data.startTime);
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
