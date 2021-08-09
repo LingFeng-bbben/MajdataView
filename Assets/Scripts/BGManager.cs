@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public class BGManager : MonoBehaviour
 {
+    GameObject SongDetail;
     SpriteRenderer spriteRender;
     VideoPlayer videoPlayer;
     RawImage rawImage;
@@ -18,7 +19,24 @@ public class BGManager : MonoBehaviour
         spriteRender = GetComponent<SpriteRenderer>();
         videoPlayer = GetComponent<VideoPlayer>();
         rawImage = GameObject.Find("Jacket").GetComponent<RawImage>();
+        SongDetail = GameObject.Find("CanvasSongDetail");
+        SongDetail.SetActive(false);
     }
+
+    public void PlaySongDetail()
+    {
+        SongDetail.SetActive(true);
+    }
+
+    public void PauseVideo()
+    {
+        videoPlayer.Pause();
+    }
+    public void ContinueVideo()
+    {
+        videoPlayer.Play();
+    }
+
 
     public void LoadBGFromPath(string path,float speed)
     {
