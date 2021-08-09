@@ -73,20 +73,20 @@ public class HttpHandler : MonoBehaviour
 
         if (data.control == EditorControlMethod.Start)
         {
-            timeProvider.SetStartTime(data.startAt, data.startTime);
+            timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
             loader.speed = data.playSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath),data.startTime);
             
-            bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);
+            bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName,data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
         }
         if (data.control == EditorControlMethod.OpStart)
         {
-            timeProvider.SetStartTime(data.startAt, data.startTime);
+            timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
             loader.speed = data.playSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
 
-            bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName);
+            bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
 
             SongDetail.SetActive(true);

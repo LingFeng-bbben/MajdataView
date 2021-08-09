@@ -20,7 +20,7 @@ public class BGManager : MonoBehaviour
         rawImage = GameObject.Find("Jacket").GetComponent<RawImage>();
     }
 
-    public void LoadBGFromPath(string path)
+    public void LoadBGFromPath(string path,float speed)
     {
         if (File.Exists(path + "/Cover.jpg"))
         {
@@ -42,6 +42,7 @@ public class BGManager : MonoBehaviour
         {
             videoPlayer.url = "file://" + path + "/bg.mp4";
             videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
+            videoPlayer.playbackSpeed = speed;
             StartCoroutine(waitFumenStart());
             return;
         }
@@ -49,6 +50,7 @@ public class BGManager : MonoBehaviour
         {
             videoPlayer.url = "file://" + path + "/bg.wmv";
             videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
+            videoPlayer.playbackSpeed = speed;
             StartCoroutine(waitFumenStart());
             return;
         }
