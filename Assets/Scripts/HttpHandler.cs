@@ -91,6 +91,10 @@ public class HttpHandler : MonoBehaviour
 
             SongDetail.SetActive(true);
         }
+        if(data.control == EditorControlMethod.Pause)
+        {
+            timeProvider.isStart = false;
+        }
         if (data.control == EditorControlMethod.Stop)
         {
             timeProvider.ResetStartTime();
