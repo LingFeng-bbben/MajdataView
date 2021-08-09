@@ -181,20 +181,20 @@ public class JsonDataLoader : MonoBehaviour
         if (timing.noteList.Count > 1)
         {
             NDCompo.isEach = true;
-
-            if (timing.noteList.FindAll(
-                o => o.noteType == SimaiNoteType.Slide &&
-                o.startPosition == note.startPosition).Count
-                > 1)
-            {
-                NDCompo.isDouble = true;
-            }
             if (timing.noteList.FindAll(
                 o => o.noteType == SimaiNoteType.Slide).Count
                 > 1)
             {
                 SliCompo.isEach = true;
                 slide_star.GetComponent<SpriteRenderer>().sprite = starEach;
+            }
+            if (timing.noteList.FindAll(
+                o => o.noteType == SimaiNoteType.Slide &&
+                o.startPosition == note.startPosition).Count
+                > 1)
+            {
+                NDCompo.isDouble = true;
+                NDCompo.isEach = false;
             }
         }
 
