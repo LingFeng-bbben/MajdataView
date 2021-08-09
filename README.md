@@ -1,14 +1,12 @@
 # MajdataView&Edit
-Alpha6.3 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+Alpha6.4 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
 
 ## 更新内容
-1. 修复Edit issue#12
-2. 自定义快捷键
-3. 支持offset
-4. 现在播放谱面View会一直显示，而开始画面
-   只有点击录制模式才会出现
+1. 修复小节线错乱
+2. 暂停保留预览
+3. 播放速度调整
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -29,8 +27,12 @@ Alpha6.3 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=St
 |Ctrl+Shift+C|播放/停止|适用于在写谱时重复听一个段落的情况|
 |Ctrl+Shift+X|播放/暂停|适用于总览谱面的情况|
 |Ctrl+Shift+Z|发送到编辑器| |
+|Ctrl+p|加快播放速度| |
+|Ctrl+o|减缓播放速度|对音用|
+
 要更改快捷键的话，请编辑EditorSetting.json
-如“Ctrl+Space”
+
+有关键位名称请参阅 [这里](https://docs.microsoft.com/zh-cn/dotnet/api/system.windows.input.key)
 
 ## 已知问题
 1. 重叠touch问题
