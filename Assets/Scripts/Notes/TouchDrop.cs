@@ -56,7 +56,7 @@ public class TouchDrop : MonoBehaviour
         if (timing > 0.05f)
         {
             Instantiate(tapEffect, transform.position, transform.rotation);
-            
+            GameObject.Find("ObjectCount").GetComponent<ObjectCount>().touchCount++;
             Destroy(gameObject);
         }
         if (timing > 0f)

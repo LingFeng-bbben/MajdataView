@@ -104,6 +104,7 @@ public class WifiDrop : MonoBehaviour
             process = 1f - process;
             if (process > 1)
             {
+                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
                 for (int i = 0; i < star_slide.Length; i++)
                     Destroy(star_slide[i]);
                 Destroy(gameObject);

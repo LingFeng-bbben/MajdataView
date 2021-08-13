@@ -101,6 +101,7 @@ public class SlideDrop : MonoBehaviour
             var process = (LastFor -timing) / LastFor;
             process = 1f - process;
             if (process > 1) {
+                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
                 Destroy(star_slide);
                 Destroy(gameObject);
             }

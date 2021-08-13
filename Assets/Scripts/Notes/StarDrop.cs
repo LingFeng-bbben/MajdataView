@@ -14,6 +14,7 @@ public class StarDrop : MonoBehaviour
     public bool isBreak = false;
     public bool isDouble = false;
     public bool isEX = false;
+    public bool isNoHead = false;
 
     public Sprite tapSpr;
     public Sprite eachSpr;
@@ -39,6 +40,8 @@ public class StarDrop : MonoBehaviour
     SpriteRenderer spriteRenderer;
     SpriteRenderer lineSpriteRender;
     SpriteRenderer exSpriteRender;
+
+    ObjectCount objectCount;
     void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -48,6 +51,7 @@ public class StarDrop : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
+        objectCount = GameObject.Find("ObjectCount").GetComponent<ObjectCount>();
         if (isDouble)
         {
             exSpriteRender.sprite = exSpriteDouble;
@@ -106,11 +110,18 @@ public class StarDrop : MonoBehaviour
             destScale = 0f;
             return;
         }
-        spriteRenderer.forceRenderingOff = false;
-        if (isEX) exSpriteRender.forceRenderingOff = false;
+        if (!isNoHead)
+        {
+            spriteRenderer.forceRenderingOff = false;
+            if (isEX) exSpriteRender.forceRenderingOff = false;
+        }
 
         if (timing > 0) {
-            Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            if (!isNoHead) { 
+                Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+                if (isBreak) objectCount.breakCount++;
+                else objectCount.tapCount++;
+            }
             Destroy(tapLine);
             Destroy(gameObject); 
         }
@@ -128,7 +139,7 @@ public class StarDrop : MonoBehaviour
             distance = 1.225f;
             Vector3 pos = getPositionFromDistance(distance);
             transform.position = pos;
-            if (destScale > 0.3f) tapLine.SetActive(true);
+            if (destScale > 0.3f && !isNoHead) tapLine.SetActive(true);
         }
         else
         {

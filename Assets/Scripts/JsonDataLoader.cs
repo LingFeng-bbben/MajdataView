@@ -27,10 +27,13 @@ public class JsonDataLoader : MonoBehaviour
     public Text designText;
     public RawImage cardImage;
     public Color[] diffColors = new Color[7];
+
+    ObjectCount objectCount;
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 120;
+        objectCount = GameObject.Find("ObjectCount").GetComponent<ObjectCount>();
     }
 
     public void LoadJson(string json, float ignoreOffset)
@@ -44,10 +47,15 @@ public class JsonDataLoader : MonoBehaviour
         designText.text = loadedData.designer;
         cardImage.color = diffColors[loadedData.diffNum];
 
+        CountNoteSum(loadedData);
+
         foreach (var timing in loadedData.timingList)
         {
             try {
-                if (timing.time < ignoreOffset) continue;
+                if (timing.time < ignoreOffset) {
+                    CountNoteCount(timing.noteList);
+                    continue;
+                }
                 for (int i = 0; i < timing.noteList.Count; i++)
                 {
                     var note = timing.noteList[i];
@@ -114,6 +122,66 @@ public class JsonDataLoader : MonoBehaviour
         }
     }
 
+
+    void CountNoteSum(Majson json)
+    {
+        foreach (var timing in json.timingList)
+        {
+            foreach (var note in timing.noteList)
+            {
+                if (!note.isBreak)
+                {
+                    if (note.noteType == SimaiNoteType.Tap) objectCount.tapSum++;
+                    if (note.noteType == SimaiNoteType.Hold) objectCount.holdSum++;
+                    if (note.noteType == SimaiNoteType.TouchHold) objectCount.holdSum++;
+                    if (note.noteType == SimaiNoteType.Touch) objectCount.touchSum++;
+                    if (note.noteType == SimaiNoteType.Slide)
+                    {
+                        if (!note.isSlideNoHead) objectCount.tapSum++;
+                        objectCount.slideSum++;
+                    }
+                }
+                else
+                {
+                    if (note.noteType == SimaiNoteType.Slide)
+                    {
+                        if (!note.isSlideNoHead) objectCount.breakSum++;
+                        objectCount.slideSum++;
+                    }
+                    else { objectCount.breakSum++; }
+                }
+            }
+        }
+    }
+
+    void CountNoteCount(List<SimaiNote> timing)
+    {
+        foreach (var note in timing)
+        {
+            if (!note.isBreak)
+            {
+                if (note.noteType == SimaiNoteType.Tap) objectCount.tapCount++;
+                if (note.noteType == SimaiNoteType.Hold) objectCount.holdCount++;
+                if (note.noteType == SimaiNoteType.TouchHold) objectCount.holdCount++;
+                if (note.noteType == SimaiNoteType.Touch) objectCount.touchCount++;
+                if (note.noteType == SimaiNoteType.Slide)
+                {
+                    if (!note.isSlideNoHead) objectCount.tapCount++;
+                    objectCount.slideCount++;
+                }
+            }
+            else
+            {
+                if (note.noteType == SimaiNoteType.Slide)
+                {
+                    if (!note.isSlideNoHead) objectCount.breakCount++;
+                    objectCount.slideCount++;
+                }
+                else { objectCount.breakCount++; }
+            }
+        }
+    }
+
     void InstantiateWifi(SimaiTimingPoint timing,SimaiNote note)
     {
         var GOnote = Instantiate(starPrefab, notes.transform);
@@ -142,7 +210,7 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
-
+        NDCompo.isNoHead = note.isSlideNoHead;
         NDCompo.time = (float)timing.time;
         NDCompo.startPosition = note.startPosition;
         NDCompo.speed = speed;
@@ -201,7 +269,7 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
-
+        NDCompo.isNoHead = note.isSlideNoHead;
         NDCompo.time = (float)timing.time;
         NDCompo.startPosition = note.startPosition;
         NDCompo.speed = speed;

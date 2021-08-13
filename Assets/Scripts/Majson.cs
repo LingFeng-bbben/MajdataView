@@ -36,12 +36,17 @@ class SimaiNote
     public bool isBreak = false;
     public bool isHanabi = false;
     public bool isEx = false;
+    public bool isSlideNoHead = false;
+
     public int startPosition = 1; //键位（1-8）
     public char touchArea = ' ';
+
     public double holdTime = 0d;
+
     public double slideStartTime = 0d;
     public double slideTime = 0d;
-    public string noteContent;
+
+    public string noteContent; //used for star explain
 }
 
 class EditRequestjson
