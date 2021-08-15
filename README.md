@@ -1,12 +1,13 @@
 # MajdataView&Edit
-Beta1.0 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+Beta1.1 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
 
 ## 更新内容
-1. 修改若干美术样式
-2. 修正同头星星
-3. 增加物量显示
+1. 修正wifi星星头样式
+2. 修复Edit #23 谱面作者不能保存
+3. 修复Edit #24 view窗口会在点击录制时变更大小 
+4. 修复Edit #25 Hold释放音效无法和在同一时间的note对齐
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
