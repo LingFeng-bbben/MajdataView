@@ -201,12 +201,23 @@ public class JsonDataLoader : MonoBehaviour
         if (timing.noteList.Count > 1)
         {
             NDCompo.isEach = true;
-            NDCompo.isDouble = true;
+            NDCompo.isDouble = false;
             if (timing.noteList.FindAll(
                 o => o.noteType == SimaiNoteType.Slide).Count
                 > 1)
             {
                 WifiCompo.isEach = true;
+            }
+            var count = timing.noteList.FindAll(
+            o => o.noteType == SimaiNoteType.Slide &&
+            o.startPosition == note.startPosition).Count;
+            if (count > 1)//有同起点
+            {
+                NDCompo.isDouble = true;
+                if (count == timing.noteList.Count)
+                    NDCompo.isEach = false;
+                else
+                    NDCompo.isEach = true;
             }
         }
 
