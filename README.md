@@ -1,13 +1,13 @@
 # MajdataView&Edit
-Beta1.1 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+Beta1.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
 
 ## 更新内容
-1. 修正wifi星星头样式
-2. 修复Edit #23 谱面作者不能保存
-3. 修复Edit #24 view窗口会在点击录制时变更大小 
-4. 修复Edit #25 Hold释放音效无法和在同一时间的note对齐
+1. 增加各种皮肤自定义
+2. 增加slide音和touch音
+3. 将音效文件格式改为wav
+4. 修复 View #10 星星不能在超过360度的Slide上平滑旋转
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -71,5 +71,4 @@ Beta1.1 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=Sta
 1. 重叠touch问题
 2. touch无法调整速度
 3. **不支持动态比特率的mp3文件**
-4. 高DPI显示问题
-5. 潜在的性能问题(hold释放音)
+4. 潜在的性能问题(hold释放音)
