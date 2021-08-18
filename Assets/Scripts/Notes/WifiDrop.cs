@@ -11,10 +11,11 @@ public class WifiDrop : MonoBehaviour
     SpriteRenderer[] spriteRenderer_star = new SpriteRenderer[3];
 
     public Sprite[] eachSlide = new Sprite[11];
+    public Sprite normalStar;
     public Sprite eachStar;
 
     public float time;
-    public float timeStar;
+    public float timeStart;
     public float LastFor = 1f;
     public float speed;
     public bool isEach;
@@ -40,6 +41,7 @@ public class WifiDrop : MonoBehaviour
             star_slide[i] = Instantiate(star_slidePrefab, notes);
             spriteRenderer_star[i] = star_slide[i].GetComponent<SpriteRenderer>();
             if (isEach) spriteRenderer_star[i].sprite = eachStar;
+            else spriteRenderer_star[i].sprite = normalStar;
             star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i + 3 + startPosition)));
             SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
             star_slide[i].SetActive(false);
@@ -68,7 +70,7 @@ public class WifiDrop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var startiming = timeProvider.AudioTime - timeStar;
+        var startiming = timeProvider.AudioTime - timeStart;
         if (startiming <= 0f)
         {
             var alpha = startiming * (speed / 3) + 1f;
@@ -87,7 +89,7 @@ public class WifiDrop : MonoBehaviour
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
         {
-            var alpha = 1f - (-timing / (time - timeStar)) + 0.8f;
+            var alpha = 1f - (-timing / (time - timeStart)) + 0.8f;
             alpha = alpha > 1f ? 1f : alpha;
             alpha = alpha < 0f ? 0f : alpha;
             for (int i = 0; i < star_slide.Length; i++)

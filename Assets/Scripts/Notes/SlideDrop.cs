@@ -9,6 +9,7 @@ public class SlideDrop : MonoBehaviour
 
     SpriteRenderer spriteRenderer_star;
 
+    public Sprite spriteNormal;
     public Sprite spriteEach;
 
     public bool isMirror;
@@ -65,6 +66,7 @@ public class SlideDrop : MonoBehaviour
             sr.sortingOrder += sortIndex;
             sr.sortingLayerName = "Slide";
             if (isEach) sr.sprite = spriteEach;
+            else sr.sprite = spriteNormal;
         }
     }
 

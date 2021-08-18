@@ -13,8 +13,10 @@ public class TapDrop : MonoBehaviour
     public bool isBreak = false;
     public bool isEX = false;
 
+    public Sprite normalSpr;
     public Sprite eachSpr;
     public Sprite breakSpr;
+    public Sprite exSpr;
 
     public Sprite eachLine;
     public Sprite breakLine;
@@ -42,6 +44,9 @@ public class TapDrop : MonoBehaviour
         exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         objectCount = GameObject.Find("ObjectCount").GetComponent<ObjectCount>();
+
+        spriteRenderer.sprite = normalSpr;
+        exSpriteRender.sprite = exSpr;
 
         if (isEX)
         {

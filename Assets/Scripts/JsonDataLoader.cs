@@ -9,7 +9,6 @@ using UnityEngine.UI;
 public class JsonDataLoader : MonoBehaviour
 {
     public float speed = 10f;
-    public Sprite slideEach;
     public Sprite starEach;
     public GameObject tapPrefab;
     public GameObject holdPrefab;
@@ -29,11 +28,13 @@ public class JsonDataLoader : MonoBehaviour
     public Color[] diffColors = new Color[7];
 
     ObjectCount objectCount;
+    CustomSkin customSkin;
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 120;
         objectCount = GameObject.Find("ObjectCount").GetComponent<ObjectCount>();
+        customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
     }
 
     public void LoadJson(string json, float ignoreOffset)
@@ -63,6 +64,13 @@ public class JsonDataLoader : MonoBehaviour
                     {
                         var GOnote = Instantiate(tapPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TapDrop>();
+
+                        //自定义note样式
+                        NDCompo.normalSpr = customSkin.Tap;
+                        NDCompo.breakSpr = customSkin.Tap_Break;
+                        NDCompo.eachSpr = customSkin.Tap_Each;
+                        NDCompo.exSpr = customSkin.Tap_Ex;
+
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.isBreak = note.isBreak;
                         NDCompo.isEX = note.isEx;
@@ -74,6 +82,11 @@ public class JsonDataLoader : MonoBehaviour
                     {
                         var GOnote = Instantiate(holdPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<HoldDrop>();
+
+                        NDCompo.tapSpr = customSkin.Hold;
+                        NDCompo.eachSpr = customSkin.Hold_Each;
+                        NDCompo.exSpr = customSkin.Hold_Ex;
+
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.time = (float)timing.time;
                         NDCompo.lastFor = (float)note.holdTime;
@@ -187,6 +200,16 @@ public class JsonDataLoader : MonoBehaviour
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
 
+        NDCompo.tapSpr = customSkin.Star;
+        NDCompo.eachSpr = customSkin.Star_Each;
+        NDCompo.breakSpr = customSkin.Star_Break;
+        NDCompo.exSpr = customSkin.Star_Ex;
+
+        NDCompo.tapSpr_Double = customSkin.Star_Double;
+        NDCompo.eachSpr_Double = customSkin.Star_Each_Double;
+        NDCompo.breakSpr_Double = customSkin.Star_Break_Double;
+        NDCompo.exSpr_Double = customSkin.Star_Ex_Double;
+
         NDCompo.rotateSpeed = (float)note.slideTime;
         NDCompo.isEX = note.isEx;
         NDCompo.isBreak = note.isBreak;
@@ -197,6 +220,8 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.slide = slideWifi;
         var WifiCompo = slideWifi.GetComponent<WifiDrop>();
 
+        WifiCompo.normalStar = customSkin.Star;
+        WifiCompo.eachStar = customSkin.Star_Each;
 
         if (timing.noteList.Count > 1)
         {
@@ -227,7 +252,7 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.speed = speed;
 
         WifiCompo.speed = speed;
-        WifiCompo.timeStar = (float)timing.time;
+        WifiCompo.timeStart = (float)timing.time;
         WifiCompo.startPosition = note.startPosition;
         WifiCompo.time = (float)note.slideStartTime;
         WifiCompo.LastFor = (float)note.slideTime;
@@ -239,6 +264,16 @@ public class JsonDataLoader : MonoBehaviour
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
 
+        NDCompo.tapSpr = customSkin.Star;
+        NDCompo.eachSpr = customSkin.Star_Each;
+        NDCompo.breakSpr = customSkin.Star_Break;
+        NDCompo.exSpr = customSkin.Star_Ex;
+
+        NDCompo.tapSpr_Double = customSkin.Star_Double;
+        NDCompo.eachSpr_Double = customSkin.Star_Each_Double;
+        NDCompo.breakSpr_Double = customSkin.Star_Break_Double;
+        NDCompo.exSpr_Double = customSkin.Star_Ex_Double;
+
         NDCompo.rotateSpeed = (float)note.slideTime;
         NDCompo.isEX = note.isEx;
         NDCompo.isBreak = note.isBreak;
@@ -249,13 +284,14 @@ public class JsonDataLoader : MonoBehaviour
 
         var slide = Instantiate(slidePrefab[slideIndex], notes.transform);
         var slide_star = Instantiate(star_slidePrefab, notes.transform);
-
-
+        slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star;
         slide_star.SetActive(false);
         slide.SetActive(false);
         NDCompo.slide = slide;
         var SliCompo = slide.AddComponent<SlideDrop>();
 
+        SliCompo.spriteNormal = customSkin.Slide;
+        SliCompo.spriteEach = customSkin.Slide_Each;
 
         if (timing.noteList.Count > 1)
         {
@@ -265,7 +301,7 @@ public class JsonDataLoader : MonoBehaviour
                 > 1)
             {
                 SliCompo.isEach = true;
-                slide_star.GetComponent<SpriteRenderer>().sprite = starEach;
+                slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star_Each;
             }
             var count = timing.noteList.FindAll(
                 o => o.noteType == SimaiNoteType.Slide &&
@@ -285,7 +321,6 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.startPosition = note.startPosition;
         NDCompo.speed = speed;
 
-        SliCompo.spriteEach = slideEach;
         SliCompo.isMirror = isMirror;
         SliCompo.speed = speed;
         SliCompo.timeStar = (float)timing.time;

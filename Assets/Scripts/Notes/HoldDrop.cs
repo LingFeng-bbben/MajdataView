@@ -14,6 +14,7 @@ public class HoldDrop : MonoBehaviour
 
     public Sprite tapSpr;
     public Sprite eachSpr;
+    public Sprite exSpr;
 
     public Sprite eachLine;
 
@@ -44,6 +45,9 @@ public class HoldDrop : MonoBehaviour
         
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        spriteRenderer.sprite = tapSpr;
+        exSpriteRender.sprite = exSpr;
 
         if (isEX)
         {

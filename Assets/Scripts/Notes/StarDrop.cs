@@ -19,10 +19,12 @@ public class StarDrop : MonoBehaviour
     public Sprite tapSpr;
     public Sprite eachSpr;
     public Sprite breakSpr;
+    public Sprite exSpr;
 
     public Sprite tapSpr_Double;
     public Sprite eachSpr_Double;
     public Sprite breakSpr_Double;
+    public Sprite exSpr_Double;
 
     public Sprite eachLine;
     public Sprite breakLine;
@@ -33,7 +35,6 @@ public class StarDrop : MonoBehaviour
 
     public Color exEffectTap;
     public Color exEffectEach;
-    public Sprite exSpriteDouble;
 
     AudioTimeProvider timeProvider;
 
@@ -54,7 +55,7 @@ public class StarDrop : MonoBehaviour
         objectCount = GameObject.Find("ObjectCount").GetComponent<ObjectCount>();
         if (isDouble)
         {
-            exSpriteRender.sprite = exSpriteDouble;
+            exSpriteRender.sprite = exSpr_Double;
             spriteRenderer.sprite = tapSpr_Double;
             if (isEX)
             {
@@ -77,6 +78,8 @@ public class StarDrop : MonoBehaviour
         }
         else
         {
+            exSpriteRender.sprite = exSpr;
+            spriteRenderer.sprite = tapSpr;
             if (isEX)
             {
                 exSpriteRender.color = exEffectTap;
