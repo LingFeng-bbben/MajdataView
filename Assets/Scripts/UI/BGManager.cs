@@ -88,7 +88,6 @@ public class BGManager : MonoBehaviour
 
     IEnumerator loadPic(string path)
     {
-
         UnityWebRequest req = UnityWebRequest.Get("file://"+path);
         yield return req.SendWebRequest();
         System.Drawing.Image image = System.Drawing.Image.FromFile(path);

@@ -19,7 +19,6 @@ public class HttpHandler : MonoBehaviour
 
     void Start()
     {
-        DontDestroyOnLoad(gameObject);
         SceneManager.LoadScene(1);
         http.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
         http.Prefixes.Add("http://localhost:8013/");
