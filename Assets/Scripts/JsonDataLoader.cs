@@ -197,6 +197,16 @@ public class JsonDataLoader : MonoBehaviour
 
     void InstantiateWifi(SimaiTimingPoint timing,SimaiNote note)
     {
+        var str = note.noteContent.Substring(0, 3);
+        var digits = str.Split('w');
+        int startPos = int.Parse(digits[0]);
+        int endPos = int.Parse(digits[1]);
+        endPos = endPos - startPos;
+        endPos = endPos < 0 ? endPos + 8 : endPos;
+        endPos = endPos > 8 ? endPos - 8 : endPos;
+        endPos++;
+        if (endPos != 5) throw new Exception("w星星尾部错误");
+
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
 
@@ -346,6 +356,7 @@ public class JsonDataLoader : MonoBehaviour
             endPos = endPos - startPos;
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
+            if (endPos < 3 || endPos > 7) throw new Exception("-星星至少隔开一键");
             return endPos - 2;
         }
         if (content.Contains('>'))
@@ -422,7 +433,7 @@ public class JsonDataLoader : MonoBehaviour
             {
                 return -(MirrorKeys(endPos + 1) + 4);
             }
-            throw new System.Exception("^ Error");
+            throw new Exception("^星星不合法");
         }
         if (content.Contains('v'))
         {
@@ -438,6 +449,7 @@ public class JsonDataLoader : MonoBehaviour
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
             endPos++;
+            if (endPos == 5 || endPos == 1) throw new Exception("v星星不合法");
             if (endPos > 4) return endPos + 10;
             if (endPos < 6) return endPos + 11;
         }
@@ -501,10 +513,28 @@ public class JsonDataLoader : MonoBehaviour
         }
         if (content.Contains('s'))
         {
+            var str = content.Substring(0, 3);
+            var digits = str.Split('s');
+            int startPos = int.Parse(digits[0]);
+            int endPos = int.Parse(digits[1]);
+            endPos = endPos - startPos;
+            endPos = endPos < 0 ? endPos + 8 : endPos;
+            endPos = endPos > 8 ? endPos - 8 : endPos;
+            endPos++;
+            if(endPos!=5) throw new Exception("s星星尾部错误");
             return 35;
         }
         if (content.Contains('z'))
         {
+            var str = content.Substring(0, 3);
+            var digits = str.Split('z');
+            int startPos = int.Parse(digits[0]);
+            int endPos = int.Parse(digits[1]);
+            endPos = endPos - startPos;
+            endPos = endPos < 0 ? endPos + 8 : endPos;
+            endPos = endPos > 8 ? endPos - 8 : endPos;
+            endPos++;
+            if (endPos != 5) throw new Exception("z星星尾部错误");
             return -35;
         }
         if (content.Contains('V'))
@@ -529,12 +559,15 @@ public class JsonDataLoader : MonoBehaviour
             endPos++;
             if (turnPos == 7)
             {
+                if (endPos < 2 || endPos > 5) throw new Exception("V星星终点不合法");
                 return endPos + 35;
             }
             if (turnPos == 3)
             {
+                if (endPos < 5) throw new Exception("V星星终点不合法");
                 return -(MirrorKeys(endPos) + 35);
             }
+            throw new Exception("V星星拐点只能隔开一键");
         }
         return 0;
     }
