@@ -356,8 +356,9 @@ public class JsonDataLoader : MonoBehaviour
             endPos = endPos - startPos;
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
+            endPos++;
             if (endPos < 3 || endPos > 7) throw new Exception("-星星至少隔开一键");
-            return endPos - 2;
+            return endPos - 3;
         }
         if (content.Contains('>'))
         {
