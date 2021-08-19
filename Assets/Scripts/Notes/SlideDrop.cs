@@ -115,7 +115,7 @@ public class SlideDrop : MonoBehaviour
                 star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) + slidePositions[index]; 
                 //star_slide.transform.rotation = slideRotations[index];
                 var delta = Mathf.DeltaAngle(slideRotations[index + 1].eulerAngles.z , slideRotations[index].eulerAngles.z) * (pos - index);
-                
+                delta = Mathf.Abs(delta);
                 star_slide.transform.rotation = Quaternion.Euler(0f, 0f,
                      Mathf.MoveTowardsAngle(slideRotations[index].eulerAngles.z, slideRotations[index + 1].eulerAngles.z, delta)
                 );
