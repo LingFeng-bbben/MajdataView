@@ -1,13 +1,11 @@
 # MajdataView&Edit
-Beta1.2 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+Beta1.2.1 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
 
 ## 更新内容
-1. 增加各种皮肤自定义
-2. 增加slide音和touch音
-3. 将音效文件格式改为wav
-4. 修复 View #10 星星不能在超过360度的Slide上平滑旋转
+1. 修复逆时针星星旋转插值 #10
+2. 增加星星语法错误提示
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
