@@ -284,6 +284,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe99402ae61564d9ebdee3bd92ba2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Tap: {fileID: 0}
+  Tap_Each: {fileID: 0}
+  Tap_Break: {fileID: 0}
+  Tap_Ex: {fileID: 0}
+  Slide: {fileID: 0}
+  Slide_Each: {fileID: 0}
+  Star: {fileID: 0}
+  Star_Double: {fileID: 0}
+  Star_Each: {fileID: 0}
+  Star_Each_Double: {fileID: 0}
+  Star_Break: {fileID: 0}
+  Star_Break_Double: {fileID: 0}
+  Star_Ex: {fileID: 0}
+  Star_Ex_Double: {fileID: 0}
+  Hold: {fileID: 0}
+  Hold_Each: {fileID: 0}
+  Hold_Ex: {fileID: 0}
 --- !u!1 &1794058321
 GameObject:
   m_ObjectHideFlags: 0
