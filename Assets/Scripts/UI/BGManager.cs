@@ -88,16 +88,11 @@ public class BGManager : MonoBehaviour
 
     IEnumerator loadPic(string path)
     {
-        UnityWebRequest req = UnityWebRequest.Get("file://"+path);
-        yield return req.SendWebRequest();
-        System.Drawing.Image image = System.Drawing.Image.FromFile(path);
-        Texture2D texture = new Texture2D(image.Width, image.Height);
-        texture.LoadImage(req.downloadHandler.data);
-        rawImage.texture = texture;
-        spriteRender.sprite = Sprite.Create(texture, new Rect(0, 0, image.Width, image.Width),new Vector2(0.5f,0.5f));
-        var scale = 1080f/(float)image.Width;
+        Sprite sprite;
+        yield return sprite = SpriteLoader.LoadSpriteFromFile(path);
+        spriteRender.sprite = sprite;
+        var scale = 1080f/(float)sprite.texture.width;
         gameObject.transform.localScale = new Vector3(scale, scale, scale);
-        image.Dispose();
     }
 
     // Update is called once per frame
