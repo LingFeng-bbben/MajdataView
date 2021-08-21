@@ -26,6 +26,7 @@ public class SlideDrop : MonoBehaviour
     AudioTimeProvider timeProvider;
 
     List<GameObject> slideBars = new List<GameObject>();
+    GameObject slideOK;
 
     List<Vector3> slidePositions = new List<Vector3>();
     List<Quaternion> slideRotations = new List<Quaternion>();
@@ -49,10 +50,13 @@ public class SlideDrop : MonoBehaviour
 
         
         spriteRenderer_star = star_slide.GetComponent<SpriteRenderer>();
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < transform.childCount-1; i++)
         {
             slideBars.Add(transform.GetChild(i).gameObject);
         }
+        slideOK = transform.GetChild(transform.childCount - 1).gameObject;//slideok is the last one
+        slideOK.SetActive(false);
+        slideOK.transform.SetParent(transform.parent);
         slidePositions.Add(getPositionFromDistance(4.8f));
         foreach (var bars in slideBars)
         {
@@ -104,6 +108,7 @@ public class SlideDrop : MonoBehaviour
             process = 1f - process;
             if (process > 1) {
                 GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
+                slideOK.SetActive(true);
                 Destroy(star_slide);
                 Destroy(gameObject);
             }

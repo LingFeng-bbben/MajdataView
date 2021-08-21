@@ -225,7 +225,6 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.isBreak = note.isBreak;
 
         var slideWifi = Instantiate(slidePrefab[36], notes.transform);
-
         slideWifi.SetActive(false);
         NDCompo.slide = slideWifi;
         var WifiCompo = slideWifi.GetComponent<WifiDrop>();

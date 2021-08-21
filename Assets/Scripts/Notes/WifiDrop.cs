@@ -26,6 +26,7 @@ public class WifiDrop : MonoBehaviour
     AudioTimeProvider timeProvider;
 
     List<GameObject> slideBars = new List<GameObject>();
+    GameObject slideOK;
     List<SpriteRenderer> sbRender = new List<SpriteRenderer>();
 
     Vector3 SlidePositionStart = new Vector3();
@@ -46,16 +47,16 @@ public class WifiDrop : MonoBehaviour
             SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
             star_slide[i].SetActive(false);
         }
-    }
 
-    private void OnEnable()
-    {
         transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
         slideBars.Clear();
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < transform.childCount - 1; i++)
         {
             slideBars.Add(transform.GetChild(i).gameObject);
         }
+        slideOK = transform.GetChild(transform.childCount - 1).gameObject;//slideok is the last one
+        slideOK.SetActive(false);
+        slideOK.transform.SetParent(transform.parent);
         SlidePositionStart = getPositionFromDistance(4.8f);
 
         for (int i = 0; i < slideBars.Count; i++)
@@ -65,6 +66,11 @@ public class WifiDrop : MonoBehaviour
             sbRender.Add(sr);
             sr.color = new Color(1f, 1f, 1f, 0f);
         }
+    }
+
+    private void OnEnable()
+    {
+
     }
 
     // Update is called once per frame
@@ -109,6 +115,7 @@ public class WifiDrop : MonoBehaviour
                 GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
                 for (int i = 0; i < star_slide.Length; i++)
                     Destroy(star_slide[i]);
+                slideOK.SetActive(true);
                 Destroy(gameObject);
             }
             var pos = (slideBars.Count - 1) * process;
