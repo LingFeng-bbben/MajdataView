@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6772936758778904541}
   - component: {fileID: 7523802056998589475}
   - component: {fileID: 382502230404555281}
+  - component: {fileID: 206266315368702556}
   m_Layer: 0
   m_Name: Just_wifi
   m_TagString: Untagged
@@ -115,3 +116,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ifDestroy: 0
+--- !u!114 &206266315368702556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5321880145144305730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6edbf0e2c317614c9224783e8d8c101, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _0curv1str2wifi: 3

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2475977991462650878}
   - component: {fileID: 7381869810983028850}
   - component: {fileID: 5703177854819787050}
+  - component: {fileID: -1893411426434260203}
   m_Layer: 0
   m_Name: Just_curv
   m_TagString: Untagged
@@ -115,3 +116,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ifDestroy: 0
+--- !u!114 &-1893411426434260203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9006129424700068006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6edbf0e2c317614c9224783e8d8c101, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
