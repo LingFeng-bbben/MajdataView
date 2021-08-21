@@ -30,7 +30,6 @@ public class StarDrop : MonoBehaviour
     public Sprite breakLine;
 
     public GameObject slide;
-    public GameObject tapEffect;
     public GameObject tapLine;
 
     public Color exEffectTap;
@@ -120,8 +119,8 @@ public class StarDrop : MonoBehaviour
         }
 
         if (timing > 0) {
-            if (!isNoHead) { 
-                Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            if (!isNoHead) {
+                GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, isBreak);
                 if (isBreak) objectCount.breakCount++;
                 else objectCount.tapCount++;
             }

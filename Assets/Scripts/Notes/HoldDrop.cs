@@ -18,7 +18,6 @@ public class HoldDrop : MonoBehaviour
 
     public Sprite eachLine;
 
-    public GameObject tapEffect;
     public GameObject holdEffect;
 
     public GameObject tapLine;
@@ -84,7 +83,7 @@ public class HoldDrop : MonoBehaviour
         var holdTime = timing - lastFor;
         var holdDistance = holdTime * speed + 4.8f;
         if (holdTime > 0) {
-            Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, false);
             GameObject.Find("ObjectCount").GetComponent<ObjectCount>().holdCount++;
             Destroy(tapLine);
             Destroy(holdEffect);
@@ -136,7 +135,7 @@ public class HoldDrop : MonoBehaviour
             transform.localScale = new Vector3(1f, 1f);
         }
         var lineScale = Mathf.Abs(distance / 4.8f);
-        lineScale = lineScale >= 1f ? 0f : lineScale;
+        lineScale = lineScale >= 1f ? 1f : lineScale;
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
         exSpriteRender.size = spriteRenderer.size;
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);

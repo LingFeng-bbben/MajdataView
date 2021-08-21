@@ -21,7 +21,6 @@ public class TapDrop : MonoBehaviour
     public Sprite eachLine;
     public Sprite breakLine;
 
-    public GameObject tapEffect;
     public GameObject tapLine;
 
     public Color exEffectTap;
@@ -85,7 +84,7 @@ public class TapDrop : MonoBehaviour
 
         if (timing > 0)
         {
-            Instantiate(tapEffect, getPositionFromDistance(4.8f), transform.rotation);
+            GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, isBreak);
             if (isBreak) objectCount.breakCount++;
             else objectCount.tapCount++;
 
