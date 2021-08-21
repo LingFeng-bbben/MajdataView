@@ -1,11 +1,17 @@
 # MajdataView&Edit
-Beta1.2.1 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
+![Beta 1.3](https://img.shields.io/static/v1?label=Beta&message=1.3&color=546875)
+[![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
 
 ## 更新内容
-1. 修复逆时针星星旋转插值 #10
-2. 增加星星语法错误提示
+1. 重做tap动画
+2. 加入星星判定条(just)
+3. 感谢Moying-moe带来的谱面无理检查
+4. 修复Edit issue #28
+5. 修复45度旋转星星不正确的问题
+6. 修复View无法加载封面或贴图的问题
+7. 修复正常的直线星星报错的问题
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -46,14 +52,7 @@ Beta1.2.1 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=S
 ### 延迟很大/音乐谱面对不上。
 - 请尝试更改您的时区
 - 请不要在谱面中长时间使用一种拍号
-
-### 我是第一次写maimai谱面，该怎么做?
-1. 请先选好歌，剪辑好长度后新建文件夹，并把歌曲重命名为track.mp3
-2. 请点击新建，然后在编辑->一般谱面信息中，设置好谱面信息
-3. 请设置背景，将（bg.mp4/bg.wmv/bg.jpg/bg.png）文件存入和track.mp3一个文件夹内
-4. 请打开SimaiWiki（日语），熟悉各种note的摆放方式和语法
-5. 请使用工具中的BPMtap或其他软件测试好歌曲bpm
-6. 请使用偏移来对准小节线
+- 请确保您的mp3文件为标准比特率。具体请看 [这里](https://github.com/LingFeng-bbben/MajdataEdit/issues/26)
 
 ### 我的封面无法加载
 - 请确认您的封面比例为1：1。推荐的分辨率是1080x1080
@@ -65,8 +64,56 @@ Beta1.2.1 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=S
 - 右上角有隐藏的全屏按钮，鼠标悬浮即可显示
 - 拉宽窗口即可看到物量显示信息
 
+### 为什么该重合的星星没有重合？
+- 因为所有slide都是我手摆的
+
+### 我对xxx音效不满意
+- SFX文件夹内的wav自个儿换
+
+### 我对xxx外观不满意
+- Skin文件夹内的png自个儿画
+
+### 能写Phixxos的谱吗
+- 操你妈 滚
+
+### 我是第一次写maimai谱面，该怎么做?
+1. 请先选好歌，剪辑好长度后新建文件夹，并把歌曲重命名为track.mp3
+2. 请点击新建，然后在编辑->一般谱面信息中，设置好谱面信息
+3. 请设置背景，将（bg.mp4/bg.wmv/bg.jpg/bg.png）文件存入和track.mp3一个文件夹内
+4. 请打开SimaiWiki（日语），熟悉各种note的摆放方式和语法
+5. 请使用工具中的BPMtap或其他软件测试好歌曲bpm
+6. 请使用偏移来对准小节线
+
 ## 已知问题
 1. 重叠touch问题
 2. touch无法调整速度
 3. **不支持动态比特率的mp3文件**
 4. 潜在的性能问题(hold释放音)
+
+## Skin文件夹需要的纹理列表
+
+*动动手 动动脑 你一定能找到你的需要*
+
+|文件名|备注|
+|--|--|
+|outline.png
+|tap.png
+|tap_each.png
+|tap_break.png
+|tap_ex.png|ex是白色的外圈发光贴图|
+|slide.png
+|slide_each.png
+|star.png|请确保旋转中心和图像中心重合|
+|star_double.png
+|star_each.png
+|star_each_double.png
+|star_break.png
+|star_break_double.png
+|star_ex.png
+|star_ex_double.png
+|hold.png|上下切图的像素距离为58|
+|hold_each.png
+|hold_ex.png
+|just_curv.png|这三个是星星判定图 不需要可以直接删|
+|just_str.png
+|just_wifi.png
