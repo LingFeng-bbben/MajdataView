@@ -4,6 +4,13 @@
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
 
+## Credits
+- Main Programmer: bbben
+- Muri Detector: [Moying-moe](https://github.com/Moying-moe/maimaiMuriDetector)
+- Mirroring: [Wh1tyEnd](https://github.com/Wh1tyEnd)
+- Hanabi Effect: 青山散人
+- *Special thanks*: Simai developed by [Celeca](https://twitter.com/formiku39854)
+
 ## 更新内容
 1. 重做tap动画
 2. 加入星星判定条(just)
