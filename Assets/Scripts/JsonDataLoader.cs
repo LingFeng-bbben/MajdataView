@@ -205,7 +205,7 @@ public class JsonDataLoader : MonoBehaviour
         endPos = endPos < 0 ? endPos + 8 : endPos;
         endPos = endPos > 8 ? endPos - 8 : endPos;
         endPos++;
-        if (endPos != 5) throw new Exception("w星星尾部错误");
+        if (endPos != 5) throw new Exception("w星星尾部错误\nwスライドエラー");
 
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
@@ -356,7 +356,7 @@ public class JsonDataLoader : MonoBehaviour
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
             endPos++;
-            if (endPos < 3 || endPos > 7) throw new Exception("-星星至少隔开一键");
+            if (endPos < 3 || endPos > 7) throw new Exception("-星星至少隔开一键\n-スライドエラー");
             return endPos - 3;
         }
         if (content.Contains('>'))
@@ -433,7 +433,7 @@ public class JsonDataLoader : MonoBehaviour
             {
                 return -(MirrorKeys(endPos + 1) + 4);
             }
-            throw new Exception("^星星不合法");
+            throw new Exception("^星星不合法\n^スライドエラー");
         }
         if (content.Contains('v'))
         {
@@ -449,7 +449,7 @@ public class JsonDataLoader : MonoBehaviour
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
             endPos++;
-            if (endPos == 5 || endPos == 1) throw new Exception("v星星不合法");
+            if (endPos == 5 || endPos == 1) throw new Exception("v星星不合法\nvスライドエラー");
             if (endPos > 4) return endPos + 10;
             if (endPos < 6) return endPos + 11;
         }
@@ -521,7 +521,7 @@ public class JsonDataLoader : MonoBehaviour
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
             endPos++;
-            if(endPos!=5) throw new Exception("s星星尾部错误");
+            if(endPos!=5) throw new Exception("s星星尾部错误\nsスライドエラー");
             return 35;
         }
         if (content.Contains('z'))
@@ -534,7 +534,7 @@ public class JsonDataLoader : MonoBehaviour
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
             endPos++;
-            if (endPos != 5) throw new Exception("z星星尾部错误");
+            if (endPos != 5) throw new Exception("z星星尾部错误\nzスライドエラー");
             return -35;
         }
         if (content.Contains('V'))
@@ -559,15 +559,15 @@ public class JsonDataLoader : MonoBehaviour
             endPos++;
             if (turnPos == 7)
             {
-                if (endPos < 2 || endPos > 5) throw new Exception("V星星终点不合法");
+                if (endPos < 2 || endPos > 5) throw new Exception("V星星终点不合法\nVスライドエラー");
                 return endPos + 35;
             }
             if (turnPos == 3)
             {
-                if (endPos < 5) throw new Exception("V星星终点不合法");
+                if (endPos < 5) throw new Exception("V星星终点不合法\nVスライドエラー");
                 return -(MirrorKeys(endPos) + 35);
             }
-            throw new Exception("V星星拐点只能隔开一键");
+            throw new Exception("V星星拐点只能隔开一键\nVスライドエラー");
         }
         return 0;
     }
