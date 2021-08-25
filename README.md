@@ -1,8 +1,9 @@
 # MajdataView&Edit
-![Beta 1.3](https://img.shields.io/static/v1?label=Beta&message=1.3&color=546875)
+![Beta 1.4](https://img.shields.io/static/v1?label=Beta&message=1.4&color=546875)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
+(開発交流グループ)
 
 ## Credits
 - Main Programmer: bbben
@@ -11,14 +12,10 @@
 - Hanabi Effect: 青山散人
 - *Special thanks*: Simai developed by [Celeca](https://twitter.com/formiku39854)
 
-## 更新内容
-1. 重做tap动画
-2. 加入星星判定条(just)
-3. 感谢Moying-moe带来的谱面无理检查
-4. 修复Edit issue #28
-5. 修复45度旋转星星不正确的问题
-6. 修复View无法加载封面或贴图的问题
-7. 修复正常的直线星星报错的问题
+## 语言切换方法/言語切り替え方法/How to change language
+- 请用记事本编辑EditorSetting.json的Language一栏。
+- ノートパトを使って、EditorSett.jsonのLanguageを編集してください。
+- Please edit the Language setting in EditorSetting.json using notepad.
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -28,6 +25,8 @@
    且自动与Editor对齐
 5. 点击发送到查看器开始播放预览
 6. bg.mp4/bg.wmv/bg.jpg/bg.png可设为背景
+7. 用录制模式会加入开头动画
+8. 可以更换皮肤（Skin文件夹）和音效（SFX文件夹）
 
 ## 快捷键列表
 把焦点放在文本框上这些快捷键才能起作用。
