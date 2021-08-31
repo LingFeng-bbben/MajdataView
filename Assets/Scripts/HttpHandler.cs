@@ -73,7 +73,8 @@ public class HttpHandler : MonoBehaviour
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
             loader.speed = data.playSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath),data.startTime);
-            
+            GameObject.Find("Notes").GetComponent<PlayAllPerfect>().enabled = false;
+
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName,data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
         }
