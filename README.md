@@ -1,5 +1,5 @@
 # MajdataView&Edit
-![Beta 1.4](https://img.shields.io/static/v1?label=Beta&message=1.4&color=546875)
+![Beta 2.0](https://img.shields.io/static/v1?label=Beta&message=2.0&color=546875)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
@@ -16,6 +16,9 @@
 - 请用记事本编辑EditorSetting.json的Language一栏。
 - ノートパトを使って、EditorSett.jsonのLanguageを編集してください。
 - Please edit the Language setting in EditorSetting.json using notepad.
+- 或者使用设置菜单
+- 設定メニューをご利用して下さい
+- Please use the setting menu.
 
 ## 基本操作
 1. 用鼠标滚轮或鼠标拖动调整时间轴
@@ -29,7 +32,7 @@
 8. 可以更换皮肤（Skin文件夹）和音效（SFX文件夹）
 
 ## 快捷键列表
-把焦点放在文本框上这些快捷键才能起作用。
+把**焦点放在文本框**上这些快捷键才能起作用。
 |快捷键|功能|备注|
 |--|--|--|
 |Ctrl+左键|选定进度| |
@@ -37,7 +40,7 @@
 |Ctrl+Z|撤销| |
 |Ctrl+Shift+C|播放/停止|适用于在写谱时重复听一个段落的情况|
 |Ctrl+Shift+X|播放/暂停|适用于总览谱面的情况|
-|Ctrl+Shift+Z|发送到编辑器| |
+|Ctrl+Shift+Z|录制模式| |
 |Ctrl+p|加快播放速度| |
 |Ctrl+o|减缓播放速度|对音用|
 
@@ -94,7 +97,6 @@
 1. 重叠touch问题
 2. touch无法调整速度
 3. **不支持动态比特率的mp3文件**
-4. 潜在的性能问题(hold释放音)
 
 ## Skin文件夹需要的纹理列表
 
