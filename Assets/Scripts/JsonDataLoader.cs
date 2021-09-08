@@ -337,7 +337,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.star_slide = slide_star;
         SliCompo.time = (float)note.slideStartTime;
         SliCompo.LastFor = (float)note.slideTime;
-        SliCompo.sortIndex = -7000 + (int)(timing.time * -10) + sort * 1;
+        SliCompo.sortIndex = -7000 + (int)(timing.time * -10) + sort * 5;
     }
     int detectShapeFromText(string content)
     {
