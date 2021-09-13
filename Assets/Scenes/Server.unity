@@ -301,6 +301,10 @@ MonoBehaviour:
   Hold: {fileID: 0}
   Hold_Each: {fileID: 0}
   Hold_Ex: {fileID: 0}
+  Just:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &1794058321
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,7 +358,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 5.4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

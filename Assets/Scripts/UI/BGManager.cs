@@ -13,12 +13,15 @@ public class BGManager : MonoBehaviour
     SpriteRenderer spriteRender;
     VideoPlayer videoPlayer;
     RawImage rawImage;
+    AudioTimeProvider provider;
+    float playSpeed;
     // Start is called before the first frame update
     void Start()
     {
         spriteRender = GetComponent<SpriteRenderer>();
         videoPlayer = GetComponent<VideoPlayer>();
         rawImage = GameObject.Find("Jacket").GetComponent<RawImage>();
+        provider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         SongDetail = GameObject.Find("CanvasSongDetail");
         SongDetail.SetActive(false);
     }
@@ -58,32 +61,14 @@ public class BGManager : MonoBehaviour
         }
         if (File.Exists(path + "/bg.mp4"))
         {
-            videoPlayer.url = "file://" + path + "/bg.mp4";
-            videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
-            videoPlayer.playbackSpeed = speed;
-            StartCoroutine(waitFumenStart());
+            loadVideo(path + "/bg.mp4", speed);
             return;
         }
         if (File.Exists(path + "/bg.wmv"))
         {
-            videoPlayer.url = "file://" + path + "/bg.wmv";
-            videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
-            videoPlayer.playbackSpeed = speed;
-            StartCoroutine(waitFumenStart());
+            loadVideo(path + "/bg.wmv", speed);
             return;
         }
-    }
-
-    IEnumerator waitFumenStart()
-    {
-        var provider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-        videoPlayer.time = provider.offset;
-        videoPlayer.Play();
-        yield return new WaitForEndOfFrame();// Load first frame
-        videoPlayer.Pause();
-        while (provider.AudioTime <= 0) yield return new WaitForEndOfFrame();
-        videoPlayer.Play();
-        videoPlayer.time = provider.offset;
     }
 
     IEnumerator loadPic(string path)
@@ -96,9 +81,33 @@ public class BGManager : MonoBehaviour
         gameObject.transform.localScale = new Vector3(scale, scale, scale);
     }
 
+    void loadVideo(string path, float speed)
+    {
+        videoPlayer.url = "file://" + path;
+        videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
+        videoPlayer.playbackSpeed = speed;
+        playSpeed = speed;
+        StartCoroutine(waitFumenStart());
+    }
+
+    IEnumerator waitFumenStart()
+    {
+        videoPlayer.Prepare();
+        videoPlayer.timeReference = VideoTimeReference.ExternalTime;
+        while (provider.AudioTime <= 0) yield return new WaitForEndOfFrame();
+        while (!videoPlayer.isPrepared) yield return new WaitForEndOfFrame();
+        videoPlayer.Play();
+        videoPlayer.time = provider.AudioTime;
+
+        var scale = (float)videoPlayer.height/(float)videoPlayer.width;
+        spriteRender.sprite = Sprite.Create(new Texture2D(1080, 1080), new Rect(0, 0, 1080, 1080), new Vector2(0.5f, 0.5f));
+        gameObject.transform.localScale = new Vector3(1f, scale);
+    }
     // Update is called once per frame
     void Update()
     {
-        
+        videoPlayer.externalReferenceTime = provider.AudioTime;
+        //var delta = videoPlayer.clockTime - provider.AudioTime;
+
     }
 }
