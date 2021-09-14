@@ -8,6 +8,9 @@ public class ObjectCount : MonoBehaviour
     Text text;
     Text rate;
     Text combo;
+    GameObject comboObj;
+
+    static bool isComboEnabled = false;
 
     public int tapCount;
     public int holdCount;
@@ -26,13 +29,16 @@ public class ObjectCount : MonoBehaviour
     {
         text = GetComponent<Text>();
         rate = GameObject.Find("ObjectRate").GetComponent<Text>();
-        combo = GameObject.Find("ComboText").GetComponent<Text>();
+        comboObj = GameObject.Find("ComboText");
+        combo = comboObj.GetComponent<Text>();
+        comboObj.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         if (FiSumScore() == 0) return;
+        comboObj.SetActive(isComboEnabled);
         var comboN = tapCount + holdCount + slideCount + touchCount + breakCount;
         combo.text = comboN.ToString();
         text.text = string.Format(
@@ -56,6 +62,21 @@ public class ObjectCount : MonoBehaviour
             ((float)FiNowScore() / FiSumScore()) * 100,
             ((float)DxNowScore() / DxSumScore()) * 100 + ((float)breakCount /breakSum)
             );
+    }
+
+    public void ToggleCombo()
+    {
+        if (FiSumScore() == 0) return;
+        if (isComboEnabled)
+        {
+            comboObj.SetActive(false);
+            isComboEnabled = false;
+        }
+        else
+        {
+            comboObj.SetActive(true);
+            isComboEnabled = true;
+        }
     }
 
     int FiSumScore()

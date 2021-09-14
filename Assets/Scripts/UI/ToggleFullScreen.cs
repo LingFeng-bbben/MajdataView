@@ -6,25 +6,6 @@ using UnityEngine;
 
 public class ToggleFullScreen : MonoBehaviour
 {
-    // Start is called before the first frame update
-    SpriteRenderer sr;
-    private void Start()
-    {
-        sr = GetComponent<SpriteRenderer>();
-    }
-    private void OnMouseEnter()
-    {
-        sr.color = Color.gray;
-    }
-    private void OnMouseExit()
-    {
-        sr.color = new Color(1f, 1f, 1f, 0f);
-    }
-    private void OnMouseDown()
-    {
-        sr.color = Color.white;
-        ToggleFullscreen();
-    }
     public void ToggleFullscreen()
     {
         print("ToggleFullScreen");
