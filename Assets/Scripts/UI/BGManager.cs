@@ -35,8 +35,10 @@ public class BGManager : MonoBehaviour
     {
         videoPlayer.Pause();
     }
-    public void ContinueVideo()
+    public void ContinueVideo(float speed)
     {
+        videoPlayer.playbackSpeed = speed;
+        playSpeed = speed;
         videoPlayer.Play();
     }
 
@@ -93,7 +95,7 @@ public class BGManager : MonoBehaviour
     IEnumerator waitFumenStart()
     {
         videoPlayer.Prepare();
-        videoPlayer.timeReference = VideoTimeReference.ExternalTime;
+        //videoPlayer.timeReference = VideoTimeReference.ExternalTime;
         while (provider.AudioTime <= 0) yield return new WaitForEndOfFrame();
         while (!videoPlayer.isPrepared) yield return new WaitForEndOfFrame();
         videoPlayer.Play();
@@ -106,8 +108,19 @@ public class BGManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        videoPlayer.externalReferenceTime = provider.AudioTime;
-        //var delta = videoPlayer.clockTime - provider.AudioTime;
-
+        //videoPlayer.externalReferenceTime = provider.AudioTime;
+        var delta = videoPlayer.clockTime - provider.AudioTime;
+        print(delta);
+        if (delta < -0.01f)
+        {
+            videoPlayer.playbackSpeed = playSpeed + 0.2f;
+        }else if(delta > 0.01f)
+        {
+            videoPlayer.playbackSpeed = playSpeed - 0.2f;
+        }
+        else
+        {
+            videoPlayer.playbackSpeed = playSpeed;
+        }
     }
 }

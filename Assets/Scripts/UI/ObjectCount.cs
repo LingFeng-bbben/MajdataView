@@ -7,6 +7,7 @@ public class ObjectCount : MonoBehaviour
 {
     Text text;
     Text rate;
+    Text combo;
 
     public int tapCount;
     public int holdCount;
@@ -25,21 +26,27 @@ public class ObjectCount : MonoBehaviour
     {
         text = GetComponent<Text>();
         rate = GameObject.Find("ObjectRate").GetComponent<Text>();
+        combo = GameObject.Find("ComboText").GetComponent<Text>();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (FiSumScore() == 0) return;
-
+        var comboN = tapCount + holdCount + slideCount + touchCount + breakCount;
+        combo.text = comboN.ToString();
         text.text = string.Format(
             "TAP: {0} / {5}\n" +
             "HOD: {1} / {6}\n" +
             "SLD: {2} / {7}\n" +
             "TOH: {3} / {8}\n" +
-            "BRK: {4} / {9}"
-            , tapCount,holdCount,slideCount,touchCount,breakCount
-            , tapSum, holdSum, slideSum, touchSum, breakSum);
+            "BRK: {4} / {9}\n" +
+            "ALL: {10} / {11}",
+            tapCount, holdCount, slideCount, touchCount, breakCount,
+            tapSum, holdSum, slideSum, touchSum, breakSum,
+            comboN,
+            tapSum + holdSum + slideSum + touchSum + breakSum
+            );
 
         rate.text = string.Format(
             "FiNALE  Rate:\n" +

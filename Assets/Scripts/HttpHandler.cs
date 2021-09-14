@@ -102,7 +102,7 @@ public class HttpHandler : MonoBehaviour
         if(data.control == EditorControlMethod.Continue)
         {
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
-            bgManager.ContinueVideo();
+            bgManager.ContinueVideo(data.audioSpeed);
         }
         request = "";
     }
