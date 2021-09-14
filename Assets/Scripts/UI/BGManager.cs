@@ -110,7 +110,7 @@ public class BGManager : MonoBehaviour
     {
         //videoPlayer.externalReferenceTime = provider.AudioTime;
         var delta = videoPlayer.clockTime - provider.AudioTime;
-        print(delta);
+        //print(delta);
         if (delta < -0.01f)
         {
             videoPlayer.playbackSpeed = playSpeed + 0.2f;

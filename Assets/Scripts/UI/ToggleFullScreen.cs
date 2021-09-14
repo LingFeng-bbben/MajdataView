@@ -22,6 +22,25 @@ public class ToggleFullScreen : MonoBehaviour
         }
         Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
     }
+
+    bool isWide = false;
+    public void ToggleWidth()
+    {
+        if (!Screen.fullScreen)
+        {
+            if (isWide)
+            {
+                Screen.SetResolution(Screen.height, Screen.height, false);
+                isWide = false;
+            }
+            else
+            {
+                Screen.SetResolution((int)(Screen.height * 1.778f), Screen.height, false);
+                isWide = true;
+            }
+
+        }
+    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
