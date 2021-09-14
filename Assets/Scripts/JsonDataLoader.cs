@@ -15,6 +15,7 @@ public class JsonDataLoader : MonoBehaviour
     public GameObject starPrefab;
     public GameObject touchHoldPrefab;
     public GameObject touchPrefab;
+    public GameObject eachLine;
     public GameObject notes;
     public GameObject star_slidePrefab;
     public GameObject[] slidePrefab;
@@ -127,6 +128,36 @@ public class JsonDataLoader : MonoBehaviour
                         }
 
                     }
+                }
+                var eachNotes = timing.noteList.FindAll(o => o.noteType != SimaiNoteType.Touch && o.noteType != SimaiNoteType.TouchHold);
+                if (eachNotes.Count > 1)//有多个非touchnote
+                {
+                    int startPos = eachNotes[0].startPosition;
+                    int endPos = eachNotes[1].startPosition;
+                    endPos = endPos - startPos;
+                    if (endPos == 0) continue;
+
+                    var line = Instantiate(eachLine, notes.transform);
+                    var lineDrop = line.GetComponent<EachLineDrop>();
+
+                    lineDrop.time = (float)timing.time;
+                    lineDrop.speed = speed;
+
+                    endPos = endPos < 0 ? endPos + 8 : endPos;
+                    endPos = endPos > 8 ? endPos - 8 : endPos;
+                    endPos++;
+
+                    if (endPos > 4)
+                    {
+                        startPos = eachNotes[1].startPosition;
+                        endPos = eachNotes[0].startPosition;
+                        endPos = endPos - startPos;
+                        endPos = endPos < 0 ? endPos + 8 : endPos;
+                        endPos = endPos > 8 ? endPos - 8 : endPos;
+                        endPos++;
+                    }
+                    lineDrop.startPosition = startPos;
+                    lineDrop.curvLength = endPos-1;
                 }
             }catch(Exception e)
             {
