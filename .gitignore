@@ -36,3 +36,5 @@ sysinfo.txt
 *.apk
 *.unitypackage
 Skin/*.*
+*.log
+*.log
