@@ -1,5 +1,5 @@
 # MajdataView&Edit
-![Beta 2.1](https://img.shields.io/static/v1?label=Beta&message=2.1&color=546875)
+![Beta 2.2](https://img.shields.io/static/v1?label=Beta&message=2.2&color=546875)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
@@ -55,7 +55,7 @@
 - 请确认您安装了.net Framework 4.7.2
 - 如果打开报错与PresentationCore有关，请尝试强制软件渲染
 
-### 为什么我的谱面无法打开？
+### 为什么我的谱面无法打开？（很长很吓人的报错）
 - 本软件只读取&title，&artist，&des，&first，&lv_x和&inote_x字段，请删掉其他字段和空字段重试。
 - 如果报错与ReadWaveFromFile有关，请确认您的mp3文件为固定比特率。
 
@@ -67,12 +67,9 @@
 ### 我的封面无法加载
 - 请确认您的封面比例为1：1。推荐的分辨率是1080x1080
 
-### 我的背景视频被拉伸
-- 请使用视频剪辑软件调整您的视频为1:1。推荐的分辨率是1080x1080
-
 ### 我想全屏View/我想查看谱面物量
 - 右上角有隐藏的全屏按钮，鼠标悬浮即可显示
-- 拉宽窗口即可看到物量显示信息
+- 还有一键拓宽按钮
 
 ### 为什么该重合的星星没有重合？
 - 因为所有slide都是我手摆的
