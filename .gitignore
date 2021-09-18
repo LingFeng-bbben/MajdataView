@@ -38,4 +38,4 @@ sysinfo.txt
 *.unitypackage
 Skin/*.*
 *.log
-*.log
+Logs/*.*
