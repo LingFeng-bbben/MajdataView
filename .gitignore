@@ -36,6 +36,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
 Skin/*.*
-*.log
-Logs/*.*
+[Ll]ogs/*
+*/[Ll]ogs/
