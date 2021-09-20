@@ -1,5 +1,5 @@
 # MajdataView&Edit
-![Beta 2.2](https://img.shields.io/static/v1?label=Beta&message=2.2&color=546875)
+![Beta 2.3](https://img.shields.io/static/v1?label=Beta&message=2.3&color=546875)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
@@ -10,6 +10,7 @@
 - Muri Detector: [Moying-moe](https://github.com/Moying-moe/maimaiMuriDetector)
 - Mirroring: [Wh1tyEnd](https://github.com/Wh1tyEnd)
 - Hanabi Effect: 青山散人
+- Orignal Skin [AECBanana](https://github.com/AECBanana)
 - *Special thanks*: Simai developed by [Celeca](https://twitter.com/formiku39854)
 
 ## 语言切换方法/言語切り替え方法/How to change language
@@ -28,7 +29,7 @@
    且自动与Editor对齐
 5. 点击发送到查看器开始播放预览
 6. bg.mp4/bg.wmv/bg.jpg/bg.png可设为背景
-7. 用录制模式会加入开头动画
+7. 用录制模式会加入开头动画和AP特效
 8. 可以更换皮肤（Skin文件夹）和音效（SFX文件夹）
 9. 可以更改字号（EditorSetting.json）
 
@@ -39,6 +40,7 @@
 |Ctrl+左键|选定进度| |
 |Ctrl+S|保存| |
 |Ctrl+Z|撤销| |
+|Ctrl+f|查找与替换|
 |Ctrl+Shift+C|播放/停止|适用于在写谱时重复听一个段落的情况|
 |Ctrl+Shift+X|播放/暂停|适用于总览谱面的情况|
 |Ctrl+Shift+Z|录制模式| |
