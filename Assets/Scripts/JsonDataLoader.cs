@@ -16,6 +16,7 @@ public class JsonDataLoader : MonoBehaviour
     public GameObject touchHoldPrefab;
     public GameObject touchPrefab;
     public GameObject eachLine;
+    public GameObject starLine;
     public GameObject notes;
     public GameObject star_slidePrefab;
     public GameObject[] slidePrefab;
@@ -66,11 +67,22 @@ public class JsonDataLoader : MonoBehaviour
                         var GOnote = Instantiate(tapPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TapDrop>();
 
-                        //自定义note样式
-                        NDCompo.normalSpr = customSkin.Tap;
-                        NDCompo.breakSpr = customSkin.Tap_Break;
-                        NDCompo.eachSpr = customSkin.Tap_Each;
-                        NDCompo.exSpr = customSkin.Tap_Ex;
+                        if (note.isForceStar)
+                        {
+                            NDCompo.normalSpr = customSkin.Star; 
+                            NDCompo.eachSpr = customSkin.Star_Each;
+                            NDCompo.breakSpr = customSkin.Star_Break;
+                            NDCompo.exSpr = customSkin.Star_Ex;
+                            NDCompo.tapLine = starLine;
+                        }
+                        else
+                        {
+                            //自定义note样式
+                            NDCompo.normalSpr = customSkin.Tap;
+                            NDCompo.breakSpr = customSkin.Tap_Break;
+                            NDCompo.eachSpr = customSkin.Tap_Each;
+                            NDCompo.exSpr = customSkin.Tap_Ex;
+                        }
 
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.isBreak = note.isBreak;

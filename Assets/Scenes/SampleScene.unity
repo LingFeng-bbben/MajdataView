@@ -974,6 +974,8 @@ MonoBehaviour:
   touchPrefab: {fileID: 3167371522221019254, guid: 93aa98f79a99f9e48a495e74f4fab299,
     type: 3}
   eachLine: {fileID: 278292873598720211, guid: 54e5879f47df2a248b91a3e19dfe8599, type: 3}
+  starLine: {fileID: 7599635926637845735, guid: 170f7f7a95689ea479fc7270d6ebf074,
+    type: 3}
   notes: {fileID: 327139454}
   star_slidePrefab: {fileID: 3082733108601366817, guid: 42156a3b3ae4d054da74641cd739534f,
     type: 3}
