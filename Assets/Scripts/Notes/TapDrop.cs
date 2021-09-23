@@ -12,6 +12,7 @@ public class TapDrop : MonoBehaviour
     public bool isEach = false;
     public bool isBreak = false;
     public bool isEX = false;
+    public bool isFakeStarRotate = false;
 
     public Sprite normalSpr;
     public Sprite eachSpr;
@@ -91,8 +92,14 @@ public class TapDrop : MonoBehaviour
             Destroy(tapLine);
             Destroy(gameObject);
         }
-        transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
-        tapLine.transform.rotation = transform.rotation;
+        if (isFakeStarRotate) {
+            transform.Rotate(0f, 0f, 10f);
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
+        }
+        tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
 
         if (distance < 1.225f)
         {

@@ -74,6 +74,7 @@ public class JsonDataLoader : MonoBehaviour
                             NDCompo.breakSpr = customSkin.Star_Break;
                             NDCompo.exSpr = customSkin.Star_Ex;
                             NDCompo.tapLine = starLine;
+                            NDCompo.isFakeStarRotate = note.isFakeRotate;
                         }
                         else
                         {
