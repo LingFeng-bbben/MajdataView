@@ -66,6 +66,11 @@ public class BGManager : MonoBehaviour
             loadVideo(path + "/bg.mp4", speed);
             return;
         }
+        if (File.Exists(path + "/mv.mp4"))
+        {
+            loadVideo(path + "/mv.mp4", speed);
+            return;
+        }
         if (File.Exists(path + "/bg.wmv"))
         {
             loadVideo(path + "/bg.wmv", speed);
