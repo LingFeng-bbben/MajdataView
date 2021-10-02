@@ -2,11 +2,8 @@
 ![Beta 2.4](https://img.shields.io/static/v1?label=Beta&message=2.4&color=546875)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
-点击链接加入群聊【majdata工具交流反馈】：[607473320](https://jq.qq.com/?_wv=1027&k=TV6EGwC2)
-(開発交流グループ)
-
 ## Credits
-- Main Programmer: bbben
+- Main Programmer: bbben [>Twitter](https://twitter.com/bbben132329)
 - Muri Detector: [Moying-moe](https://github.com/Moying-moe/maimaiMuriDetector)
 - Mirroring: [Wh1tyEnd](https://github.com/Wh1tyEnd)
 - Hanabi Effect: 青山散人
