@@ -104,6 +104,8 @@ public class SlideDrop : MonoBehaviour
         if (timing > 0f)
         {
             spriteRenderer_star.color = Color.white;
+            star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+
             var process = (LastFor -timing) / LastFor;
             process = 1f - process;
             if (process > 1) {
