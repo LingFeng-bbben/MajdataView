@@ -128,7 +128,7 @@ public class StarDrop : MonoBehaviour
             Destroy(gameObject); 
         }
 
-        transform.Rotate(0f, 0f, 5f/rotateSpeed);
+        transform.Rotate(0f, 0f, 200f*Time.deltaTime/rotateSpeed);
 
         tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
 

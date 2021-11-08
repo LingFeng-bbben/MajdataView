@@ -93,7 +93,7 @@ public class TapDrop : MonoBehaviour
             Destroy(gameObject);
         }
         if (isFakeStarRotate) {
-            transform.Rotate(0f, 0f, 10f);
+            transform.Rotate(0f, 0f, 400f*Time.deltaTime);
         }
         else
         {
