@@ -28,7 +28,7 @@ public class CustomSkin : MonoBehaviour
     public Sprite Hold_Each;
     public Sprite Hold_Ex;
 
-    public Sprite[] Just = new Sprite[3];
+    public Sprite[] Just = new Sprite[6];
 
     // Start is called before the first frame update
     void Start()
@@ -61,9 +61,12 @@ public class CustomSkin : MonoBehaviour
         Hold_Each = SpriteLoader.LoadSpriteFromFile(path + "/hold_each.png", border);
         Hold_Ex = SpriteLoader.LoadSpriteFromFile(path + "/hold_ex.png", border);
 
-        Just[0] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv.png");
-        Just[1] = SpriteLoader.LoadSpriteFromFile(path + "/just_str.png");
-        Just[2] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi.png");
+        Just[0] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_r.png");
+        Just[1] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_r.png");
+        Just[2] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_u.png");
+        Just[3] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_l.png");
+        Just[4] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_l.png");
+        Just[5] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_d.png");
     }
 
     // Update is called once per frame

@@ -374,7 +374,9 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.startPosition = note.startPosition;
         NDCompo.speed = speed;
 
+
         SliCompo.isMirror = isMirror;
+        SliCompo.isJustR = detectJustType(note.noteContent);
         SliCompo.speed = speed;
         SliCompo.timeStar = (float)timing.time;
         SliCompo.startPosition = note.startPosition;
@@ -382,6 +384,75 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.time = (float)note.slideStartTime;
         SliCompo.LastFor = (float)note.slideTime;
         SliCompo.sortIndex = -7000 + (int)(timing.time * -100) + sort * 5;
+    }
+    bool detectJustType(string content)
+    {
+        // > < ^ V w
+        if (content.Contains('>')) {
+            var str = content.Substring(0, 3); 
+            var digits = str.Split('>');
+            int startPos = int.Parse(digits[0]);
+            if (isUpperHalf(startPos)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (content.Contains('<')) {
+            var str = content.Substring(0, 3);
+            var digits = str.Split('<');
+            int startPos = int.Parse(digits[0]);
+            if (!isUpperHalf(startPos)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (content.Contains('^')) {
+            var str = content.Substring(0, 3); 
+            var digits = str.Split('^');
+            int startPos = int.Parse(digits[0]);
+            int endPos = int.Parse(digits[1]);
+            endPos = endPos - startPos;
+            endPos = endPos < 0 ? endPos + 8 : endPos;
+            endPos = endPos > 8 ? endPos - 8 : endPos;
+
+            if (endPos < 4) {
+                return true;
+            } else if (endPos > 4) {
+                return false;
+            }
+        } else if (content.Contains('V')) {
+            var str = content.Substring(0, 4);
+            var digits = str.Split('V');
+            int endPos = int.Parse(digits[1][1].ToString());
+
+            if (isRightHalf(endPos)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (content.Contains('w')) {
+            var str = content.Substring(0, 3);
+            var endPos = int.Parse(str.Substring(2, 1));
+            if (isUpperHalf(endPos)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            int endPos;
+            if (content.Contains("qq") || content.Contains("pp")) {
+                endPos = int.Parse(content.Substring(3, 1));
+            } else {
+                endPos = int.Parse(content.Substring(2, 1));
+            }
+            if (isRightHalf(endPos)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        return true;
     }
     int detectShapeFromText(string content)
     {
@@ -622,6 +693,16 @@ public class JsonDataLoader : MonoBehaviour
         if (key == 8) return true;
         if (key == 1) return true;
         if (key == 2) return true;
+
+        return false;
+    }
+
+    bool isRightHalf(int key)
+    {
+        if (key == 1) return true;
+        if (key == 2) return true;
+        if (key == 3) return true;
+        if (key == 4) return true;
 
         return false;
     }
