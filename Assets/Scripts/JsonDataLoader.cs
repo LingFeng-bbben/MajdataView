@@ -52,6 +52,8 @@ public class JsonDataLoader : MonoBehaviour
 
         CountNoteSum(loadedData);
 
+        double lastNoteTime = loadedData.timingList.Last().time;
+
         foreach (var timing in loadedData.timingList)
         {
             try {
@@ -137,7 +139,7 @@ public class JsonDataLoader : MonoBehaviour
                         }
                         else
                         {
-                            InstantiateStar(timing, note, i);
+                            InstantiateStar(timing, note, i, lastNoteTime);
                         }
 
                     }
@@ -311,7 +313,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.LastFor = (float)note.slideTime;
     }
 
-    void InstantiateStar(SimaiTimingPoint timing, SimaiNote note,int sort)
+    void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, int sort, double lastNoteTime)
     {
 
         var GOnote = Instantiate(starPrefab, notes.transform);
@@ -383,7 +385,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.star_slide = slide_star;
         SliCompo.time = (float)note.slideStartTime;
         SliCompo.LastFor = (float)note.slideTime;
-        SliCompo.sortIndex = -7000 + (int)(timing.time * -100) + sort * 5;
+        SliCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100) + sort * 5;
     }
     bool detectJustType(string content)
     {
