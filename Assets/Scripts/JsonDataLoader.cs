@@ -135,7 +135,7 @@ public class JsonDataLoader : MonoBehaviour
 
                         if (note.noteContent.Contains('w')) //wifi
                         {
-                            InstantiateWifi(timing, note);
+                            InstantiateWifi(timing, note, lastNoteTime);
                         }
                         else
                         {
@@ -241,7 +241,7 @@ public class JsonDataLoader : MonoBehaviour
         }
     }
 
-    void InstantiateWifi(SimaiTimingPoint timing,SimaiNote note)
+    void InstantiateWifi(SimaiTimingPoint timing,SimaiNote note,double lastNoteTime)
     {
         var str = note.noteContent.Substring(0, 3);
         var digits = str.Split('w');
@@ -306,11 +306,13 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.startPosition = note.startPosition;
         NDCompo.speed = speed;
 
+        WifiCompo.isJustR = detectJustType(note.noteContent);
         WifiCompo.speed = speed;
         WifiCompo.timeStart = (float)timing.time;
         WifiCompo.startPosition = note.startPosition;
         WifiCompo.time = (float)note.slideStartTime;
         WifiCompo.LastFor = (float)note.slideTime;
+        WifiCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100);
     }
 
     void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, int sort, double lastNoteTime)

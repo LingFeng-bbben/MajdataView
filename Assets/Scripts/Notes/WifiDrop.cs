@@ -14,6 +14,7 @@ public class WifiDrop : MonoBehaviour
     public Sprite normalStar;
     public Sprite eachStar;
 
+    public bool isJustR;
     public float time;
     public float timeStart;
     public float LastFor = 1f;
@@ -22,6 +23,7 @@ public class WifiDrop : MonoBehaviour
 
     public int startPosition = 1;
 
+    public int sortIndex = 0;
 
     AudioTimeProvider timeProvider;
 
@@ -55,6 +57,12 @@ public class WifiDrop : MonoBehaviour
             slideBars.Add(transform.GetChild(i).gameObject);
         }
         slideOK = transform.GetChild(transform.childCount - 1).gameObject;//slideok is the last one
+        if (isJustR) {
+            slideOK.GetComponent<LoadJustSprite>().setR();
+        } else {
+            slideOK.GetComponent<LoadJustSprite>().setL();
+            slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
+        }
         slideOK.SetActive(false);
         slideOK.transform.SetParent(transform.parent);
         SlidePositionStart = getPositionFromDistance(4.8f);
@@ -65,6 +73,8 @@ public class WifiDrop : MonoBehaviour
             if (isEach) sr.sprite = eachSlide[i];
             sbRender.Add(sr);
             sr.color = new Color(1f, 1f, 1f, 0f);
+            sr.sortingOrder += sortIndex;
+            sr.sortingLayerName = "Slide";
         }
     }
 
