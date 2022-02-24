@@ -1,5 +1,5 @@
 # MajdataView&Edit
-![Beta 2.4](https://img.shields.io/static/v1?label=Beta&message=2.4&color=546875)
+![Beta 2.5](https://img.shields.io/static/v1?label=Beta&message=2.4&color=546875)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 ## Credits
@@ -115,6 +115,9 @@
 |hold.png|上下切图的像素距离为58|
 |hold_each.png
 |hold_ex.png
-|just_curv.png|这三个是星星判定图 不需要可以直接删|
-|just_str.png
-|just_wifi.png
+|just_curv_l.png|这六个是星星判定图 不需要可以直接删|
+|just_curv_r.png
+|just_str_l.png
+|just_str_r.png
+|just_wifi_u.png
+|just_wifi_d.png
