@@ -13,6 +13,7 @@ public class SlideDrop : MonoBehaviour
     public Sprite spriteEach;
 
     public bool isMirror;
+    public bool isJustR;
     public bool isEach;
     public float time;
     public float timeStar;
@@ -38,14 +39,32 @@ public class SlideDrop : MonoBehaviour
 
     private void OnEnable()
     {
+        slideOK = transform.GetChild(transform.childCount - 1).gameObject;//slideok is the last one
         if (isMirror)
         {
             transform.localScale = new Vector3(-1f, 1f, 1f);
             transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition ));
+            slideOK.transform.localScale = new Vector3(-1f, 1f, 1f);
         }
         else
         {
             transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
+        }
+
+        if (isJustR) {
+            if (slideOK.GetComponent<LoadJustSprite>().setR() == 1 && isMirror)
+            {
+                slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
+                var angel = slideOK.transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
+                slideOK.transform.position += new Vector3(Mathf.Sin(angel) * 0.27f, Mathf.Cos(angel) * -0.27f);
+            }
+        } else {
+            if (slideOK.GetComponent<LoadJustSprite>().setL() == 1 && !isMirror)
+            {
+                slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
+                var angel = slideOK.transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
+                slideOK.transform.position += new Vector3(Mathf.Sin(angel) * 0.27f, Mathf.Cos(angel) * -0.27f);
+            }
         }
 
         
@@ -54,7 +73,7 @@ public class SlideDrop : MonoBehaviour
         {
             slideBars.Add(transform.GetChild(i).gameObject);
         }
-        slideOK = transform.GetChild(transform.childCount - 1).gameObject;//slideok is the last one
+
         slideOK.SetActive(false);
         slideOK.transform.SetParent(transform.parent);
         slidePositions.Add(getPositionFromDistance(4.8f));
