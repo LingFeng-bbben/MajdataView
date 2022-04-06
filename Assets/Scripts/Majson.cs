@@ -25,6 +25,7 @@ class SimaiTimingPoint
     public string noteContent;
     public float currentBpm;
     public List<SimaiNote> noteList = new List<SimaiNote>();
+    public float HSpeed = 1.0f;
 }
 enum SimaiNoteType
 {

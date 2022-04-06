@@ -92,7 +92,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.isEX = note.isEx;
                         NDCompo.time = (float)timing.time;
                         NDCompo.startPosition = note.startPosition;
-                        NDCompo.speed = speed;
+                        NDCompo.speed = speed * timing.HSpeed;
                     }
                     if (note.noteType == SimaiNoteType.Hold)
                     {
@@ -107,7 +107,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.time = (float)timing.time;
                         NDCompo.lastFor = (float)note.holdTime;
                         NDCompo.startPosition = note.startPosition;
-                        NDCompo.speed = speed;
+                        NDCompo.speed = speed * timing.HSpeed;
                         NDCompo.isEX = note.isEx;
                     }
                     if (note.noteType == SimaiNoteType.TouchHold)
@@ -116,7 +116,7 @@ public class JsonDataLoader : MonoBehaviour
                         var NDCompo = GOnote.GetComponent<TouchHoldDrop>();
                         NDCompo.time = (float)timing.time;
                         NDCompo.lastFor = (float)note.holdTime;
-                        NDCompo.speed = 0.2f;
+                        NDCompo.speed = 0.2f * timing.HSpeed;
                         NDCompo.isFirework = note.isHanabi;
                     }
                     if (note.noteType == SimaiNoteType.Touch)
@@ -127,7 +127,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.areaPosition = note.touchArea;
                         NDCompo.startPosition = note.startPosition;
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
-                        NDCompo.speed = 0.2f;
+                        NDCompo.speed = 0.2f * timing.HSpeed;
                         NDCompo.isFirework = note.isHanabi;
                     }
                     if (note.noteType == SimaiNoteType.Slide)
@@ -156,7 +156,7 @@ public class JsonDataLoader : MonoBehaviour
                     var lineDrop = line.GetComponent<EachLineDrop>();
 
                     lineDrop.time = (float)timing.time;
-                    lineDrop.speed = speed;
+                    lineDrop.speed = speed * timing.HSpeed;
 
                     endPos = endPos < 0 ? endPos + 8 : endPos;
                     endPos = endPos > 8 ? endPos - 8 : endPos;
@@ -304,10 +304,10 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.isNoHead = note.isSlideNoHead;
         NDCompo.time = (float)timing.time;
         NDCompo.startPosition = note.startPosition;
-        NDCompo.speed = speed;
+        NDCompo.speed = speed * timing.HSpeed;
 
         WifiCompo.isJustR = detectJustType(note.noteContent);
-        WifiCompo.speed = speed;
+        WifiCompo.speed = speed * timing.HSpeed;
         WifiCompo.timeStart = (float)timing.time;
         WifiCompo.startPosition = note.startPosition;
         WifiCompo.time = (float)note.slideStartTime;
@@ -376,12 +376,12 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.isNoHead = note.isSlideNoHead;
         NDCompo.time = (float)timing.time;
         NDCompo.startPosition = note.startPosition;
-        NDCompo.speed = speed;
+        NDCompo.speed = speed * timing.HSpeed;
 
 
         SliCompo.isMirror = isMirror;
         SliCompo.isJustR = detectJustType(note.noteContent);
-        SliCompo.speed = speed;
+        SliCompo.speed = speed * timing.HSpeed;
         SliCompo.timeStar = (float)timing.time;
         SliCompo.startPosition = note.startPosition;
         SliCompo.star_slide = slide_star;
