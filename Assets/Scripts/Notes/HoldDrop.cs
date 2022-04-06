@@ -45,6 +45,10 @@ public class HoldDrop : MonoBehaviour
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        int sortOrder = (int)(time * -100);
+        spriteRenderer.sortingOrder = sortOrder;
+        exSpriteRender.sortingOrder = sortOrder;
+
         spriteRenderer.sprite = tapSpr;
         exSpriteRender.sprite = exSpr;
 

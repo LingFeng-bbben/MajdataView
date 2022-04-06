@@ -52,6 +52,11 @@ public class StarDrop : MonoBehaviour
         exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         objectCount = GameObject.Find("ObjectCount").GetComponent<ObjectCount>();
+
+        int sortOrder = (int)(time * -100);
+        spriteRenderer.sortingOrder = sortOrder;
+        exSpriteRender.sortingOrder = sortOrder;
+
         if (isDouble)
         {
             exSpriteRender.sprite = exSpr_Double;
