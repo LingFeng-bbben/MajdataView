@@ -1,5 +1,5 @@
 # MajdataView&Edit
-![Beta 2.5](https://img.shields.io/static/v1?label=Beta&message=2.4&color=546875)
+![Beta 3.0](https://img.shields.io/static/v1?label=Beta&message=2.4&color=546875)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 ## Credits
@@ -26,6 +26,8 @@
 9. 左边的几个参数栏可以用鼠标滚轮微调值
 10. 谱面信息窗口里可以设置封面和其他&参数
 11. View右上角有隐藏按钮，可以切换combo显示和全屏等
+12. 在谱面信息>Other Commands里面可以设置歌曲开始前的guide音: &clock_count=4
+13. 已对应maipad变速语法 <HS*1.0>
 
 ## 快捷键列表
 把**焦点放在文本框**上这些快捷键才能起作用。
