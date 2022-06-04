@@ -105,13 +105,13 @@ public class WifiDrop : MonoBehaviour
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
         {
-            var alpha = 1f - (-timing / (time - timeStart)) + 0.8f;
+            var alpha = 1f - (-timing / (time - timeStart)) ;
             alpha = alpha > 1f ? 1f : alpha;
-            alpha = alpha < 0f ? 0f : alpha;
+            alpha = alpha < 0.5f ? 0.5f : alpha;
             for (int i = 0; i < star_slide.Length; i++)
             {
                 spriteRenderer_star[i].color = new Color(1, 1, 1, alpha);
-                star_slide[i].transform.localScale = new Vector3(alpha, alpha, alpha);
+                star_slide[i].transform.localScale = new Vector3(alpha + 0.5f, alpha + 0.5f, alpha + 0.5f);
                 star_slide[i].transform.position = SlidePositionStart;
             }
         }
