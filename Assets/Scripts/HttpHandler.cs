@@ -71,7 +71,8 @@ public class HttpHandler : MonoBehaviour
         {
             request = "";
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
-            loader.speed = data.playSpeed;
+            loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
+            loader.touchSpeed = data.touchSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath),data.startTime);
             GameObject.Find("Notes").GetComponent<PlayAllPerfect>().enabled = false;
 
@@ -82,7 +83,8 @@ public class HttpHandler : MonoBehaviour
         {
             request = "";
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
-            loader.speed = data.playSpeed;
+            loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
+            loader.touchSpeed = data.touchSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
 
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);

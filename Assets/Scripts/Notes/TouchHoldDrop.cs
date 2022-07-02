@@ -19,9 +19,17 @@ public class TouchHoldDrop : MonoBehaviour
     SpriteRenderer[] fansSprite = new SpriteRenderer[6];
     public SpriteMask mask;
 
+    private float wholeDuration;
+    private float moveDuration;
+    private float displayDuration;
+
     // Start is called before the first frame update
     void Start()
     {
+        wholeDuration = 3.209385682f * Mathf.Pow(speed, -0.9549621752f);
+        moveDuration = 0.8f * wholeDuration;
+        displayDuration = 0.2f * wholeDuration;
+
         var notes = GameObject.Find("Notes").transform;
         holdEffect = Instantiate(holdEffect, notes);
         holdEffect.SetActive(false);
@@ -32,6 +40,7 @@ public class TouchHoldDrop : MonoBehaviour
         {
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
         }
+        SetfanColor(new Color(1f, 1f, 1f, 0f));
     }
 
     // Update is called once per frame
@@ -39,7 +48,7 @@ public class TouchHoldDrop : MonoBehaviour
     {
         var timing = timeProvider.AudioTime - time;
         //var pow = Mathf.Pow(-timing * speed, 0.1f) - 0.4f;
-        var pow = -Mathf.Exp(8 * timing - 0.6f) + 0.5f;
+        var pow = -Mathf.Exp(8 * (timing * 0.4f / moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
         if (timing > lastFor)
@@ -51,13 +60,13 @@ public class TouchHoldDrop : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (pow > 0.4f)
+        if (-timing <= wholeDuration && -timing > moveDuration)
         {
-            SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((timing*5+ 1.6f), 0f, 1f)));
+            SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((wholeDuration + timing) / displayDuration, 0f, 1f)));
             fans[5].SetActive(false);
             mask.enabled = false;
         }
-        else
+        else if (-timing < moveDuration)
         {
             fans[5].SetActive(true);
             mask.enabled = true;

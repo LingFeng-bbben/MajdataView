@@ -5,7 +5,7 @@ using UnityEngine;
 public class TouchDrop : MonoBehaviour
 {
     public float time;
-    public float speed = 1;
+    public float speed = 7;
     public char areaPosition;
     public bool isEach;
     public bool isFirework;
@@ -23,9 +23,17 @@ public class TouchDrop : MonoBehaviour
     public GameObject[] fans;
     SpriteRenderer[] fansSprite = new SpriteRenderer[5];
 
+    private float wholeDuration;
+    private float moveDuration;
+    private float displayDuration;
+
     // Start is called before the first frame update
     void Start()
     {
+        wholeDuration = 3.209385682f * Mathf.Pow(speed, -0.9549621752f);
+        moveDuration = 0.8f * wholeDuration;
+        displayDuration = 0.2f * wholeDuration;
+
         var notes = GameObject.Find("Notes").transform;
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         for (int i = 0; i < 5; i++)
@@ -42,15 +50,17 @@ public class TouchDrop : MonoBehaviour
         }
         justEffect.SetActive(false);
         transform.position = GetAreaPos(startPosition, areaPosition);
+        SetfanColor(new Color(1f, 1f, 1f, 0f));
     }
 
     // Update is called once per frame
     void Update()
     {
         var timing = timeProvider.AudioTime - time;
+        
         //var timing = time;
         //var pow = Mathf.Pow(-timing * speed, 0.1f)-0.4f;
-        var pow = -Mathf.Exp(8 * timing - 0.6f) + 0.5f;
+        var pow = -Mathf.Exp(8 * (timing*0.4f/moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
         if (timing > 0.05f)
@@ -65,11 +75,11 @@ public class TouchDrop : MonoBehaviour
             justEffect.SetActive(true);
         }
 
-        if (pow > 0.4f)
+        if (-timing <= wholeDuration && -timing > moveDuration)
         {
-            SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((timing * 6 + 2.5f), 0f, 1f)));
+            SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((wholeDuration+timing)/displayDuration, 0f, 1f)));
         }
-        else
+        else if (-timing < moveDuration)
         {
             SetfanColor(Color.white);
         }

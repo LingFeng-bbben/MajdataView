@@ -58,7 +58,8 @@ class EditRequestjson
     public float startTime;
     public long startAt;
     public string jsonPath;
-    public float playSpeed;
+    public float noteSpeed;
+    public float touchSpeed;
     public float backgroundCover;
     public float audioSpeed;
 }
