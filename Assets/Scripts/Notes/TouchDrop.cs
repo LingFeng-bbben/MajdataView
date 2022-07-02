@@ -15,10 +15,13 @@ public class TouchDrop : MonoBehaviour
     public GameObject tapEffect;
     public GameObject justEffect;
     public GameObject fireworkEffect;
+    public GameObject multTouchEffect2;
+    public GameObject multTouchEffect3;
 
     public Sprite faneachSprite;
     public Sprite pointEachSprite;
     AudioTimeProvider timeProvider;
+    MultTouchHandler multTouchHandler;
 
     public GameObject[] fans;
     SpriteRenderer[] fansSprite = new SpriteRenderer[5];
@@ -26,6 +29,8 @@ public class TouchDrop : MonoBehaviour
     private float wholeDuration;
     private float moveDuration;
     private float displayDuration;
+    private int layer = 0;
+    private bool isStarted = false;
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +41,7 @@ public class TouchDrop : MonoBehaviour
 
         var notes = GameObject.Find("Notes").transform;
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
+        multTouchHandler = GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>();
         for (int i = 0; i < 5; i++)
         {
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
@@ -65,6 +71,7 @@ public class TouchDrop : MonoBehaviour
 
         if (timing > 0.05f)
         {
+            multTouchHandler.cancelTouch(this);
             Instantiate(tapEffect, transform.position, transform.rotation);
             GameObject.Find("ObjectCount").GetComponent<ObjectCount>().touchCount++;
             Destroy(gameObject);
@@ -77,10 +84,20 @@ public class TouchDrop : MonoBehaviour
 
         if (-timing <= wholeDuration && -timing > moveDuration)
         {
+            if (!isStarted)
+            {
+                isStarted = true;
+                multTouchHandler.registerTouch(this);
+            }
             SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((wholeDuration+timing)/displayDuration, 0f, 1f)));
         }
         else if (-timing < moveDuration)
         {
+            if (!isStarted)
+            {
+                isStarted = true;
+                multTouchHandler.registerTouch(this);
+            }
             SetfanColor(Color.white);
         }
 
@@ -91,6 +108,29 @@ public class TouchDrop : MonoBehaviour
             fans[i].transform.localPosition = pos;
         }
 
+    }
+
+    public void setLayer(int newLayer)
+    {
+        layer = newLayer;
+        if (layer == 1)
+        {
+            multTouchEffect2.SetActive(true);
+            multTouchEffect3.SetActive(false);
+        } else if (layer == 2)
+        {
+            multTouchEffect2.SetActive(false);
+            multTouchEffect3.SetActive(true);
+        } else
+        {
+            multTouchEffect2.SetActive(false);
+            multTouchEffect3.SetActive(false);
+        }
+    }
+
+    public void layerDown()
+    {
+        setLayer(layer - 1);
     }
 
     Vector3 GetAngle(int index)

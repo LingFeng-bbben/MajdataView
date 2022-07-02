@@ -75,6 +75,7 @@ public class HttpHandler : MonoBehaviour
             loader.touchSpeed = data.touchSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath),data.startTime);
             GameObject.Find("Notes").GetComponent<PlayAllPerfect>().enabled = false;
+            GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>().clearSlots();
 
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName,data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
@@ -86,6 +87,7 @@ public class HttpHandler : MonoBehaviour
             loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
             loader.touchSpeed = data.touchSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
+            GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>().clearSlots();
 
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
