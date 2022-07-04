@@ -20,11 +20,13 @@ public class TouchDrop : MonoBehaviour
 
     public Sprite faneachSprite;
     public Sprite pointEachSprite;
+    public Sprite multTouch2EachSprite;
+    public Sprite multTouch3EachSprite;
     AudioTimeProvider timeProvider;
     MultTouchHandler multTouchHandler;
 
     public GameObject[] fans;
-    SpriteRenderer[] fansSprite = new SpriteRenderer[5];
+    SpriteRenderer[] fansSprite = new SpriteRenderer[7];
 
     private float wholeDuration;
     private float moveDuration;
@@ -42,13 +44,15 @@ public class TouchDrop : MonoBehaviour
         var notes = GameObject.Find("Notes").transform;
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         multTouchHandler = GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>();
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 7; i++)
         {
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
         }
         if (isEach) { 
             SetfanSprite(faneachSprite);
             fansSprite[4].sprite = pointEachSprite;
+            fansSprite[5].sprite = multTouch2EachSprite;
+            fansSprite[6].sprite = multTouch3EachSprite;
         }
         if (isFirework) { 
             fireworkEffect = Instantiate(fireworkEffect, transform.position, transform.rotation);

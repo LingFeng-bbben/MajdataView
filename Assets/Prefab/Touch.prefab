@@ -398,12 +398,18 @@ MonoBehaviour:
   multTouchEffect3: {fileID: 3167371522402805961}
   faneachSprite: {fileID: 21300000, guid: f3974af5b544d2f459706acf1fa30d1e, type: 3}
   pointEachSprite: {fileID: 21300000, guid: dfb43f44e9c0dc7468a44b3e34935741, type: 3}
+  multTouch2EachSprite: {fileID: 21300000, guid: 0b5398588c3ba044ab60b44ace6fc9af,
+    type: 3}
+  multTouch3EachSprite: {fileID: 21300000, guid: d29bb87fe754b494b983a1d5f604a28a,
+    type: 3}
   fans:
   - {fileID: 3167371522500999629}
   - {fileID: 3167371522283853499}
   - {fileID: 3167371521363346912}
   - {fileID: 3167371521975138485}
   - {fileID: 3167371522082856913}
+  - {fileID: 3167371522247862228}
+  - {fileID: 3167371522402805961}
 --- !u!1 &3167371522247862228
 GameObject:
   m_ObjectHideFlags: 0
