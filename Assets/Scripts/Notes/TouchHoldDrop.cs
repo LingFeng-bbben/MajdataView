@@ -41,6 +41,7 @@ public class TouchHoldDrop : MonoBehaviour
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
         }
         SetfanColor(new Color(1f, 1f, 1f, 0f));
+        mask.enabled = false;
     }
 
     // Update is called once per frame
