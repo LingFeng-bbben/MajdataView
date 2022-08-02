@@ -100,6 +100,7 @@ public class HttpHandler : MonoBehaviour
         }
         if (data.control == EditorControlMethod.Stop)
         {
+            GameObject.Find("TapEffects").GetComponent<TapEffectManager>().setOutlineColor(255, 255, 255);
             timeProvider.ResetStartTime();
             SceneManager.LoadScene(1);
         }

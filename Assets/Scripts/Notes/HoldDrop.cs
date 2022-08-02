@@ -35,7 +35,15 @@ public class HoldDrop : MonoBehaviour
         var notes = GameObject.Find("Notes").transform;
         holdEffect = Instantiate(holdEffect,notes);
         holdEffect.SetActive(false);
-        
+        ParticleSystem.MainModule holdEffectMain = holdEffect.GetComponent<ParticleSystem>().main;
+        if (isEach)
+        {
+            holdEffectMain.startColor = new ParticleSystem.MinMaxGradient(new Color32(255, 237, 37, 255));
+        } else
+        {
+            holdEffectMain.startColor = new ParticleSystem.MinMaxGradient(new Color32(251, 110, 251, 255));
+        }
+
         tapLine = Instantiate(tapLine,notes);
         tapLine.SetActive(false);
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
@@ -82,7 +90,7 @@ public class HoldDrop : MonoBehaviour
         spriteRenderer.forceRenderingOff = false;
         if (isEX) exSpriteRender.forceRenderingOff = false;
 
-        spriteRenderer.size = new Vector2(1.22f, 1.4f);
+        spriteRenderer.size = new Vector2(1.22f, 1.15f);
 
         var holdTime = timing - lastFor;
         var holdDistance = holdTime * speed + 4.8f;
@@ -104,7 +112,7 @@ public class HoldDrop : MonoBehaviour
 
 
             transform.localScale = new Vector3(destScale, destScale);
-            spriteRenderer.size = new Vector2(1.22f, 1.42f);
+            spriteRenderer.size = new Vector2(1.22f, 1.15f);
             distance = 1.225f;
             Vector3 pos = getPositionFromDistance(distance);
             transform.position = pos;
@@ -134,7 +142,7 @@ public class HoldDrop : MonoBehaviour
             }
             var dis = (distance - holdDistance) / 2 + holdDistance;
             transform.position = getPositionFromDistance(dis);//0.325
-            var size = distance - holdDistance + 1.4f;
+            var size = distance - holdDistance + 1.15f;
             spriteRenderer.size = new Vector2(1.22f, size);
             transform.localScale = new Vector3(1f, 1f);
         }

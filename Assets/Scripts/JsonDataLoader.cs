@@ -51,6 +51,8 @@ public class JsonDataLoader : MonoBehaviour
         designText.text = loadedData.designer;
         cardImage.color = diffColors[loadedData.diffNum];
 
+        GameObject.Find("TapEffects").GetComponent<TapEffectManager>().setOutlineColor(loadedData.difficulty);
+
         CountNoteSum(loadedData);
 
         double lastNoteTime = loadedData.timingList.Last().time;
@@ -348,6 +350,7 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.slide = slide;
         var SliCompo = slide.AddComponent<SlideDrop>();
 
+        SliCompo.starCollider = slide_star.GetComponent<Collider2D>();
         SliCompo.spriteNormal = customSkin.Slide;
         SliCompo.spriteEach = customSkin.Slide_Each;
 

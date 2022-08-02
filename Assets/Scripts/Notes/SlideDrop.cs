@@ -24,6 +24,8 @@ public class SlideDrop : MonoBehaviour
 
     public int sortIndex = 0;
 
+    public Collider2D starCollider;
+
     AudioTimeProvider timeProvider;
 
     List<GameObject> slideBars = new List<GameObject>();
@@ -122,6 +124,11 @@ public class SlideDrop : MonoBehaviour
         }
         if (timing > 0f)
         {
+            if (!starCollider.enabled)
+            {
+                starCollider.enabled = true;
+            }
+
             spriteRenderer_star.color = Color.white;
             star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 

@@ -6,6 +6,7 @@ using UnityEngine;
 public class CustomSkin : MonoBehaviour
 {
     SpriteRenderer Outline;
+    SpriteRenderer OutlineEffect;
 
     public Sprite Tap;
     public Sprite Tap_Each;
@@ -34,10 +35,12 @@ public class CustomSkin : MonoBehaviour
     void Start()
     {
         var path = new DirectoryInfo(Application.dataPath).Parent.FullName + "/Skin/";
+
         Outline = gameObject.GetComponent<SpriteRenderer>();
-        print(path);
+        OutlineEffect = transform.GetChild(0).GetComponent<SpriteRenderer>();
         
         Outline.sprite = SpriteLoader.LoadSpriteFromFile(path + "/outline.png");
+        OutlineEffect.sprite = SpriteLoader.LoadSpriteFromFile(path + "/outline_effect.png");
 
         Tap = SpriteLoader.LoadSpriteFromFile(path + "/tap.png");
         Tap_Each = SpriteLoader.LoadSpriteFromFile(path + "/tap_each.png");

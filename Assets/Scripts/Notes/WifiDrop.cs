@@ -25,6 +25,8 @@ public class WifiDrop : MonoBehaviour
 
     public int sortIndex = 0;
 
+    Collider2D[] starColliders = new Collider2D[3];
+
     AudioTimeProvider timeProvider;
 
     List<GameObject> slideBars = new List<GameObject>();
@@ -48,6 +50,8 @@ public class WifiDrop : MonoBehaviour
             star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i + 3 + startPosition)));
             SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
             star_slide[i].SetActive(false);
+
+            starColliders[i] = star_slide[i].GetComponent<Collider2D>();
         }
 
         transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
@@ -117,7 +121,13 @@ public class WifiDrop : MonoBehaviour
         }
         if (timing > 0f)
         {
-            
+            if (! starColliders[0].enabled)
+            {
+                starColliders[0].enabled = true;
+                starColliders[1].enabled = true;
+                starColliders[2].enabled = true;
+            }
+
             var process = (LastFor - timing) / LastFor;
             process = 1f - process;
             if (process > 1)
