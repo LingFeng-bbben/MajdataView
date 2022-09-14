@@ -11,10 +11,12 @@ public class HoldDrop : MonoBehaviour
 
     public bool isEach = false;
     public bool isEX = false;
+    public bool isBreak = false;
 
     public Sprite tapSpr;
     public Sprite eachSpr;
     public Sprite exSpr;
+    public Sprite breakSpr;
 
     public Sprite eachLine;
 
@@ -60,6 +62,14 @@ public class HoldDrop : MonoBehaviour
         {
             spriteRenderer.sprite = eachSpr;
             lineSpriteRender.sprite = eachLine;
+            if (isEX)
+            {
+                exSpriteRender.color = exEffectEach;
+            }
+        }
+        if (isBreak)
+        {
+            spriteRenderer.sprite = breakSpr;
             if (isEX)
             {
                 exSpriteRender.color = exEffectEach;

@@ -103,6 +103,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.tapSpr = customSkin.Hold;
                         NDCompo.eachSpr = customSkin.Hold_Each;
                         NDCompo.exSpr = customSkin.Hold_Ex;
+                        NDCompo.breakSpr = customSkin.Hold_Break;
 
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.time = (float)timing.time;
@@ -110,6 +111,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.startPosition = note.startPosition;
                         NDCompo.speed = noteSpeed * timing.HSpeed;
                         NDCompo.isEX = note.isEx;
+                        NDCompo.isBreak = note.isBreak;
                     }
                     if (note.noteType == SimaiNoteType.TouchHold)
                     {
@@ -350,6 +352,7 @@ public class JsonDataLoader : MonoBehaviour
 
         SliCompo.spriteNormal = customSkin.Slide;
         SliCompo.spriteEach = customSkin.Slide_Each;
+        SliCompo.spriteBreak = customSkin.Slide_Break;
 
         if (timing.noteList.Count > 1)
         {
@@ -372,6 +375,12 @@ public class JsonDataLoader : MonoBehaviour
                 else
                     NDCompo.isEach = true;
             }
+        }
+
+        SliCompo.isBreak = note.isSlideBreak;
+        if (note.isSlideBreak)
+        {
+            slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star_Break;
         }
 
         NDCompo.isNoHead = note.isSlideNoHead;

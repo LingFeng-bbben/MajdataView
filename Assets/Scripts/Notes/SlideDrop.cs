@@ -11,10 +11,12 @@ public class SlideDrop : MonoBehaviour
 
     public Sprite spriteNormal;
     public Sprite spriteEach;
+    public Sprite spriteBreak;
 
     public bool isMirror;
     public bool isJustR;
     public bool isEach;
+    public bool isBreak;
     public float time;
     public float timeStar;
     public float LastFor = 1f;
@@ -89,6 +91,7 @@ public class SlideDrop : MonoBehaviour
             sr.sortingOrder += sortIndex;
             sr.sortingLayerName = "Slide";
             if (isEach) sr.sprite = spriteEach;
+            if (isBreak) sr.sprite = spriteBreak;
             else sr.sprite = spriteNormal;
         }
     }

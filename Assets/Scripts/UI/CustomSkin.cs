@@ -14,6 +14,10 @@ public class CustomSkin : MonoBehaviour
 
     public Sprite Slide;
     public Sprite Slide_Each;
+    public Sprite Slide_Break;
+    //public Sprite Wifi;
+    //public Sprite Wifi_Each;
+    //public Sprite Wifi_Break;
 
     public Sprite Star;
     public Sprite Star_Double;
@@ -27,6 +31,7 @@ public class CustomSkin : MonoBehaviour
     public Sprite Hold;
     public Sprite Hold_Each;
     public Sprite Hold_Ex;
+    public Sprite Hold_Break;
 
     public Sprite[] Just = new Sprite[6];
 
@@ -46,6 +51,7 @@ public class CustomSkin : MonoBehaviour
 
         Slide = SpriteLoader.LoadSpriteFromFile(path + "/slide.png");
         Slide_Each = SpriteLoader.LoadSpriteFromFile(path + "/slide_each.png");
+        Slide_Break = SpriteLoader.LoadSpriteFromFile(path + "/slide_break.png");
 
         Star = SpriteLoader.LoadSpriteFromFile(path + "/star.png");
         Star_Double = SpriteLoader.LoadSpriteFromFile(path + "/star_double.png");
@@ -60,6 +66,7 @@ public class CustomSkin : MonoBehaviour
         Hold = SpriteLoader.LoadSpriteFromFile(path + "/hold.png", border);
         Hold_Each = SpriteLoader.LoadSpriteFromFile(path + "/hold_each.png", border);
         Hold_Ex = SpriteLoader.LoadSpriteFromFile(path + "/hold_ex.png", border);
+        Hold_Break = SpriteLoader.LoadSpriteFromFile(path + "/hold_break.png", border);
 
         Just[0] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_r.png");
         Just[1] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_r.png");

@@ -35,6 +35,7 @@ class SimaiNote
 {
     public SimaiNoteType noteType;
     public bool isBreak = false;
+    public bool isSlideBreak = false;
     public bool isHanabi = false;
     public bool isEx = false;
     public bool isSlideNoHead = false;
