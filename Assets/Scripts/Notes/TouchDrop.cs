@@ -14,7 +14,7 @@ public class TouchDrop : MonoBehaviour
 
     public GameObject tapEffect;
     public GameObject justEffect;
-    public GameObject fireworkEffect;
+    
     public GameObject multTouchEffect2;
     public GameObject multTouchEffect3;
 
@@ -24,6 +24,9 @@ public class TouchDrop : MonoBehaviour
     public Sprite multTouch3EachSprite;
     AudioTimeProvider timeProvider;
     MultTouchHandler multTouchHandler;
+
+    GameObject firework;
+    Animator fireworkEffect;
 
     public GameObject[] fans;
     SpriteRenderer[] fansSprite = new SpriteRenderer[7];
@@ -44,6 +47,10 @@ public class TouchDrop : MonoBehaviour
         var notes = GameObject.Find("Notes").transform;
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         multTouchHandler = GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>();
+
+        firework = GameObject.Find("Firework");
+        fireworkEffect = firework.GetComponent<Animator>();
+
         for (int i = 0; i < 7; i++)
         {
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
@@ -54,12 +61,8 @@ public class TouchDrop : MonoBehaviour
             fansSprite[5].sprite = multTouch2EachSprite;
             fansSprite[6].sprite = multTouch3EachSprite;
         }
-        if (isFirework) { 
-            fireworkEffect = Instantiate(fireworkEffect, transform.position, transform.rotation);
-            fireworkEffect.SetActive(false);
-        }
-        justEffect.SetActive(false);
         transform.position = GetAreaPos(startPosition, areaPosition);
+        justEffect.SetActive(false);
         SetfanColor(new Color(1f, 1f, 1f, 0f));
     }
 
@@ -78,11 +81,14 @@ public class TouchDrop : MonoBehaviour
             multTouchHandler.cancelTouch(this);
             Instantiate(tapEffect, transform.position, transform.rotation);
             GameObject.Find("ObjectCount").GetComponent<ObjectCount>().touchCount++;
+            if (isFirework) {
+                fireworkEffect.SetTrigger("Fire");
+                firework.transform.position = transform.position;
+            }
             Destroy(gameObject);
         }
         if (timing > 0f)
         {
-            fireworkEffect.SetActive(true);
             justEffect.SetActive(true);
         }
 
@@ -160,7 +166,7 @@ public class TouchDrop : MonoBehaviour
         if (area == 'A')
         {
             var angle = (-index * (Mathf.PI / 4)) + ((Mathf.PI * 5) / 8);
-            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 4.8f;
+            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 4.1f;
         }
         if (area == 'E')
         {
@@ -170,7 +176,7 @@ public class TouchDrop : MonoBehaviour
         if (area == 'D')
         {
             var angle = (-index * (Mathf.PI / 4)) + ((Mathf.PI * 6) / 8);
-            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 4.8f;
+            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 4.1f;
         }
         return Vector3.zero;
     }
