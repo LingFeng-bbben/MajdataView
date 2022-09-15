@@ -42,10 +42,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -124,10 +126,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -206,10 +210,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -288,10 +294,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -370,10 +378,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -452,10 +462,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -533,10 +545,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -642,14 +656,30 @@ MonoBehaviour:
   - {fileID: -3300150129828961110, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
   - {fileID: 5821571336286938200, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
   - {fileID: 4201695303700987197, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  breakSlide:
+  - {fileID: -6546410876217497116, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -6063473975745692081, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -708685629431033037, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -2016628678761655281, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: 4221847290182326359, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: 5363148054523604052, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -5714714075864894090, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -1387646478963634914, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -4777771625403694506, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: 1725681396707737570, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -2499823243339350701, guid: 79612319b62e28541879c9b8cb425989, type: 3}
   normalStar: {fileID: 0}
   eachStar: {fileID: 21300000, guid: 18b858f24d67a4341ab427db18c00991, type: 3}
+  breakStar: {fileID: 0}
+  isJustR: 0
   time: 0
   timeStart: 0
   LastFor: 1
   speed: 0
   isEach: 0
+  isBreak: 0
   startPosition: 1
+  sortIndex: 0
 --- !u!1 &6050344087625599061
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,10 +722,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -774,10 +806,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -856,10 +890,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -938,10 +974,12 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -991,6 +1029,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6115861605497332194, guid: 7af41147dd1b16f4aae1932254b18ab3,
         type: 3}
+      propertyPath: m_RootOrder
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6115861605497332194, guid: 7af41147dd1b16f4aae1932254b18ab3,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.61
       objectReference: {fileID: 0}
@@ -1006,6 +1049,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6115861605497332194, guid: 7af41147dd1b16f4aae1932254b18ab3,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.1956931
+      objectReference: {fileID: 0}
+    - target: {fileID: 6115861605497332194, guid: 7af41147dd1b16f4aae1932254b18ab3,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
@@ -1018,16 +1066,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.98066527
-      objectReference: {fileID: 0}
-    - target: {fileID: 6115861605497332194, guid: 7af41147dd1b16f4aae1932254b18ab3,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.1956931
-      objectReference: {fileID: 0}
-    - target: {fileID: 6115861605497332194, guid: 7af41147dd1b16f4aae1932254b18ab3,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6115861605497332194, guid: 7af41147dd1b16f4aae1932254b18ab3,
         type: 3}

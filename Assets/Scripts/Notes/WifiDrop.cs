@@ -11,8 +11,10 @@ public class WifiDrop : MonoBehaviour
     SpriteRenderer[] spriteRenderer_star = new SpriteRenderer[3];
 
     public Sprite[] eachSlide = new Sprite[11];
+    public Sprite[] breakSlide = new Sprite[11];
     public Sprite normalStar;
     public Sprite eachStar;
+    public Sprite breakStar;
 
     public bool isJustR;
     public float time;
@@ -20,6 +22,7 @@ public class WifiDrop : MonoBehaviour
     public float LastFor = 1f;
     public float speed;
     public bool isEach;
+    public bool isBreak;
 
     public int startPosition = 1;
 
@@ -44,6 +47,7 @@ public class WifiDrop : MonoBehaviour
             star_slide[i] = Instantiate(star_slidePrefab, notes);
             spriteRenderer_star[i] = star_slide[i].GetComponent<SpriteRenderer>();
             if (isEach) spriteRenderer_star[i].sprite = eachStar;
+            if (isBreak) spriteRenderer_star[i].sprite = breakStar;
             else spriteRenderer_star[i].sprite = normalStar;
             star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i + 3 + startPosition)));
             SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
@@ -71,6 +75,7 @@ public class WifiDrop : MonoBehaviour
         {
             var sr = slideBars[i].GetComponent<SpriteRenderer>();
             if (isEach) sr.sprite = eachSlide[i];
+            if (isBreak) sr.sprite = breakSlide[i];
             sbRender.Add(sr);
             sr.color = new Color(1f, 1f, 1f, 0f);
             sr.sortingOrder += sortIndex;

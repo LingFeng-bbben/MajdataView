@@ -280,6 +280,7 @@ public class JsonDataLoader : MonoBehaviour
 
         WifiCompo.normalStar = customSkin.Star;
         WifiCompo.eachStar = customSkin.Star_Each;
+        WifiCompo.breakStar = customSkin.Star_Break;
 
         if (timing.noteList.Count > 1)
         {
@@ -303,6 +304,8 @@ public class JsonDataLoader : MonoBehaviour
                     NDCompo.isEach = true;
             }
         }
+
+        WifiCompo.isBreak = note.isSlideBreak;
 
         NDCompo.isNoHead = note.isSlideNoHead;
         NDCompo.time = (float)timing.time;
