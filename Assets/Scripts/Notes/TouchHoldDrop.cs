@@ -11,9 +11,11 @@ public class TouchHoldDrop : MonoBehaviour
 
     public GameObject tapEffect;
     public GameObject holdEffect;
-    public GameObject fireworkEffect;
 
     AudioTimeProvider timeProvider;
+
+    GameObject firework;
+    Animator fireworkEffect;
 
     public GameObject[] fans;
     SpriteRenderer[] fansSprite = new SpriteRenderer[6];
@@ -36,6 +38,9 @@ public class TouchHoldDrop : MonoBehaviour
 
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
 
+        firework = GameObject.Find("Firework");
+        fireworkEffect = firework.GetComponent<Animator>();
+
         for (int i = 0; i < 6; i++)
         {
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
@@ -56,7 +61,11 @@ public class TouchHoldDrop : MonoBehaviour
         {
             Instantiate(tapEffect, transform.position, transform.rotation);
             GameObject.Find("ObjectCount").GetComponent<ObjectCount>().holdCount++;
-            if (isFirework) Instantiate(fireworkEffect, transform.position, transform.rotation);
+            if (isFirework)
+            {
+                fireworkEffect.SetTrigger("Fire");
+                firework.transform.position = transform.position;
+            }
             Destroy(holdEffect);
             Destroy(gameObject);
         }
