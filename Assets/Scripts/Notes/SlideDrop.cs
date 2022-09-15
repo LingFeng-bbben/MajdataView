@@ -92,8 +92,8 @@ public class SlideDrop : MonoBehaviour
             sr.color = new Color(1f, 1f, 1f, 0f);
             sr.sortingOrder += sortIndex;
             sr.sortingLayerName = "Slide";
-            if (isEach) sr.sprite = spriteEach;
             if (isBreak) sr.sprite = spriteBreak;
+            else if (isEach) sr.sprite = spriteEach;
             else sr.sprite = spriteNormal;
         }
     }

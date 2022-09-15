@@ -76,8 +76,8 @@ public class WifiDrop : MonoBehaviour
         for (int i = 0; i < slideBars.Count; i++)
         {
             var sr = slideBars[i].GetComponent<SpriteRenderer>();
-            if (isEach) sr.sprite = eachSlide[i];
             if (isBreak) sr.sprite = breakSlide[i];
+            else if (isEach) sr.sprite = eachSlide[i];
             sbRender.Add(sr);
             sr.color = new Color(1f, 1f, 1f, 0f);
             sr.sortingOrder += sortIndex;

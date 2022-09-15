@@ -448,10 +448,12 @@ public class JsonDataLoader : MonoBehaviour
         if (timing.noteList.Count > 1)
         {
             NDCompo.isEach = true;
+            Debug.Log(JsonConvert.SerializeObject(timing.noteList));
             if (timing.noteList.FindAll(
                 o => o.noteType == SimaiNoteType.Slide).Count
                 > 1)
             {
+                Debug.Log("yes");
                 SliCompo.isEach = true;
                 slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star_Each;
             }
