@@ -234,7 +234,14 @@ public class JsonDataLoader : MonoBehaviour
                 if (note.noteType == SimaiNoteType.Slide)
                 {
                     if (!note.isSlideNoHead) objectCount.tapCount++;
-                    objectCount.slideCount++;
+                    if (note.isSlideBreak)
+                    {
+                        objectCount.breakCount++;
+                    }
+                    else
+                    {
+                        objectCount.slideCount++;
+                    }
                 }
             }
             else
@@ -242,7 +249,14 @@ public class JsonDataLoader : MonoBehaviour
                 if (note.noteType == SimaiNoteType.Slide)
                 {
                     if (!note.isSlideNoHead) objectCount.breakCount++;
-                    objectCount.slideCount++;
+                    if (note.isSlideBreak)
+                    {
+                        objectCount.breakCount++;
+                    }
+                    else
+                    {
+                        objectCount.slideCount++;
+                    }
                 }
                 else { objectCount.breakCount++; }
             }

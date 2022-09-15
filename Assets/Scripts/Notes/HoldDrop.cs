@@ -102,11 +102,11 @@ public class HoldDrop : MonoBehaviour
             GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, isBreak);
             if (isBreak)
             {
-                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().holdCount++;
+                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().breakCount++;
             }
             else
             {
-                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().breakCount++;
+                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().holdCount++;
             }
             Destroy(tapLine);
             Destroy(holdEffect);
