@@ -53,7 +53,7 @@
 2. 可以更改字号，具体见下文`EditorSetting.json`部分
 3. View中间偏右上角有隐藏按钮（鼠标移过去可以看到），可以切换combo显示和全屏等
 4. 已对应maipad变速语法 <HS*1.0>
-5. 已支持FESTiVAL新要素，详情请见[FESTiVAL新语法](#FESTiVAL新语法)
+5. 已支持FESTiVAL新要素，详情请见下文的**FESTiVAL新语法**部分。
 
 ## 快捷键列表
 
@@ -228,13 +228,45 @@
 
 组合Slide可以和同头Slide一起使用，但是您必须**完整的书写每一条星星**。比如，您希望让Slide从1到5，然后在5的位置分开，分别到2和8，那么您应该书写`1-5-2[2:1]*-5-8[2:1]`（而不是`1-5-2*-8[2:1]`）
 
-### Break Hold
+### Break拓展
 
-Break标记和Hold标记可以一起出现，它们需要写在时长的前面。如：
+新版本中，Break、Ex、Hold可以彼此共存，出现如**Break Hold**、**Ex Break**、**Ex Break Star**等种类的note。它们的语法和过去类似，只不过可以相互叠加。如：
 
 ```plain
 1bh[4:1],
-2bh,
+1bxh,
+1bx-5[8:1],
+```
+
+尽管这些标记的书写顺序并无强制要求，但是仍然强烈建议您以以下的顺序优先级书写：
+
+`b x h`
+
+### Break Slide
+
+Break Slide是指，Slide的滑条部分是*Break*的。您应当将b书写在Slide时长之前。例子如下：
+
+```plain
+2^7b[4:1],
+1bv3-5b[4:1],
+```
+
+您可能注意到，上面的例2中，出现了两个b，其中，第一个b指定了星星头（Slide-Tap）为Break，第二个b指定了Slide为Break。换言之，Break Slide并不一定有一个绝赞星星头。
+
+### Touch拓展
+
+在新版本中，您可以将Touch书写在A区与D区上。
+
+```plain
+A1,
+D3,
+```
+
+同时，任何一个Touch都可以附加烟花，语法与过去类似。
+
+```plain
+A1f,
+D3f,
 ```
 
 ## 已知问题
