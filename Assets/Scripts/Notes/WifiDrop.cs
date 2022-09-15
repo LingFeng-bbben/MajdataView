@@ -23,6 +23,8 @@ public class WifiDrop : MonoBehaviour
     public float speed;
     public bool isEach;
     public bool isBreak;
+    public bool isGroupPart;
+    public bool isGroupPartEnd;
 
     public int startPosition = 1;
 
@@ -110,9 +112,17 @@ public class WifiDrop : MonoBehaviour
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
         {
-            var alpha = 1f - (-timing / (time - timeStart)) ;
-            alpha = alpha > 1f ? 1f : alpha;
-            alpha = alpha < 0.5f ? 0.5f : alpha;
+            float alpha;
+            if (isGroupPart)
+            {
+                alpha = 0;
+            }
+            else
+            {
+                alpha = 1f - (-timing / (time - timeStart));
+                alpha = alpha > 1f ? 1f : alpha;
+                alpha = alpha < 0.5f ? 0.5f : alpha;
+            }
             for (int i = 0; i < star_slide.Length; i++)
             {
                 spriteRenderer_star[i].color = new Color(1, 1, 1, alpha);
@@ -127,10 +137,13 @@ public class WifiDrop : MonoBehaviour
             process = 1f - process;
             if (process > 1)
             {
-                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
+                if (isGroupPartEnd)
+                {
+                    GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
+                    slideOK.SetActive(true);
+                }
                 for (int i = 0; i < star_slide.Length; i++)
                     Destroy(star_slide[i]);
-                slideOK.SetActive(true);
                 Destroy(gameObject);
             }
             var pos = (slideBars.Count - 1) * process;
@@ -138,6 +151,7 @@ public class WifiDrop : MonoBehaviour
             {
                 spriteRenderer_star[i].color = Color.white;
                 star_slide[i].transform.position = (SlidePositionEnd[i] - SlidePositionStart) * process + SlidePositionStart; //TODO add some runhua
+                star_slide[i].transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             }
             for (int i = 0; i < pos; i++)
             {

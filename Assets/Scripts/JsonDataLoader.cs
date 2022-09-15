@@ -57,7 +57,7 @@ public class JsonDataLoader : MonoBehaviour
 
         foreach (var timing in loadedData.timingList)
         {
-            try {
+            //try {
                 if (timing.time < ignoreOffset) {
                     CountNoteCount(timing.noteList);
                     continue;
@@ -135,16 +135,7 @@ public class JsonDataLoader : MonoBehaviour
                     }
                     if (note.noteType == SimaiNoteType.Slide)
                     {
-
-                        if (note.noteContent.Contains('w')) //wifi
-                        {
-                            InstantiateWifi(timing, note, lastNoteTime);
-                        }
-                        else
-                        {
-                            InstantiateStar(timing, note, i, lastNoteTime);
-                        }
-
+                        InstantiateStarGroup(timing, note, i, lastNoteTime);    // 星星组
                     }
                 }
                 var eachNotes = timing.noteList.FindAll(o => o.noteType != SimaiNoteType.Touch && o.noteType != SimaiNoteType.TouchHold);
@@ -177,10 +168,10 @@ public class JsonDataLoader : MonoBehaviour
                     lineDrop.startPosition = startPos;
                     lineDrop.curvLength = endPos-1;
                 }
-            }catch(Exception e)
-            {
-                GameObject.Find("ErrText").GetComponent<Text>().text = "在第"+(timing.rawTextPositionY+1 )+"行发现问题：\n"+e.Message;
-            }
+            //}catch(Exception e)
+            //{
+            //    GameObject.Find("ErrText").GetComponent<Text>().text = "在第"+(timing.rawTextPositionY+1 )+"行发现问题：\n"+e.Message;
+            //}
         }
     }
 
@@ -244,7 +235,99 @@ public class JsonDataLoader : MonoBehaviour
         }
     }
 
-    void InstantiateWifi(SimaiTimingPoint timing,SimaiNote note,double lastNoteTime)
+    void InstantiateStarGroup(SimaiTimingPoint timing, SimaiNote note, int sort, double lastNoteTime)
+    {
+        int charIntParse(char c)
+        {
+            return c - '0';
+        }
+
+        List<SimaiNote> subSlide = new List<SimaiNote>();
+        List<int> subBarCount = new List<int>();
+        int sumBarCount = 0;
+
+        string noteContent = note.noteContent;
+        int latestStartIndex = charIntParse(noteContent[0]); // 存储上一个Slide的结尾 也就是下一个Slide的起点
+        int ptr = 1; // 指向目前处理的字符
+
+        while (ptr < noteContent.Length)
+        {
+            if (noteContent[ptr] == '[')
+            {
+                break;
+            }
+            if (!Char.IsNumber(noteContent[ptr]))
+            {
+                // 读取到字符
+                char slideTypeChar = noteContent[ptr++];
+
+                SimaiNote slidePart = new SimaiNote();
+                slidePart.noteType = SimaiNoteType.Slide;
+                slidePart.startPosition = latestStartIndex;
+                if (slideTypeChar == 'V')
+                {
+                    // 转折星星
+                    char middlePos = noteContent[ptr++];
+                    char endPos = noteContent[ptr++];
+
+                    slidePart.noteContent = latestStartIndex.ToString() + slideTypeChar + middlePos + endPos;
+                    latestStartIndex = charIntParse(endPos);
+                }
+                else
+                {
+                    // 其他普通星星
+                    char endPos = noteContent[ptr++];
+
+                    slidePart.noteContent = latestStartIndex.ToString() + slideTypeChar + endPos;
+                    latestStartIndex = charIntParse(endPos);
+                }
+
+                var slideIndex = detectShapeFromText(slidePart.noteContent);
+                if (slideIndex < 0) { slideIndex = -slideIndex; }
+
+                int barCount = slidePrefab[slideIndex].transform.childCount;
+                Debug.Log(barCount);
+                subBarCount.Add(barCount);
+                sumBarCount += barCount;
+
+                subSlide.Add(slidePart);
+            }
+            else
+            {
+                // 理论上来说 不应该读取到数字 因此如果读取到了 说明有语法错误
+                throw new Exception("组合星星有错误\nwスライドエラー");
+            }
+        }
+
+        subSlide.ForEach(o =>
+        {
+            o.isBreak = note.isBreak;
+            o.isEx = note.isEx;
+            o.isSlideBreak = note.isSlideBreak;
+            o.isSlideNoHead = true;
+        });
+        subSlide[0].isSlideNoHead = note.isSlideNoHead;
+
+        int tempBarCount = 0;
+        for (int i = 0; i < subSlide.Count; i++)
+        {
+            subSlide[i].slideStartTime = note.slideStartTime + ((double)tempBarCount / sumBarCount) * note.slideTime;
+            subSlide[i].slideTime = ((double)subBarCount[i] / sumBarCount) * note.slideTime;
+            tempBarCount += subBarCount[i];
+            Debug.Log(note.slideStartTime + "," + note.slideTime + "," + subSlide[i].slideStartTime + "," + subSlide[i].slideTime);
+
+            if (note.noteContent.Contains('w')) //wifi
+            {
+                InstantiateWifi(timing, subSlide[i], lastNoteTime, i != 0, i == subSlide.Count - 1);
+            }
+            else
+            {
+                InstantiateStar(timing, subSlide[i], sort, lastNoteTime, i != 0, i == subSlide.Count - 1);
+            }
+        }
+    }
+
+    void InstantiateWifi(SimaiTimingPoint timing,SimaiNote note,double lastNoteTime, bool isGroupPart, bool isGroupPartEnd)
     {
         var str = note.noteContent.Substring(0, 3);
         var digits = str.Split('w');
@@ -306,6 +389,8 @@ public class JsonDataLoader : MonoBehaviour
         }
 
         WifiCompo.isBreak = note.isSlideBreak;
+        WifiCompo.isGroupPart = isGroupPart;
+        WifiCompo.isGroupPartEnd = isGroupPartEnd;
 
         NDCompo.isNoHead = note.isSlideNoHead;
         NDCompo.time = (float)timing.time;
@@ -321,7 +406,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100);
     }
 
-    void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, int sort, double lastNoteTime)
+    void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, int sort, double lastNoteTime, bool isGroupPart, bool isGroupPartEnd)
     {
 
         var GOnote = Instantiate(starPrefab, notes.transform);
@@ -381,6 +466,8 @@ public class JsonDataLoader : MonoBehaviour
         }
 
         SliCompo.isBreak = note.isSlideBreak;
+        SliCompo.isGroupPart = isGroupPart;
+        SliCompo.isGroupPartEnd = isGroupPartEnd;
         if (note.isSlideBreak)
         {
             slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star_Break;

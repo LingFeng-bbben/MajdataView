@@ -17,6 +17,8 @@ public class SlideDrop : MonoBehaviour
     public bool isJustR;
     public bool isEach;
     public bool isBreak;
+    public bool isGroupPart;
+    public bool isGroupPartEnd;
     public float time;
     public float timeStar;
     public float LastFor = 1f;
@@ -115,10 +117,19 @@ public class SlideDrop : MonoBehaviour
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
         {
-            var alpha = 1f-( -timing / (time - timeStar));
-            alpha = alpha > 1f ? 1f : alpha;
-            alpha = alpha < 0.5f ? 0.5f : alpha;
-            spriteRenderer_star.color = new Color(1, 1, 1,alpha);
+            float alpha;
+            if (isGroupPart)
+            {
+                alpha = 0;
+            }
+            else
+            {
+                // 只有当它是一个起点Slide（而非Slide Group中的子部分）的时候，才会有开始的星星渐入动画
+                alpha = 1f - (-timing / (time - timeStar));
+                alpha = alpha > 1f ? 1f : alpha;
+                alpha = alpha < 0.5f ? 0.5f : alpha;
+            }
+            spriteRenderer_star.color = new Color(1, 1, 1, alpha);
             star_slide.transform.localScale = new Vector3(alpha+0.5f, alpha + 0.5f, alpha + 0.5f);
             star_slide.transform.position = slidePositions[0];
             star_slide.transform.rotation = slideRotations[0];
@@ -131,8 +142,12 @@ public class SlideDrop : MonoBehaviour
             var process = (LastFor -timing) / LastFor;
             process = 1f - process;
             if (process > 1) {
-                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
-                slideOK.SetActive(true);
+                if (isGroupPartEnd)
+                {
+                    // 只有组内最后一个Slide完成 才会显示判定条并增加总数
+                    GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
+                    slideOK.SetActive(true);
+                }
                 Destroy(star_slide);
                 Destroy(gameObject);
             }
