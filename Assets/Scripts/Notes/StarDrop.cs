@@ -34,6 +34,7 @@ public class StarDrop : MonoBehaviour
 
     public Color exEffectTap;
     public Color exEffectEach;
+    public Color exEffectBreak;
 
     AudioTimeProvider timeProvider;
 
@@ -78,6 +79,10 @@ public class StarDrop : MonoBehaviour
             {
                 lineSpriteRender.sprite = breakLine;
                 spriteRenderer.sprite = breakSpr_Double;
+                if (isEX)
+                {
+                    exSpriteRender.color = exEffectBreak;
+                }
             }
         }
         else
@@ -101,6 +106,10 @@ public class StarDrop : MonoBehaviour
             {
                 lineSpriteRender.sprite = breakLine;
                 spriteRenderer.sprite = breakSpr;
+                if (isEX)
+                {
+                    exSpriteRender.color = exEffectBreak;
+                }
             }
         }
         spriteRenderer.forceRenderingOff = true;

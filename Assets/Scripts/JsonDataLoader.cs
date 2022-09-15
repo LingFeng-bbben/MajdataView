@@ -57,7 +57,7 @@ public class JsonDataLoader : MonoBehaviour
 
         foreach (var timing in loadedData.timingList)
         {
-            //try {
+            try {
                 if (timing.time < ignoreOffset) {
                     CountNoteCount(timing.noteList);
                     continue;
@@ -168,10 +168,10 @@ public class JsonDataLoader : MonoBehaviour
                     lineDrop.startPosition = startPos;
                     lineDrop.curvLength = endPos-1;
                 }
-            //}catch(Exception e)
-            //{
-            //    GameObject.Find("ErrText").GetComponent<Text>().text = "在第"+(timing.rawTextPositionY+1 )+"行发现问题：\n"+e.Message;
-            //}
+            }catch(Exception e)
+            {
+                GameObject.Find("ErrText").GetComponent<Text>().text = "在第"+(timing.rawTextPositionY+1 )+"行发现问题：\n"+e.Message;
+            }
         }
     }
 

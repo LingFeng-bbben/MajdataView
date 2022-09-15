@@ -26,6 +26,7 @@ public class TapDrop : MonoBehaviour
 
     public Color exEffectTap;
     public Color exEffectEach;
+    public Color exEffectBreak;
 
     AudioTimeProvider timeProvider;
 
@@ -71,7 +72,7 @@ public class TapDrop : MonoBehaviour
             lineSpriteRender.sprite = breakLine;
             if (isEX)
             {
-                exSpriteRender.color = exEffectEach;
+                exSpriteRender.color = exEffectBreak;
             }
         }
         spriteRenderer.forceRenderingOff = true;

@@ -27,6 +27,7 @@ public class HoldDrop : MonoBehaviour
 
     public Color exEffectTap;
     public Color exEffectEach;
+    public Color exEffectBreak;
 
     AudioTimeProvider timeProvider;
 
@@ -74,7 +75,7 @@ public class HoldDrop : MonoBehaviour
             lineSpriteRender.sprite = breakLine;
             if (isEX)
             {
-                exSpriteRender.color = exEffectEach;
+                exSpriteRender.color = exEffectBreak;
             }
         }
         spriteRenderer.forceRenderingOff = true;

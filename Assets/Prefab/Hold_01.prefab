@@ -198,3 +198,4 @@ MonoBehaviour:
   tapLine: {fileID: 8134463029818261665, guid: ed6ad005bb60e9c409c75936f65b7f86, type: 3}
   exEffectTap: {r: 1, g: 0.6745283, b: 0.8829237, a: 1}
   exEffectEach: {r: 1, g: 0.9943893, b: 0.4669811, a: 1}
+  exEffectBreak: {r: 1, g: 0.99607843, b: 0.46666667, a: 1}
