@@ -259,12 +259,12 @@ public class JsonDataLoader : MonoBehaviour
             if (!Char.IsNumber(noteContent[ptr]))
             {
                 // 读取到字符
-                char slideTypeChar = noteContent[ptr++];
+                string slideTypeChar = noteContent[ptr++].ToString();
 
                 SimaiNote slidePart = new SimaiNote();
                 slidePart.noteType = SimaiNoteType.Slide;
                 slidePart.startPosition = latestStartIndex;
-                if (slideTypeChar == 'V')
+                if (slideTypeChar == "V")
                 {
                     // 转折星星
                     char middlePos = noteContent[ptr++];
@@ -276,6 +276,11 @@ public class JsonDataLoader : MonoBehaviour
                 else
                 {
                     // 其他普通星星
+                    // 额外检查pp和qq
+                    if (noteContent[ptr] == slideTypeChar[0])
+                    {
+                        slideTypeChar += noteContent[ptr++];
+                    }
                     char endPos = noteContent[ptr++];
 
                     slidePart.noteContent = latestStartIndex.ToString() + slideTypeChar + endPos;
@@ -286,7 +291,6 @@ public class JsonDataLoader : MonoBehaviour
                 if (slideIndex < 0) { slideIndex = -slideIndex; }
 
                 int barCount = slidePrefab[slideIndex].transform.childCount;
-                Debug.Log(barCount);
                 subBarCount.Add(barCount);
                 sumBarCount += barCount;
 
@@ -314,7 +318,6 @@ public class JsonDataLoader : MonoBehaviour
             subSlide[i].slideStartTime = note.slideStartTime + ((double)tempBarCount / sumBarCount) * note.slideTime;
             subSlide[i].slideTime = ((double)subBarCount[i] / sumBarCount) * note.slideTime;
             tempBarCount += subBarCount[i];
-            Debug.Log(note.slideStartTime + "," + note.slideTime + "," + subSlide[i].slideStartTime + "," + subSlide[i].slideTime);
 
             if (note.noteContent.Contains('w')) //wifi
             {

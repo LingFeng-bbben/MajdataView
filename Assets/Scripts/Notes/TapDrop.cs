@@ -69,6 +69,10 @@ public class TapDrop : MonoBehaviour
         {
             spriteRenderer.sprite = breakSpr;
             lineSpriteRender.sprite = breakLine;
+            if (isEX)
+            {
+                exSpriteRender.color = exEffectEach;
+            }
         }
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;

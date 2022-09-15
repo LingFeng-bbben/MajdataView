@@ -139,7 +139,14 @@ public class WifiDrop : MonoBehaviour
             {
                 if (isGroupPartEnd)
                 {
-                    GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
+                    if (isBreak)
+                    {
+                        GameObject.Find("ObjectCount").GetComponent<ObjectCount>().breakCount++;
+                    }
+                    else
+                    {
+                        GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
+                    }
                     slideOK.SetActive(true);
                 }
                 for (int i = 0; i < star_slide.Length; i++)

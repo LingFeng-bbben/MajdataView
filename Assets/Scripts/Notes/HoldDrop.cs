@@ -19,6 +19,7 @@ public class HoldDrop : MonoBehaviour
     public Sprite breakSpr;
 
     public Sprite eachLine;
+    public Sprite breakLine;
 
     public GameObject holdEffect;
 
@@ -70,6 +71,7 @@ public class HoldDrop : MonoBehaviour
         if (isBreak)
         {
             spriteRenderer.sprite = breakSpr;
+            lineSpriteRender.sprite = breakLine;
             if (isEX)
             {
                 exSpriteRender.color = exEffectEach;
@@ -97,8 +99,15 @@ public class HoldDrop : MonoBehaviour
         var holdTime = timing - lastFor;
         var holdDistance = holdTime * speed + 4.8f;
         if (holdTime > 0) {
-            GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, false);
-            GameObject.Find("ObjectCount").GetComponent<ObjectCount>().holdCount++;
+            GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, isBreak);
+            if (isBreak)
+            {
+                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().holdCount++;
+            }
+            else
+            {
+                GameObject.Find("ObjectCount").GetComponent<ObjectCount>().breakCount++;
+            }
             Destroy(tapLine);
             Destroy(holdEffect);
             Destroy(gameObject); 
