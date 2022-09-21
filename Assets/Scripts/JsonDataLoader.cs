@@ -32,6 +32,8 @@ public class JsonDataLoader : MonoBehaviour
 
     ObjectCount objectCount;
     CustomSkin customSkin;
+
+    int slideLayer = -7000;
     // Start is called before the first frame update
     void Start()
     {
@@ -346,19 +348,21 @@ public class JsonDataLoader : MonoBehaviour
             subSlide[i].slideStartTime = note.slideStartTime + ((double)tempBarCount / sumBarCount) * note.slideTime;
             subSlide[i].slideTime = ((double)subBarCount[i] / sumBarCount) * note.slideTime;
             tempBarCount += subBarCount[i];
-
+        }
+        for (int i = subSlide.Count - 1; i >= 0; i--)
+        {
             if (note.noteContent.Contains('w')) //wifi
             {
-                InstantiateWifi(timing, subSlide[i], lastNoteTime, i != 0, i == subSlide.Count - 1);
+                InstantiateWifi(timing, subSlide[i], i != 0, i == subSlide.Count - 1);
             }
             else
             {
-                InstantiateStar(timing, subSlide[i], sort, lastNoteTime, i != 0, i == subSlide.Count - 1);
+                InstantiateStar(timing, subSlide[i], i != 0, i == subSlide.Count - 1);
             }
         }
     }
 
-    void InstantiateWifi(SimaiTimingPoint timing,SimaiNote note,double lastNoteTime, bool isGroupPart, bool isGroupPartEnd)
+    void InstantiateWifi(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd)
     {
         var str = note.noteContent.Substring(0, 3);
         var digits = str.Split('w');
@@ -434,10 +438,10 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.startPosition = note.startPosition;
         WifiCompo.time = (float)note.slideStartTime;
         WifiCompo.LastFor = (float)note.slideTime;
-        WifiCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100);
+        WifiCompo.sortIndex = slideLayer++;
     }
 
-    void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, int sort, double lastNoteTime, bool isGroupPart, bool isGroupPartEnd)
+    void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd)
     {
 
         var GOnote = Instantiate(starPrefab, notes.transform);
@@ -518,7 +522,8 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.star_slide = slide_star;
         SliCompo.time = (float)note.slideStartTime;
         SliCompo.LastFor = (float)note.slideTime;
-        SliCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100) + sort * 5;
+        //SliCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100) + sort * 5;
+        SliCompo.sortIndex = slideLayer++;
     }
     bool detectJustType(string content)
     {
