@@ -1,5 +1,5 @@
 ---
-name: English issue
+name: Report BUG(English)
 about: Please use this issue template if you speaks English
 ---
 
