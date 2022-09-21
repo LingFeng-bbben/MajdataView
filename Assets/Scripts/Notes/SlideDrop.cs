@@ -155,6 +155,11 @@ public class SlideDrop : MonoBehaviour
                     }
                     slideOK.SetActive(true);
                 }
+                else
+                {
+                    // 如果不是组内最后一个 那么也要将判定条删掉
+                    Destroy(slideOK);
+                }
                 Destroy(star_slide);
                 Destroy(gameObject);
             }
