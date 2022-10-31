@@ -37,6 +37,8 @@ public class WifiDrop : MonoBehaviour
     Vector3 SlidePositionStart = new Vector3();
     Vector3[] SlidePositionEnd = new Vector3[3];
 
+    bool startShining = false;
+
 
     void Start()
     {
@@ -111,13 +113,15 @@ public class WifiDrop : MonoBehaviour
             var alpha = startiming * (speed / 3) + 1f;
             alpha = alpha > 1f ? 1f : alpha;
             alpha = alpha < 0f ? 0f : alpha;
-            foreach (var sr in sbRender)
-            {
-                Color oldColor = sr.color;
-                oldColor.a = alpha;
-                sr.color = oldColor;
-            }
+            setSlideBarAlpha(alpha);
             return;
+        }
+        setSlideBarAlpha(1f);
+
+        if (isBreak && !startShining)
+        {
+            startShining = true;
+            this.GetComponent<Animator>().enabled = true;
         }
 
         foreach (var star in star_slide)
@@ -178,6 +182,15 @@ public class WifiDrop : MonoBehaviour
             {
                 slideBars[i].SetActive(false);
             }
+        }
+    }
+    void setSlideBarAlpha(float alpha)
+    {
+        foreach (var sr in sbRender)
+        {
+            Color oldColor = sr.color;
+            oldColor.a = alpha;
+            sr.color = oldColor;
         }
     }
 
