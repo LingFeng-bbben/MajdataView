@@ -33,7 +33,7 @@ public class JsonDataLoader : MonoBehaviour
     ObjectCount objectCount;
     CustomSkin customSkin;
 
-    int slideLayer = -7000;
+    int slideLayer = -10000;
     // Start is called before the first frame update
     void Start()
     {
@@ -534,7 +534,8 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.startPosition = note.startPosition;
         WifiCompo.time = (float)note.slideStartTime;
         WifiCompo.LastFor = (float)note.slideTime;
-        WifiCompo.sortIndex = slideLayer++;
+        WifiCompo.sortIndex = slideLayer;
+        slideLayer += 5;
     }
 
     void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd)
@@ -620,6 +621,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.LastFor = (float)note.slideTime;
         //SliCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100) + sort * 5;
         SliCompo.sortIndex = slideLayer++;
+        slideLayer += 5;
     }
     bool detectJustType(string content)
     {
