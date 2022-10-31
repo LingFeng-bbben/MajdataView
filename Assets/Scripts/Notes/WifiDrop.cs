@@ -10,8 +10,6 @@ public class WifiDrop : MonoBehaviour
 
     SpriteRenderer[] spriteRenderer_star = new SpriteRenderer[3];
 
-    public Sprite[] eachSlide = new Sprite[11];
-    public Sprite[] breakSlide = new Sprite[11];
     public Sprite normalStar;
     public Sprite eachStar;
     public Sprite breakStar;
@@ -49,7 +47,7 @@ public class WifiDrop : MonoBehaviour
             star_slide[i] = Instantiate(star_slidePrefab, notes);
             spriteRenderer_star[i] = star_slide[i].GetComponent<SpriteRenderer>();
             if (isEach) spriteRenderer_star[i].sprite = eachStar;
-            if (isBreak) spriteRenderer_star[i].sprite = breakStar;
+            else if (isBreak) spriteRenderer_star[i].sprite = breakStar;
             else spriteRenderer_star[i].sprite = normalStar;
             star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i + 3 + startPosition)));
             SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
@@ -73,13 +71,27 @@ public class WifiDrop : MonoBehaviour
         slideOK.transform.SetParent(transform.parent);
         SlidePositionStart = getPositionFromDistance(4.8f);
 
+        Color normalColor = new Color32(0, 251, 252, 0);
+        Color eachColor = new Color32(252, 249, 0, 0);
+        Color breakColor = new Color32(197, 99, 16, 0);
         for (int i = 0; i < slideBars.Count; i++)
         {
             var sr = slideBars[i].GetComponent<SpriteRenderer>();
-            if (isBreak) sr.sprite = breakSlide[i];
-            else if (isEach) sr.sprite = eachSlide[i];
+
+            if (isBreak)
+            {
+                sr.color = breakColor;
+            }
+            else if (isEach)
+            {
+                sr.color = eachColor;
+            }
+            else
+            {
+                sr.color = normalColor;
+            }
+            
             sbRender.Add(sr);
-            sr.color = new Color(1f, 1f, 1f, 0f);
             sr.sortingOrder += sortIndex;
             sr.sortingLayerName = "Slide";
         }
@@ -101,7 +113,9 @@ public class WifiDrop : MonoBehaviour
             alpha = alpha < 0f ? 0f : alpha;
             foreach (var sr in sbRender)
             {
-               sr.color = new Color(1f, 1f, 1f, alpha);
+                Color oldColor = sr.color;
+                oldColor.a = alpha;
+                sr.color = oldColor;
             }
             return;
         }
