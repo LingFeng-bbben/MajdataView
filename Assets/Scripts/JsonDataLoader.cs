@@ -21,6 +21,7 @@ public class JsonDataLoader : MonoBehaviour
     public GameObject notes;
     public GameObject star_slidePrefab;
     public GameObject[] slidePrefab;
+    public RuntimeAnimatorController slideShine;
 
     public Text diffText;
     public Text levelText;
@@ -495,6 +496,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.normalStar = customSkin.Star;
         WifiCompo.eachStar = customSkin.Star_Each;
         WifiCompo.breakStar = customSkin.Star_Break;
+        WifiCompo.slideShine = slideShine;
 
         if (timing.noteList.Count > 1)
         {
@@ -573,6 +575,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.spriteNormal = customSkin.Slide;
         SliCompo.spriteEach = customSkin.Slide_Each;
         SliCompo.spriteBreak = customSkin.Slide_Break;
+        SliCompo.slideShine = slideShine;
 
         if (timing.noteList.Count > 1)
         {

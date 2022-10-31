@@ -12,6 +12,7 @@ public class SlideDrop : MonoBehaviour
     public Sprite spriteNormal;
     public Sprite spriteEach;
     public Sprite spriteBreak;
+    public RuntimeAnimatorController slideShine;
 
     public bool isMirror;
     public bool isJustR;
@@ -35,6 +36,9 @@ public class SlideDrop : MonoBehaviour
 
     List<Vector3> slidePositions = new List<Vector3>();
     List<Quaternion> slideRotations = new List<Quaternion>();
+
+    bool startShining = false;
+    List<Animator> animators = new List<Animator>();
 
     void Start()
     {
@@ -92,7 +96,14 @@ public class SlideDrop : MonoBehaviour
             sr.color = new Color(1f, 1f, 1f, 0f);
             sr.sortingOrder += sortIndex;
             sr.sortingLayerName = "Slide";
-            if (isBreak) sr.sprite = spriteBreak;
+            if (isBreak)
+            {
+                sr.sprite = spriteBreak;
+                Animator anim = gm.AddComponent<Animator>();
+                anim.runtimeAnimatorController = slideShine;
+                anim.enabled = false;
+                animators.Add(anim);
+            }
             else if (isEach) sr.sprite = spriteEach;
             else sr.sprite = spriteNormal;
         }
@@ -113,6 +124,16 @@ public class SlideDrop : MonoBehaviour
             return;
         }
         setSlideBarAlpha(1f);
+
+        if (isBreak && !startShining)
+        {
+            startShining = true;
+            foreach (Animator anim in animators)
+            {
+                anim.enabled = true;
+            }
+        }
+
         star_slide.SetActive(true);
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)

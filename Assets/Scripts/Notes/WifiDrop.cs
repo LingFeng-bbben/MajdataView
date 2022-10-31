@@ -14,6 +14,8 @@ public class WifiDrop : MonoBehaviour
     public Sprite eachStar;
     public Sprite breakStar;
 
+    public RuntimeAnimatorController slideShine;
+
     public bool isJustR;
     public float time;
     public float timeStart;
@@ -38,7 +40,7 @@ public class WifiDrop : MonoBehaviour
     Vector3[] SlidePositionEnd = new Vector3[3];
 
     bool startShining = false;
-
+    List<Animator> animators = new List<Animator>();
 
     void Start()
     {
@@ -83,6 +85,10 @@ public class WifiDrop : MonoBehaviour
             if (isBreak)
             {
                 sr.color = breakColor;
+                Animator anim = slideBars[i].AddComponent<Animator>();
+                anim.runtimeAnimatorController = slideShine;
+                anim.enabled = false;
+                animators.Add(anim);
             }
             else if (isEach)
             {
@@ -121,7 +127,10 @@ public class WifiDrop : MonoBehaviour
         if (isBreak && !startShining)
         {
             startShining = true;
-            this.GetComponent<Animator>().enabled = true;
+            foreach(Animator anim in animators)
+            {
+                anim.enabled = true;
+            }
         }
 
         foreach (var star in star_slide)

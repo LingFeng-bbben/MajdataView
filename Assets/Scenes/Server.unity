@@ -355,6 +355,7 @@ MonoBehaviour:
   Tap_Ex: {fileID: 0}
   Slide: {fileID: 0}
   Slide_Each: {fileID: 0}
+  Slide_Break: {fileID: 0}
   Star: {fileID: 0}
   Star_Double: {fileID: 0}
   Star_Each: {fileID: 0}
@@ -366,6 +367,7 @@ MonoBehaviour:
   Hold: {fileID: 0}
   Hold_Each: {fileID: 0}
   Hold_Ex: {fileID: 0}
+  Hold_Break: {fileID: 0}
   Just:
   - {fileID: 0}
   - {fileID: 0}
