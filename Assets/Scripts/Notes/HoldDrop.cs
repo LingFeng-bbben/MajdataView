@@ -21,6 +21,9 @@ public class HoldDrop : MonoBehaviour
     public Sprite eachLine;
     public Sprite breakLine;
 
+    public Sprite holdEachEnd;
+    public Sprite holdBreakEnd;
+
     public RuntimeAnimatorController HoldShine;
     public RuntimeAnimatorController BreakShine;
 
@@ -37,6 +40,7 @@ public class HoldDrop : MonoBehaviour
     SpriteRenderer spriteRenderer;
     SpriteRenderer lineSpriteRender;
     SpriteRenderer exSpriteRender;
+    SpriteRenderer holdEndRender;
 
     bool breakAnimStart = false;
     bool holdAnimStart = false;
@@ -57,9 +61,12 @@ public class HoldDrop : MonoBehaviour
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        holdEndRender = transform.GetChild(1).GetComponent<SpriteRenderer>();
+
         int sortOrder = (int)(time * -100);
         spriteRenderer.sortingOrder = sortOrder;
         exSpriteRender.sortingOrder = sortOrder;
+        holdEndRender.sortingOrder = sortOrder;
 
         spriteRenderer.sprite = tapSpr;
         exSpriteRender.sprite = exSpr;
@@ -76,6 +83,7 @@ public class HoldDrop : MonoBehaviour
         {
             spriteRenderer.sprite = eachSpr;
             lineSpriteRender.sprite = eachLine;
+            holdEndRender.sprite = holdEachEnd;
             if (isEX)
             {
                 exSpriteRender.color = exEffectEach;
@@ -85,6 +93,7 @@ public class HoldDrop : MonoBehaviour
         {
             spriteRenderer.sprite = breakSpr;
             lineSpriteRender.sprite = breakLine;
+            holdEndRender.sprite = holdBreakEnd;
             if (isEX)
             {
                 exSpriteRender.color = exEffectBreak;
@@ -92,6 +101,7 @@ public class HoldDrop : MonoBehaviour
         }
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;
+        holdEndRender.enabled = false;
     }
 
     // Update is called once per frame
@@ -152,31 +162,34 @@ public class HoldDrop : MonoBehaviour
         }
         else
         {
-            if (holdDistance < 1.225f && distance >= 4.8f) //两头都出界
+            if (holdDistance < 1.225f && distance >= 4.8f) // 头到达 尾未出现
             {
                 holdDistance = 1.225f;
                 distance = 4.8f;
                 holdEffect.SetActive(true);
                 startHoldShine();
             }
-            if (holdDistance < 1.225f && distance < 4.8f)
+            else if (holdDistance < 1.225f && distance < 4.8f) // 头未到达 尾未出现
             {
                 holdDistance = 1.225f;
             }
-            if(holdDistance >= 1.225f && distance >= 4.8f)
+            else if (holdDistance >= 1.225f && distance >= 4.8f) // 头到达 尾出现
             {
                 distance = 4.8f;
                 holdEffect.SetActive(true);
                 startHoldShine();
-            }
-            if (holdDistance >= 1.225f && distance < 4.8f)
-            {
 
+                holdEndRender.enabled = true;
+            }
+            else if (holdDistance >= 1.225f && distance < 4.8f) // 头未到达 尾出现
+            {
+                holdEndRender.enabled = true;
             }
             var dis = (distance - holdDistance) / 2 + holdDistance;
             transform.position = getPositionFromDistance(dis);//0.325
             var size = distance - holdDistance + 1.4f;
             spriteRenderer.size = new Vector2(1.22f, size);
+            holdEndRender.transform.localPosition = new Vector3(0f, 0.6825f-size/2);
             transform.localScale = new Vector3(1f, 1f);
         }
         var lineScale = Mathf.Abs(distance / 4.8f);
