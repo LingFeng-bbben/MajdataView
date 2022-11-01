@@ -131,6 +131,7 @@ public class SlideDrop : MonoBehaviour
             foreach (Animator anim in animators)
             {
                 anim.enabled = true;
+                anim.Play("BreakShine", -1, 0.9f);
             }
         }
 

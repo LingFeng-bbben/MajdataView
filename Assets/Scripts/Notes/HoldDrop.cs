@@ -21,6 +21,9 @@ public class HoldDrop : MonoBehaviour
     public Sprite eachLine;
     public Sprite breakLine;
 
+    public RuntimeAnimatorController HoldShine;
+    public RuntimeAnimatorController BreakShine;
+
     public GameObject holdEffect;
 
     public GameObject tapLine;
@@ -34,6 +37,11 @@ public class HoldDrop : MonoBehaviour
     SpriteRenderer spriteRenderer;
     SpriteRenderer lineSpriteRender;
     SpriteRenderer exSpriteRender;
+
+    bool breakAnimStart = false;
+    bool holdAnimStart = false;
+    Animator animator;
+
     void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -55,6 +63,10 @@ public class HoldDrop : MonoBehaviour
 
         spriteRenderer.sprite = tapSpr;
         exSpriteRender.sprite = exSpr;
+
+        Animator anim = gameObject.AddComponent<Animator>();
+        anim.enabled = false;
+        animator = anim;
 
         if (isEX)
         {
@@ -94,6 +106,13 @@ public class HoldDrop : MonoBehaviour
         }
         spriteRenderer.forceRenderingOff = false;
         if (isEX) exSpriteRender.forceRenderingOff = false;
+
+        if (isBreak && !breakAnimStart)
+        {
+            breakAnimStart = true;
+            animator.runtimeAnimatorController = BreakShine;
+            animator.enabled = true; // break hold闪烁
+        }
 
         spriteRenderer.size = new Vector2(1.22f, 1.4f);
 
@@ -138,6 +157,7 @@ public class HoldDrop : MonoBehaviour
                 holdDistance = 1.225f;
                 distance = 4.8f;
                 holdEffect.SetActive(true);
+                startHoldShine();
             }
             if (holdDistance < 1.225f && distance < 4.8f)
             {
@@ -147,6 +167,7 @@ public class HoldDrop : MonoBehaviour
             {
                 distance = 4.8f;
                 holdEffect.SetActive(true);
+                startHoldShine();
             }
             if (holdDistance >= 1.225f && distance < 4.8f)
             {
@@ -163,6 +184,16 @@ public class HoldDrop : MonoBehaviour
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
         exSpriteRender.size = spriteRenderer.size;
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
+    }
+
+    void startHoldShine()
+    {
+        if (!holdAnimStart)
+        {
+            holdAnimStart = true;
+            animator.runtimeAnimatorController = HoldShine;
+            animator.enabled = true;
+        }
     }
 
     Vector3 getPositionFromDistance(float distance)

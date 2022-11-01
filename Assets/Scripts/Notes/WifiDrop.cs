@@ -129,6 +129,7 @@ public class WifiDrop : MonoBehaviour
             foreach (Animator anim in animators)
             {
                 anim.enabled = true;
+                anim.Play("BreakShine", -1, 0f);
             }
         }
 

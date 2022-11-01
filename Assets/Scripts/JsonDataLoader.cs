@@ -21,7 +21,8 @@ public class JsonDataLoader : MonoBehaviour
     public GameObject notes;
     public GameObject star_slidePrefab;
     public GameObject[] slidePrefab;
-    public RuntimeAnimatorController slideShine;
+    public RuntimeAnimatorController BreakShine;
+    public RuntimeAnimatorController HoldShine;
 
     public Text diffText;
     public Text levelText;
@@ -91,6 +92,8 @@ public class JsonDataLoader : MonoBehaviour
                             NDCompo.exSpr = customSkin.Tap_Ex;
                         }
 
+                        NDCompo.BreakShine = BreakShine;
+
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.isBreak = note.isBreak;
                         NDCompo.isEX = note.isEx;
@@ -107,6 +110,9 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.eachSpr = customSkin.Hold_Each;
                         NDCompo.exSpr = customSkin.Hold_Ex;
                         NDCompo.breakSpr = customSkin.Hold_Break;
+
+                        NDCompo.HoldShine = HoldShine;
+                        NDCompo.BreakShine = BreakShine;
 
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.time = (float)timing.time;
@@ -484,6 +490,8 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.breakSpr_Double = customSkin.Star_Break_Double;
         NDCompo.exSpr_Double = customSkin.Star_Ex_Double;
 
+        NDCompo.BreakShine = BreakShine;
+
         NDCompo.rotateSpeed = (float)note.slideTime;
         NDCompo.isEX = note.isEx;
         NDCompo.isBreak = note.isBreak;
@@ -496,7 +504,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.normalStar = customSkin.Star;
         WifiCompo.eachStar = customSkin.Star_Each;
         WifiCompo.breakStar = customSkin.Star_Break;
-        WifiCompo.slideShine = slideShine;
+        WifiCompo.slideShine = BreakShine;
 
         if (timing.noteList.Count > 1)
         {
@@ -556,6 +564,8 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.breakSpr_Double = customSkin.Star_Break_Double;
         NDCompo.exSpr_Double = customSkin.Star_Ex_Double;
 
+        NDCompo.BreakShine = BreakShine;
+
         NDCompo.rotateSpeed = (float)note.slideTime;
         NDCompo.isEX = note.isEx;
         NDCompo.isBreak = note.isBreak;
@@ -575,7 +585,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.spriteNormal = customSkin.Slide;
         SliCompo.spriteEach = customSkin.Slide_Each;
         SliCompo.spriteBreak = customSkin.Slide_Break;
-        SliCompo.slideShine = slideShine;
+        SliCompo.slideShine = BreakShine;
 
         if (timing.noteList.Count > 1)
         {
