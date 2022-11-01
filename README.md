@@ -1,14 +1,13 @@
 # MajdataView&Edit
 
 ![Majdata Festival](https://img.shields.io/badge/Majdata-FESTiVAL-ff69b4)
-![version v4.0](https://img.shields.io/badge/version-v4.0-green)
+![version v4.0-rc](https://img.shields.io/badge/version-v4.0--rc-green)
 ![license GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 ## Credits
 
-- Main Programmer: bbben [>Twitter](https://twitter.com/bbben132329)
-- Muri Detector: [Moying-moe](https://github.com/Moying-moe/maimaiMuriDetector)
+- Main Programmer: bbben([>Twitter](https://twitter.com/bbben132329)), [Moying-moe](https://github.com/Moying-moe/maimaiMuriDetector)
 - Mirroring: [Wh1tyEnd](https://github.com/Wh1tyEnd)
 - Hanabi Effect: 青山散人
 - *Special thanks*: Simai developed by [Celeca](https://twitter.com/formiku39854)
@@ -69,6 +68,11 @@
 |Ctrl+Shift+Z|录制模式| |
 |Ctrl+p|加快播放速度| |
 |Ctrl+o|减缓播放速度|对音用|
+|Ctrl+J|左右镜像|对选中文本实施，下同
+|Ctrl+K|上下镜像| |
+|Ctrl+L|180°旋转| |
+|Ctrl+;|顺时针45°旋转| |
+|Ctrl+'|逆时针45°旋转| |
 
 要更改快捷键的话，请编辑EditorSetting.json（见下文）
 
@@ -137,6 +141,8 @@
 
 **请注意不要将引号以及结尾的逗号删除！**
 
+除了所有的字母按键以外，一些键位的名称可能并非直觉上的那样（如分号键是`OemSemicolon`而不是`;`），您可以参考[这篇文档](https://docs.microsoft.com/zh-cn/dotnet/api/system.windows.input.key)。
+
 ### 字体大小
 
 ```json
@@ -147,12 +153,38 @@
 
 您可以修改编辑器中所有字体的大小，将上文中的`12.0`修改为任何想要的数字即可。
 
+## 我在使用过程中遇到了问题
+
+如果您在使用过程中遇到了问题，**请先对照下文的Q&A中列出的常见问题进行排查**。
+
+如果未找到您遇到的问题，亦或是按照其中的解决方案仍无法解决，**请按照以下步骤将您遇到的问题汇报给我们**，我们的社区维护者会在看到您的汇报后尽快排查并解决此问题。
+
+1. 请先确认，您遇到的是一个报错，还是一个不正常情况；
+   - 如果您看到了错误信息弹窗，这说明您遇到的是一个*报错*。**请将此弹窗截图保存**；
+   - 如果您觉得软件运行的不正常，如：应该得到结果A，但是实际上却是结果B。这说明您遇到的是一个*不正常情况*。**请记下您遇到的不正常情况**；
+2. 回忆出现问题之前，您正在做什么；
+3. 打开浏览器，进入[Majdata的issue页面](https://github.com/LingFeng-bbben/MajdataView/issues)，点击右上角的**New issue**，选择**提交BUG(中文)**模板；
+   - 如果您没有Github账号，可能会提示您登录或注册一个新的账号；
+4. 按照模板中的提示，填写信息，并提交。在您提交的issue中，附带上您的截图以及**尽可能详尽的描述**。
+
+在提交您的问题时，请注意以下几点：
+
+- **尽可能详尽的描述您的操作**。我们知道绝大部分的使用者并非专业人士，因此，如果您说了很多废话，我们的社区维护者并不会怪罪您，并可以很轻松的忽略掉没用的那部分。**但是如果您说的太少，那么维护者还需要反复与您沟通，这会浪费很多时间与精力**。
+- **尝试重复这个问题**。如果您可以通过某些操作稳定的触发这个问题，您可以将您的这些操作写下来，**这十分有帮助**。同样的，如果您重复之前遇到这个问题的操作，结果发现问题消失了，也请告诉我们这一点。
+- **如果情况十分难以描述，您可以附上截图或者视频作为辅助**。此外，您最好可以将出现问题时您正在编辑的谱面也一起发给我们。
+
 ## Q&A
 
 ### 为什么软件无法启动？
 
 - 请确认您安装了`.net Framework 4.7.2`
 - 如果打开报错与PresentationCore有关，请尝试强制软件渲染
+
+### 报错提示“未将对象引用设置到对象的实例”
+
+- 请确保Majdata软件以及您的谱面均位于您的用户拥有权限的文件夹。比如：您将谱面文件放在`C:\Users\p'c\AppData\Local\`，将Majdata本体放在C盘根目录下，**都可能导致此问题**。
+- 如果仍然无法解决，请确认您在Windows系统中目前使用的用户是否为**超级管理员**（一般而言您应当是），并尝试**以管理员身份运行**Majdata。
+- 如果仍然无法解决，请按照报错信息提交部分的提示汇报您遇到的问题。
 
 ### 为什么我的谱面无法打开？（很长很吓人的报错）
 
@@ -222,7 +254,20 @@
 
 每一条新组合上去的**子Slide**，都需要首尾相接的写在上一条的后面，**起点无需重复书写**。比如说，`1v3-5[4:1]`就是由`1v3`和`3-5`组合而成的。
 
-语法中最后的时间指定了整条组合Slide的时间，您无法指定某一条子Slide的时长。
+语法中最后的时间指定了**整条**组合Slide的时间，这是一般而言情况下的写法。
+
+当然，您也可以指定每一条Slide的时长。
+
+```plain
+4qq4[4:1]z8[2:1],
+2b-4[4:1]^5[8:1]-1[4:1]-7[4:1],
+```
+
+如果这样写，那么就必须指定**每一条**Slide的时长，不可以一部分指定，一部分不指定（如`1-4-6[4:1]-1[4:1]`是不允许的）。
+
+此外，在这种写法下，BPM的特殊指定语法只会影响整条组合Slide的启动时间，**组合Slide中的每一条子Slide仍然会首尾相接的滑动**。
+
+如`(120){4}1-4[60#8:1]-7[60#8:1]-2[4:1],`，整条组合Slide会延迟两拍以后启动，不停顿的走完全程。第二段的`-7[60#8:1]`完全等价于`-7[4:1]`，而不会产生停顿效果。
 
 如果需要为星星头标记break或ex，则需要写在第一个数字（也即组合Slide的起点）之后，如上面的例2。
 
@@ -244,14 +289,17 @@
 
 ### Break Slide
 
-Break Slide是指，Slide的滑条部分是*Break*的。您应当将b书写在Slide时长之前。例子如下：
+Break Slide是指，Slide的滑条部分是*Break*的。
+
+您应当将b书写在Slide时长之前（Majdata语法），当然也兼容Simai语法，即写在时长之后。
 
 ```plain
 2^7b[4:1],
+2^7[4:1]b,
 1bv3-5b[4:1],
 ```
 
-您可能注意到，上面的例2中，出现了两个b，其中，第一个b指定了星星头（Slide-Tap）为Break，第二个b指定了Slide为Break。换言之，Break Slide并不一定有一个绝赞星星头。
+您可能注意到，上面的例3中，出现了两个b，其中，第一个b指定了星星头（Slide-Tap）为Break，第二个b指定了Slide为Break。换言之，**Break Slide并不一定有一个绝赞星星头**。
 
 ### Touch拓展
 
@@ -272,6 +320,10 @@ D3f,
 ## 已知问题
 
 1. **不支持动态比特率的mp3文件**
+2. 暂不支持Touch、Wifi等要素的皮肤定制
+3. 部分语法规则较为宽松，可以在Majdata中运行的谱面可能无法在其他软件中（如maipad、simai）运行
+
+其他问题见[issue页面](https://github.com/LingFeng-bbben/MajdataView/issues)
 
 ## 皮肤Skin文件夹对照表
 
