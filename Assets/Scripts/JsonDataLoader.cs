@@ -21,6 +21,8 @@ public class JsonDataLoader : MonoBehaviour
     public GameObject notes;
     public GameObject star_slidePrefab;
     public GameObject[] slidePrefab;
+    public RuntimeAnimatorController BreakShine;
+    public RuntimeAnimatorController HoldShine;
 
     public Text diffText;
     public Text levelText;
@@ -33,7 +35,7 @@ public class JsonDataLoader : MonoBehaviour
     ObjectCount objectCount;
     CustomSkin customSkin;
 
-    int slideLayer = -7000;
+    int slideLayer = -10000;
     // Start is called before the first frame update
     void Start()
     {
@@ -90,6 +92,8 @@ public class JsonDataLoader : MonoBehaviour
                             NDCompo.exSpr = customSkin.Tap_Ex;
                         }
 
+                        NDCompo.BreakShine = BreakShine;
+
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.isBreak = note.isBreak;
                         NDCompo.isEX = note.isEx;
@@ -106,6 +110,9 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.eachSpr = customSkin.Hold_Each;
                         NDCompo.exSpr = customSkin.Hold_Ex;
                         NDCompo.breakSpr = customSkin.Hold_Break;
+
+                        NDCompo.HoldShine = HoldShine;
+                        NDCompo.BreakShine = BreakShine;
 
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.time = (float)timing.time;
@@ -280,12 +287,11 @@ public class JsonDataLoader : MonoBehaviour
         int latestStartIndex = charIntParse(noteContent[0]); // 存储上一个Slide的结尾 也就是下一个Slide的起点
         int ptr = 1; // 指向目前处理的字符
 
+        int specTimeFlag = 0; // 表示此组合slide是指定总时长 还是指定每一段的时长
+        // 0-目前还没有读取 1-读取到了一个未指定时长的段落 2-读取到了一个指定时长的段落 3-（期望）读取到了最后一个时长指定
+
         while (ptr < noteContent.Length)
         {
-            if (noteContent[ptr] == '[')
-            {
-                break;
-            }
             if (!Char.IsNumber(noteContent[ptr]))
             {
                 // 读取到字符
@@ -317,6 +323,46 @@ public class JsonDataLoader : MonoBehaviour
                     latestStartIndex = charIntParse(endPos);
                 }
 
+                if (noteContent[ptr] == '[')
+                {
+                    // 如果指定了速度
+                    if (specTimeFlag == 0)
+                    {
+                        // 之前未读取过
+                        specTimeFlag = 2;
+                    }
+                    else if (specTimeFlag == 1)
+                    {
+                        // 之前读取到的都是未指定时长的段落 那么将flag设为3 如果之后又读取到时长 则报错
+                        specTimeFlag = 3;
+                    }
+                    else if (specTimeFlag == 3)
+                    {
+                        // 之前读取到了指定时长 并期待那个时长就是最终时长 但是又读取到一个新的时长 则报错
+                        throw new Exception("组合星星有错误\nSLIDE CHAIN ERROR");
+                    }
+
+                    while (ptr < noteContent.Length && noteContent[ptr] != ']')
+                    {
+                        slidePart.noteContent += noteContent[ptr++];
+                    }
+                    slidePart.noteContent += noteContent[ptr++];
+                }
+                else
+                {
+                    // 没有指定速度
+                    if (specTimeFlag == 0)
+                    {
+                        // 之前未读取过
+                        specTimeFlag = 1;
+                    }
+                    else if (specTimeFlag == 2 || specTimeFlag == 3)
+                    {
+                        // 之前读取到指定时长的段落了 说明这一条组合星星有的指定时长 有的没指定 则需要报错
+                        throw new Exception("组合星星有错误\nSLIDE CHAIN ERROR");
+                    }
+                }
+
                 var slideIndex = detectShapeFromText(slidePart.noteContent);
                 if (slideIndex < 0) { slideIndex = -slideIndex; }
 
@@ -329,7 +375,7 @@ public class JsonDataLoader : MonoBehaviour
             else
             {
                 // 理论上来说 不应该读取到数字 因此如果读取到了 说明有语法错误
-                throw new Exception("组合星星有错误\nwスライドエラー");
+                throw new Exception("组合星星有错误\nwSLIDE CHAIN ERROR");
             }
         }
 
@@ -342,13 +388,70 @@ public class JsonDataLoader : MonoBehaviour
         });
         subSlide[0].isSlideNoHead = note.isSlideNoHead;
 
-        int tempBarCount = 0;
-        for (int i = 0; i < subSlide.Count; i++)
+        if (specTimeFlag == 1 || specTimeFlag == 0)
         {
-            subSlide[i].slideStartTime = note.slideStartTime + ((double)tempBarCount / sumBarCount) * note.slideTime;
-            subSlide[i].slideTime = ((double)subBarCount[i] / sumBarCount) * note.slideTime;
-            tempBarCount += subBarCount[i];
+            // 如果到结束还是1 那说明没有一个指定了时长 报错
+            throw new Exception("组合星星有错误\nwSLIDE CHAIN ERROR");
         }
+        // 此时 flag为2表示每条指定语法 为3表示整体指定语法
+
+        if (specTimeFlag == 3)
+        {
+            // 整体指定语法 使用slideTime来计算
+            int tempBarCount = 0;
+            for (int i = 0; i < subSlide.Count; i++)
+            {
+                subSlide[i].slideStartTime = note.slideStartTime + ((double)tempBarCount / sumBarCount) * note.slideTime;
+                subSlide[i].slideTime = ((double)subBarCount[i] / sumBarCount) * note.slideTime;
+                tempBarCount += subBarCount[i];
+            }
+        }
+        else
+        {
+            // 每条指定语法
+            
+            // 获取时长的子函数
+            double getTimeFromBeats(string noteText, float currentBpm)
+            {
+                var startIndex = noteText.IndexOf('[');
+                var overIndex = noteText.IndexOf(']');
+                var innerString = noteText.Substring(startIndex + 1, overIndex - startIndex - 1);
+                var timeOneBeat = 1d / (currentBpm / 60d);
+                if (innerString.Count(o => o == '#') == 1)
+                {
+                    var times = innerString.Split('#');
+                    if (times[1].Contains(':'))
+                    {
+                        innerString = times[1];
+                        timeOneBeat = 1d / (double.Parse(times[0]) / 60d);
+                    }
+                    else
+                    {
+                        return double.Parse(times[1]);
+                    }
+                }
+                if (innerString.Count(o => o == '#') == 2)
+                {
+                    var times = innerString.Split('#');
+                    return double.Parse(times[2]);
+                }
+                var numbers = innerString.Split(':');
+                var divide = int.Parse(numbers[0]);
+                var count = int.Parse(numbers[1]);
+
+
+                return (timeOneBeat * 4d / (double)divide) * (double)count;
+            }
+
+            double tempSlideTime = 0;
+            for (int i = 0; i < subSlide.Count; i++)
+            {
+                subSlide[i].slideStartTime = note.slideStartTime+tempSlideTime;
+                subSlide[i].slideTime = getTimeFromBeats(subSlide[i].noteContent, timing.currentBpm);
+                tempSlideTime += subSlide[i].slideTime;
+            }
+        }
+
         for (int i = subSlide.Count - 1; i >= 0; i--)
         {
             if (note.noteContent.Contains('w')) //wifi
@@ -387,6 +490,8 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.breakSpr_Double = customSkin.Star_Break_Double;
         NDCompo.exSpr_Double = customSkin.Star_Ex_Double;
 
+        NDCompo.BreakShine = BreakShine;
+
         NDCompo.rotateSpeed = (float)note.slideTime;
         NDCompo.isEX = note.isEx;
         NDCompo.isBreak = note.isBreak;
@@ -399,6 +504,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.normalStar = customSkin.Star;
         WifiCompo.eachStar = customSkin.Star_Each;
         WifiCompo.breakStar = customSkin.Star_Break;
+        WifiCompo.slideShine = BreakShine;
 
         if (timing.noteList.Count > 1)
         {
@@ -438,7 +544,8 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.startPosition = note.startPosition;
         WifiCompo.time = (float)note.slideStartTime;
         WifiCompo.LastFor = (float)note.slideTime;
-        WifiCompo.sortIndex = slideLayer++;
+        WifiCompo.sortIndex = slideLayer;
+        slideLayer += 5;
     }
 
     void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd)
@@ -456,6 +563,8 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.eachSpr_Double = customSkin.Star_Each_Double;
         NDCompo.breakSpr_Double = customSkin.Star_Break_Double;
         NDCompo.exSpr_Double = customSkin.Star_Ex_Double;
+
+        NDCompo.BreakShine = BreakShine;
 
         NDCompo.rotateSpeed = (float)note.slideTime;
         NDCompo.isEX = note.isEx;
@@ -476,6 +585,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.spriteNormal = customSkin.Slide;
         SliCompo.spriteEach = customSkin.Slide_Each;
         SliCompo.spriteBreak = customSkin.Slide_Break;
+        SliCompo.slideShine = BreakShine;
 
         if (timing.noteList.Count > 1)
         {
@@ -524,6 +634,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.LastFor = (float)note.slideTime;
         //SliCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100) + sort * 5;
         SliCompo.sortIndex = slideLayer++;
+        slideLayer += 5;
     }
     bool detectJustType(string content)
     {

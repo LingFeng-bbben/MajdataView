@@ -1022,6 +1022,8 @@ MonoBehaviour:
   - {fileID: 796092474901863576, guid: fe567d9733d824344ac702ea96d93a93, type: 3}
   - {fileID: 2695972272465249242, guid: 15779da816ed35141891224b0f894832, type: 3}
   - {fileID: 3042661451837740866, guid: 266f7f21a3d83ef4593daba2c354d4c5, type: 3}
+  BreakShine: {fileID: 9100000, guid: c28f56116f6dc34408d6f0f544f1e2cc, type: 2}
+  HoldShine: {fileID: 9100000, guid: 3fcb4587ef8c7f141969450782191592, type: 2}
   diffText: {fileID: 295904848}
   levelText: {fileID: 1130077457}
   titleText: {fileID: 494240256}

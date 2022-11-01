@@ -16,6 +16,8 @@ public class WifiDrop : MonoBehaviour
     public Sprite eachStar;
     public Sprite breakStar;
 
+    public RuntimeAnimatorController slideShine;
+
     public bool isJustR;
     public float time;
     public float timeStart;
@@ -39,6 +41,8 @@ public class WifiDrop : MonoBehaviour
     Vector3 SlidePositionStart = new Vector3();
     Vector3[] SlidePositionEnd = new Vector3[3];
 
+    bool startShining = false;
+    List<Animator> animators = new List<Animator>();
 
     void Start()
     {
@@ -49,7 +53,7 @@ public class WifiDrop : MonoBehaviour
             star_slide[i] = Instantiate(star_slidePrefab, notes);
             spriteRenderer_star[i] = star_slide[i].GetComponent<SpriteRenderer>();
             if (isEach) spriteRenderer_star[i].sprite = eachStar;
-            if (isBreak) spriteRenderer_star[i].sprite = breakStar;
+            else if (isBreak) spriteRenderer_star[i].sprite = breakStar;
             else spriteRenderer_star[i].sprite = normalStar;
             star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i + 3 + startPosition)));
             SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
@@ -63,9 +67,12 @@ public class WifiDrop : MonoBehaviour
             slideBars.Add(transform.GetChild(i).gameObject);
         }
         slideOK = transform.GetChild(transform.childCount - 1).gameObject;//slideok is the last one
-        if (isJustR) {
+        if (isJustR)
+        {
             slideOK.GetComponent<LoadJustSprite>().setR();
-        } else {
+        }
+        else
+        {
             slideOK.GetComponent<LoadJustSprite>().setL();
             slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
         }
@@ -76,8 +83,20 @@ public class WifiDrop : MonoBehaviour
         for (int i = 0; i < slideBars.Count; i++)
         {
             var sr = slideBars[i].GetComponent<SpriteRenderer>();
-            if (isBreak) sr.sprite = breakSlide[i];
-            else if (isEach) sr.sprite = eachSlide[i];
+
+            if (isBreak)
+            {
+                sr.sprite = breakSlide[i];
+                Animator anim = slideBars[i].AddComponent<Animator>();
+                anim.runtimeAnimatorController = slideShine;
+                anim.enabled = false;
+                animators.Add(anim);
+            }
+            else if (isEach)
+            {
+                sr.sprite = eachSlide[i];
+            }
+
             sbRender.Add(sr);
             sr.color = new Color(1f, 1f, 1f, 0f);
             sr.sortingOrder += sortIndex;
@@ -99,11 +118,19 @@ public class WifiDrop : MonoBehaviour
             var alpha = startiming * (speed / 3) + 1f;
             alpha = alpha > 1f ? 1f : alpha;
             alpha = alpha < 0f ? 0f : alpha;
-            foreach (var sr in sbRender)
-            {
-               sr.color = new Color(1f, 1f, 1f, alpha);
-            }
+            setSlideBarAlpha(alpha);
             return;
+        }
+        setSlideBarAlpha(1f);
+
+        if (isBreak && !startShining)
+        {
+            startShining = true;
+            foreach (Animator anim in animators)
+            {
+                anim.enabled = true;
+                anim.Play("BreakShine", -1, 0f);
+            }
         }
 
         foreach (var star in star_slide)
@@ -132,7 +159,7 @@ public class WifiDrop : MonoBehaviour
         }
         if (timing > 0f)
         {
-            
+
             var process = (LastFor - timing) / LastFor;
             process = 1f - process;
             if (process > 1)
@@ -164,6 +191,15 @@ public class WifiDrop : MonoBehaviour
             {
                 slideBars[i].SetActive(false);
             }
+        }
+    }
+    void setSlideBarAlpha(float alpha)
+    {
+        foreach (var sr in sbRender)
+        {
+            Color oldColor = sr.color;
+            oldColor.a = alpha;
+            sr.color = oldColor;
         }
     }
 

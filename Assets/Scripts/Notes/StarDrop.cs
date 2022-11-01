@@ -29,6 +29,8 @@ public class StarDrop : MonoBehaviour
     public Sprite eachLine;
     public Sprite breakLine;
 
+    public RuntimeAnimatorController BreakShine;
+
     public GameObject slide;
     public GameObject tapLine;
 
@@ -43,6 +45,10 @@ public class StarDrop : MonoBehaviour
     SpriteRenderer exSpriteRender;
 
     ObjectCount objectCount;
+
+    bool breakAnimStart = false;
+    Animator animator;
+
     void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -83,6 +89,10 @@ public class StarDrop : MonoBehaviour
                 {
                     exSpriteRender.color = exEffectBreak;
                 }
+                Animator anim = gameObject.AddComponent<Animator>();  // break star闪烁
+                anim.runtimeAnimatorController = BreakShine;
+                anim.enabled = false;
+                animator = anim;
             }
         }
         else
@@ -110,6 +120,10 @@ public class StarDrop : MonoBehaviour
                 {
                     exSpriteRender.color = exEffectBreak;
                 }
+                Animator anim = gameObject.AddComponent<Animator>();  // break star闪烁
+                anim.runtimeAnimatorController = BreakShine;
+                anim.enabled = false;
+                animator = anim;
             }
         }
         spriteRenderer.forceRenderingOff = true;
@@ -130,6 +144,12 @@ public class StarDrop : MonoBehaviour
         {
             spriteRenderer.forceRenderingOff = false;
             if (isEX) exSpriteRender.forceRenderingOff = false;
+        }
+        if (isBreak && !breakAnimStart)
+        {
+            breakAnimStart = true;
+            animator.enabled = true;
+            animator.Play("BreakShine", -1, 0.5f);
         }
 
         if (timing > 0) {

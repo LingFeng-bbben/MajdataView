@@ -22,6 +22,8 @@ public class TapDrop : MonoBehaviour
     public Sprite eachLine;
     public Sprite breakLine;
 
+    public RuntimeAnimatorController BreakShine;
+
     public GameObject tapLine;
 
     public Color exEffectTap;
@@ -35,6 +37,10 @@ public class TapDrop : MonoBehaviour
     SpriteRenderer exSpriteRender;
 
     ObjectCount objectCount;
+
+    bool breakAnimStart = false;
+    Animator animator;
+
     void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -74,6 +80,10 @@ public class TapDrop : MonoBehaviour
             {
                 exSpriteRender.color = exEffectBreak;
             }
+            Animator anim = gameObject.AddComponent<Animator>();  // break tap闪烁
+            anim.runtimeAnimatorController = BreakShine;
+            anim.enabled = false;
+            animator = anim;
         }
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;
@@ -91,6 +101,12 @@ public class TapDrop : MonoBehaviour
         }
         spriteRenderer.forceRenderingOff = false;
         if(isEX) exSpriteRender.forceRenderingOff = false;
+        if (isBreak && !breakAnimStart)
+        {
+            breakAnimStart = true;
+            animator.enabled = true;
+            animator.Play("BreakShine", -1, 0.5f);
+        }
 
         if (timing > 0)
         {
