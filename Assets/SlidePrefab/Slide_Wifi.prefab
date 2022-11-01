@@ -644,10 +644,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   star_slidePrefab: {fileID: 3082733108601366817, guid: 42156a3b3ae4d054da74641cd739534f,
     type: 3}
+  eachSlide:
+  - {fileID: -2104979366251557822, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -5508730858329978074, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 1660827000066962834, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -3035267430650131031, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -439320201241764418, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 5960795151959469272, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 6048690973988703305, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -3748293275541971110, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: -3300150129828961110, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 5821571336286938200, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  - {fileID: 4201695303700987197, guid: 50d6d666b978c944cb65ebdf8366b7bc, type: 3}
+  breakSlide:
+  - {fileID: -6546410876217497116, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -6063473975745692081, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -708685629431033037, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -2016628678761655281, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: 4221847290182326359, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: 5363148054523604052, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -5714714075864894090, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -1387646478963634914, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -4777771625403694506, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: 1725681396707737570, guid: 79612319b62e28541879c9b8cb425989, type: 3}
+  - {fileID: -2499823243339350701, guid: 79612319b62e28541879c9b8cb425989, type: 3}
   normalStar: {fileID: 0}
   eachStar: {fileID: 21300000, guid: 18b858f24d67a4341ab427db18c00991, type: 3}
   breakStar: {fileID: 0}
-  animController: {fileID: 9100000, guid: c28f56116f6dc34408d6f0f544f1e2cc, type: 2}
+  slideShine: {fileID: 0}
   isJustR: 0
   time: 0
   timeStart: 0
