@@ -8,7 +8,9 @@ public class TapEffectManager : MonoBehaviour
     public Sprite star;
 
     GameObject[] tapEffects = new GameObject[8];
-    Animator[] animators = new Animator[8];
+    Animator[] tapAnimators = new Animator[8];
+    GameObject[] judgeEffects = new GameObject[8];
+    Animator[] judgeAnimators = new Animator[8];
 
     // Start is called before the first frame update
     void Start()
@@ -16,8 +18,14 @@ public class TapEffectManager : MonoBehaviour
         for(int i = 0; i < transform.childCount; i++)
         {
             tapEffects[i] = transform.GetChild(i).gameObject;
-            animators[i] = tapEffects[i].GetComponent<Animator>();
+            tapAnimators[i] = tapEffects[i].GetComponent<Animator>();
             tapEffects[i].SetActive(false);
+        }
+        GameObject judgeObject = GameObject.Find("JudgeEffects");
+        for (int i = 0; i < judgeObject.transform.childCount; i++)
+        {
+            judgeEffects[i] = judgeObject.transform.GetChild(i).gameObject;
+            judgeAnimators[i] = judgeEffects[i].GetComponent<Animator>();
         }
     }
 
@@ -26,7 +34,15 @@ public class TapEffectManager : MonoBehaviour
     {
         var pos = position - 1;
         tapEffects[pos].SetActive(true);
-        if (isBreak) animators[pos].SetTrigger("break");
-        else animators[pos].SetTrigger("tap");
+        if (isBreak)
+        {
+            tapAnimators[pos].SetTrigger("break");
+            judgeAnimators[pos].SetTrigger("break");
+        }
+        else
+        {
+            tapAnimators[pos].SetTrigger("tap");
+            judgeAnimators[pos].SetTrigger("perfect");
+        }
     }
 }
