@@ -37,6 +37,16 @@ public class CustomSkin : MonoBehaviour
     public Sprite JudgeText_Normal;
     public Sprite JudgeText_Break;
 
+    public Sprite Touch;
+    public Sprite Touch_Each;
+    public Sprite TouchPoint;
+    public Sprite TouchPoint_Each;
+    public Sprite TouchJust;
+    public Sprite[] TouchBorder = new Sprite[2];
+    public Sprite[] TouchBorder_Each = new Sprite[2];
+
+    public Sprite[] TouchHold = new Sprite[5];
+
     public Texture2D test;
 
     // Start is called before the first frame update
@@ -87,6 +97,24 @@ public class CustomSkin : MonoBehaviour
 
         JudgeText_Normal = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_normal.png");
         JudgeText_Break = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_break.png");
+
+        Touch = SpriteLoader.LoadSpriteFromFile(path + "/touch.png");
+        Touch_Each = SpriteLoader.LoadSpriteFromFile(path + "/touch_each.png");
+        TouchPoint = SpriteLoader.LoadSpriteFromFile(path + "/touch_point.png");
+        TouchPoint_Each = SpriteLoader.LoadSpriteFromFile(path + "/touch_point_each.png");
+
+        TouchJust = SpriteLoader.LoadSpriteFromFile(path + "/touch_just.png");
+
+        TouchBorder[0] = SpriteLoader.LoadSpriteFromFile(path + "/touch_border_2.png");
+        TouchBorder[1] = SpriteLoader.LoadSpriteFromFile(path + "/touch_border_3.png");
+        TouchBorder_Each[0] = SpriteLoader.LoadSpriteFromFile(path + "/touch_border_2_each.png");
+        TouchBorder_Each[1] = SpriteLoader.LoadSpriteFromFile(path + "/touch_border_3_each.png");
+
+        for (int i = 0; i < 4; i++)
+        {
+            TouchHold[i] = SpriteLoader.LoadSpriteFromFile(path + "/touchhold_" + i +".png");
+        }
+        TouchHold[4] = SpriteLoader.LoadSpriteFromFile(path + "/touchhold_border.png");
 
         Debug.Log(test);
     }

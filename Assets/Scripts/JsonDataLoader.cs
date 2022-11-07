@@ -130,6 +130,9 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.lastFor = (float)note.holdTime;
                         NDCompo.speed = touchSpeed * timing.HSpeed;
                         NDCompo.isFirework = note.isHanabi;
+
+                        Array.Copy(customSkin.TouchHold, NDCompo.TouchHoldSprite, 5);
+                        NDCompo.TouchPointSprite = customSkin.TouchPoint;
                     }
                     if (note.noteType == SimaiNoteType.Touch)
                     {
@@ -138,6 +141,15 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.time = (float)timing.time;
                         NDCompo.areaPosition = note.touchArea;
                         NDCompo.startPosition = note.startPosition;
+
+                        NDCompo.fanNormalSprite = customSkin.Touch;
+                        NDCompo.fanEachSprite = customSkin.Touch_Each;
+                        NDCompo.pointNormalSprite = customSkin.TouchPoint;
+                        NDCompo.pointEachSprite = customSkin.TouchPoint_Each;
+                        NDCompo.justSprite = customSkin.TouchJust;
+                        Array.Copy(customSkin.TouchBorder, NDCompo.multTouchNormalSprite, 2);
+                        Array.Copy(customSkin.TouchBorder_Each, NDCompo.multTouchEachSprite, 2);
+
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.speed = touchSpeed * timing.HSpeed;
                         NDCompo.isFirework = note.isHanabi;
