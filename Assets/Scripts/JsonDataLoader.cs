@@ -506,6 +506,10 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.breakStar = customSkin.Star_Break;
         WifiCompo.slideShine = BreakShine;
 
+        Array.Copy(customSkin.Wifi, WifiCompo.normalSlide, 11);
+        Array.Copy(customSkin.Wifi_Each, WifiCompo.eachSlide, 11);
+        Array.Copy(customSkin.Wifi_Break, WifiCompo.breakSlide, 11);
+
         if (timing.noteList.Count > 1)
         {
             NDCompo.isEach = true;

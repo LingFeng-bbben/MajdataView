@@ -15,9 +15,9 @@ public class CustomSkin : MonoBehaviour
     public Sprite Slide;
     public Sprite Slide_Each;
     public Sprite Slide_Break;
-    //public Sprite Wifi;
-    //public Sprite Wifi_Each;
-    //public Sprite Wifi_Break;
+    public Sprite[] Wifi = new Sprite[11];
+    public Sprite[] Wifi_Each = new Sprite[11];
+    public Sprite[] Wifi_Break = new Sprite[11];
 
     public Sprite Star;
     public Sprite Star_Double;
@@ -37,6 +37,8 @@ public class CustomSkin : MonoBehaviour
     public Sprite JudgeText_Normal;
     public Sprite JudgeText_Break;
 
+    public Texture2D test;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +56,12 @@ public class CustomSkin : MonoBehaviour
         Slide = SpriteLoader.LoadSpriteFromFile(path + "/slide.png");
         Slide_Each = SpriteLoader.LoadSpriteFromFile(path + "/slide_each.png");
         Slide_Break = SpriteLoader.LoadSpriteFromFile(path + "/slide_break.png");
+        for (int i = 0; i < 11; i++)
+        {
+            Wifi[i] = SpriteLoader.LoadSpriteFromFile(path + "/wifi_" + i + ".png");
+            Wifi_Each[i] = SpriteLoader.LoadSpriteFromFile(path + "/wifi_each_" + i + ".png");
+            Wifi_Break[i] = SpriteLoader.LoadSpriteFromFile(path + "/wifi_break_" + i + ".png");
+        }
 
         Star = SpriteLoader.LoadSpriteFromFile(path + "/star.png");
         Star_Double = SpriteLoader.LoadSpriteFromFile(path + "/star_double.png");
@@ -79,6 +87,8 @@ public class CustomSkin : MonoBehaviour
 
         JudgeText_Normal = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_normal.png");
         JudgeText_Break = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_break.png");
+
+        Debug.Log(test);
     }
 
     // Update is called once per frame

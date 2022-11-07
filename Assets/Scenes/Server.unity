@@ -375,6 +375,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  JudgeText_Normal: {fileID: 0}
+  JudgeText_Break: {fileID: 0}
+  test: {fileID: 2800000, guid: 6957da2c263275c4fb9bf416a25d654a, type: 3}
 --- !u!1 &1794058321
 GameObject:
   m_ObjectHideFlags: 0
