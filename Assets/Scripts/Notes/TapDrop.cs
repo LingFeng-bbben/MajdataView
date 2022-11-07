@@ -110,7 +110,7 @@ public class TapDrop : MonoBehaviour
 
         if (timing > 0)
         {
-            GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, isBreak);
+            GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
             if (isBreak) objectCount.breakCount++;
             else objectCount.tapCount++;
 
