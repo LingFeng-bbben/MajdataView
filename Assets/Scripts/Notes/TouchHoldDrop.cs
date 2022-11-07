@@ -17,6 +17,9 @@ public class TouchHoldDrop : MonoBehaviour
     GameObject firework;
     Animator fireworkEffect;
 
+    public Sprite[] TouchHoldSprite = new Sprite[5];
+    public Sprite TouchPointSprite;
+
     public GameObject[] fans;
     SpriteRenderer[] fansSprite = new SpriteRenderer[6];
     public SpriteMask mask;
@@ -45,6 +48,14 @@ public class TouchHoldDrop : MonoBehaviour
         {
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
         }
+
+        for (int i = 0; i < 4; i++)
+        {
+            fansSprite[i].sprite = TouchHoldSprite[i];
+        }
+        fansSprite[5].sprite = TouchHoldSprite[4];      // TouchHold Border
+        fansSprite[4].sprite = TouchPointSprite;
+
         SetfanColor(new Color(1f, 1f, 1f, 0f));
         mask.enabled = false;
     }

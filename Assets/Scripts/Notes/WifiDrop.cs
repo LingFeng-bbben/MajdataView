@@ -10,6 +10,7 @@ public class WifiDrop : MonoBehaviour
 
     SpriteRenderer[] spriteRenderer_star = new SpriteRenderer[3];
 
+    public Sprite[] normalSlide = new Sprite[11];
     public Sprite[] eachSlide = new Sprite[11];
     public Sprite[] breakSlide = new Sprite[11];
     public Sprite normalStar;
@@ -95,6 +96,10 @@ public class WifiDrop : MonoBehaviour
             else if (isEach)
             {
                 sr.sprite = eachSlide[i];
+            }
+            else
+            {
+                sr.sprite = normalSlide[i];
             }
 
             sbRender.Add(sr);

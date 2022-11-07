@@ -18,10 +18,17 @@ public class TouchDrop : MonoBehaviour
     public GameObject multTouchEffect2;
     public GameObject multTouchEffect3;
 
-    public Sprite faneachSprite;
+    public Sprite fanNormalSprite;
+    public Sprite fanEachSprite;
+
+    public Sprite pointNormalSprite;
     public Sprite pointEachSprite;
-    public Sprite multTouch2EachSprite;
-    public Sprite multTouch3EachSprite;
+
+    public Sprite justSprite;
+
+    public Sprite[] multTouchNormalSprite = new Sprite[2];
+    public Sprite[] multTouchEachSprite = new Sprite[2];
+
     AudioTimeProvider timeProvider;
     MultTouchHandler multTouchHandler;
 
@@ -55,12 +62,22 @@ public class TouchDrop : MonoBehaviour
         {
             fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
         }
+
         if (isEach) { 
-            SetfanSprite(faneachSprite);
+            SetfanSprite(fanEachSprite);
             fansSprite[4].sprite = pointEachSprite;
-            fansSprite[5].sprite = multTouch2EachSprite;
-            fansSprite[6].sprite = multTouch3EachSprite;
+            fansSprite[5].sprite = multTouchEachSprite[0];
+            fansSprite[6].sprite = multTouchEachSprite[1];
         }
+        else
+        {
+            SetfanSprite(fanNormalSprite);
+            fansSprite[4].sprite = pointNormalSprite;
+            fansSprite[5].sprite = multTouchNormalSprite[0];
+            fansSprite[6].sprite = multTouchNormalSprite[1];
+        }
+        justEffect.GetComponent<SpriteRenderer>().sprite = justSprite;
+
         transform.position = GetAreaPos(startPosition, areaPosition);
         justEffect.SetActive(false);
         SetfanColor(new Color(1f, 1f, 1f, 0f));
