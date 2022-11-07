@@ -748,19 +748,19 @@ Transform:
   m_Children:
   - {fileID: 2136680973}
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &369171440
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 413796635}
+    m_TransformParent: {fileID: 939379138}
     m_Modifications:
     - target: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_Name
-      value: Tap_Effect (2)
+      value: TapEffect4
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -785,7 +785,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.50000083
+      value: -0.19509031
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -800,7 +800,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.866025
+      value: 0.98078537
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -815,7 +815,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 120.00001
+      value: 202.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3edd06a81e4ec844bb281d728dce49b2, type: 3}
@@ -905,12 +905,12 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 413796635}
+    m_TransformParent: {fileID: 939379138}
     m_Modifications:
     - target: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_Name
-      value: Tap_Effect (1)
+      value: TapEffect3
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -935,7 +935,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.9659264
+      value: 0.19509041
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -950,7 +950,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.25881684
+      value: 0.9807853
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -965,7 +965,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -30.000002
+      value: 157.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3edd06a81e4ec844bb281d728dce49b2, type: 3}
@@ -1244,7 +1244,7 @@ GameObject:
   - component: {fileID: 413796635}
   - component: {fileID: 413796634}
   m_Layer: 0
-  m_Name: TapEffects
+  m_Name: NoteEffects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1275,14 +1275,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 3067806536291434088}
-  - {fileID: 1673765536}
-  - {fileID: 378737506}
-  - {fileID: 369171441}
-  - {fileID: 1495139241}
-  - {fileID: 1239329122}
-  - {fileID: 1762033402}
-  - {fileID: 949612863}
+  - {fileID: 939379138}
+  - {fileID: 532882189}
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1784,7 +1778,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 532882188}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1796,8 +1790,8 @@ Transform:
   - {fileID: 1936313801}
   - {fileID: 378430068}
   - {fileID: 1961844058}
-  m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_Father: {fileID: 413796635}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &562282296
 GameObject:
@@ -2790,7 +2784,7 @@ PrefabInstance:
     - target: {fileID: 1219397163196343875, guid: c1701d28c8a13d74a90a9e4dea169092,
         type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 1219397163196343875, guid: c1701d28c8a13d74a90a9e4dea169092,
         type: 3}
@@ -2854,6 +2848,44 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1701d28c8a13d74a90a9e4dea169092, type: 3}
+--- !u!1 &939379137
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 939379138}
+  m_Layer: 0
+  m_Name: TapEffects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &939379138
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939379137}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3067806536291434088}
+  - {fileID: 1673765536}
+  - {fileID: 378737506}
+  - {fileID: 369171441}
+  - {fileID: 1495139241}
+  - {fileID: 1239329122}
+  - {fileID: 1762033402}
+  - {fileID: 949612863}
+  m_Father: {fileID: 413796635}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &946807015
 GameObject:
   m_ObjectHideFlags: 0
@@ -2942,12 +2974,12 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 413796635}
+    m_TransformParent: {fileID: 939379138}
     m_Modifications:
     - target: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_Name
-      value: Tap_Effect (6)
+      value: TapEffect8
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -2972,7 +3004,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9659258
+      value: 0.98078537
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -2987,7 +3019,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.25881934
+      value: 0.19509031
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -3002,7 +3034,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 30.000002
+      value: 22.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3edd06a81e4ec844bb281d728dce49b2, type: 3}
@@ -3287,12 +3319,12 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 413796635}
+    m_TransformParent: {fileID: 939379138}
     m_Modifications:
     - target: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_Name
-      value: Tap_Effect (4)
+      value: TapEffect6
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -3317,7 +3349,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.96592575
+      value: -0.8314697
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -3332,7 +3364,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.25881946
+      value: 0.5555702
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -3347,7 +3379,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 30.000002
+      value: 292.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3edd06a81e4ec844bb281d728dce49b2, type: 3}
@@ -3885,12 +3917,12 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 413796635}
+    m_TransformParent: {fileID: 939379138}
     m_Modifications:
     - target: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_Name
-      value: Tap_Effect (3)
+      value: TapEffect5
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -3915,7 +3947,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8660259
+      value: -0.55557
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -3930,7 +3962,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.4999992
+      value: 0.8314698
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -3945,7 +3977,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 60.000004
+      value: 247.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3edd06a81e4ec844bb281d728dce49b2, type: 3}
@@ -4756,12 +4788,12 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 413796635}
+    m_TransformParent: {fileID: 939379138}
     m_Modifications:
     - target: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_Name
-      value: Tap_Effect
+      value: TapEffect2
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -4786,7 +4818,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9659256
+      value: 0.55557024
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -4801,7 +4833,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.25882035
+      value: 0.8314696
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -4816,7 +4848,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 30.000002
+      value: 112.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3edd06a81e4ec844bb281d728dce49b2, type: 3}
@@ -4906,12 +4938,12 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 413796635}
+    m_TransformParent: {fileID: 939379138}
     m_Modifications:
     - target: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_Name
-      value: Tap_Effect (5)
+      value: TapEffect7
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -4936,7 +4968,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.79335326
+      value: -0.9807853
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -4951,7 +4983,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.6087616
+      value: 0.19509049
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -4966,7 +4998,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 75
+      value: 337.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3edd06a81e4ec844bb281d728dce49b2, type: 3}
@@ -6143,7 +6175,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 413796635}
+    m_TransformParent: {fileID: 939379138}
     m_Modifications:
     - target: {fileID: 314035495445613876, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -6160,7 +6192,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238881, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_Name
-      value: Tap_Effect (7)
+      value: TapEffect1
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -6185,7 +6217,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8653567
+      value: 0.8314697
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -6200,7 +6232,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.5011566
+      value: 0.5555702
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
@@ -6215,7 +6247,7 @@ PrefabInstance:
     - target: {fileID: 314035496818238884, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 60.153004
+      value: 67.5
       objectReference: {fileID: 0}
     - target: {fileID: 314035496818238887, guid: 3edd06a81e4ec844bb281d728dce49b2,
         type: 3}

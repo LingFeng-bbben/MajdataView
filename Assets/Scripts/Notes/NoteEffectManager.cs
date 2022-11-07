@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TapEffectManager : MonoBehaviour
+public class NoteEffectManager : MonoBehaviour
 {
     public Sprite hex;
     public Sprite star;
@@ -15,17 +15,36 @@ public class TapEffectManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0; i < transform.childCount; i++)
+        GameObject tapEffectParent = transform.GetChild(0).gameObject;
+        GameObject judgeEffectParent = transform.GetChild(1).gameObject;
+
+        for (int i = 0; i < tapEffectParent.transform.childCount; i++)
         {
-            tapEffects[i] = transform.GetChild(i).gameObject;
+            tapEffects[i] = tapEffectParent.transform.GetChild(i).gameObject;
             tapAnimators[i] = tapEffects[i].GetComponent<Animator>();
             tapEffects[i].SetActive(false);
         }
-        GameObject judgeObject = GameObject.Find("JudgeEffects");
-        for (int i = 0; i < judgeObject.transform.childCount; i++)
+        
+        for (int i = 0; i < judgeEffectParent.transform.childCount; i++)
         {
-            judgeEffects[i] = judgeObject.transform.GetChild(i).gameObject;
+            judgeEffects[i] = judgeEffectParent.transform.GetChild(i).gameObject;
             judgeAnimators[i] = judgeEffects[i].GetComponent<Animator>();
+        }
+
+        LoadSkin();
+    }
+
+    /// <summary>
+    /// 加载判定文本的皮肤
+    /// </summary>
+    private void LoadSkin()
+    {
+        CustomSkin customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
+
+        foreach (GameObject judgeEffect in judgeEffects)
+        {
+            judgeEffect.transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite = customSkin.JudgeText_Normal;
+            judgeEffect.transform.GetChild(0).GetChild(1).gameObject.GetComponent<SpriteRenderer>().sprite = customSkin.JudgeText_Break;
         }
     }
 

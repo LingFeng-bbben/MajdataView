@@ -34,6 +34,8 @@ public class CustomSkin : MonoBehaviour
     public Sprite Hold_Break;
 
     public Sprite[] Just = new Sprite[6];
+    public Sprite JudgeText_Normal;
+    public Sprite JudgeText_Break;
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +76,9 @@ public class CustomSkin : MonoBehaviour
         Just[3] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_l.png");
         Just[4] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_l.png");
         Just[5] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_d.png");
+
+        JudgeText_Normal = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_normal.png");
+        JudgeText_Break = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_break.png");
     }
 
     // Update is called once per frame

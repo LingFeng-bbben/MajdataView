@@ -154,7 +154,7 @@ public class StarDrop : MonoBehaviour
 
         if (timing > 0) {
             if (!isNoHead) {
-                GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, isBreak);
+                GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
                 if (isBreak) objectCount.breakCount++;
                 else objectCount.tapCount++;
             }
