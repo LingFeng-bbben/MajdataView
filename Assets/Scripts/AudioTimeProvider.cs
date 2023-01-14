@@ -19,8 +19,8 @@ public class AudioTimeProvider : MonoBehaviour
         AudioTime = offset;
         var dateTime = new DateTime(ticks);
         var seconds = (dateTime - DateTime.Now).TotalSeconds;
-        startTime = Time.realtimeSinceStartup + (float)seconds;
-        speed = _speed;
+        startTime = Time.time + (float)seconds;
+        Time.timeScale = _speed;
         isStart = true;
     }
 
@@ -34,6 +34,6 @@ public class AudioTimeProvider : MonoBehaviour
     void Update()
     {
         if (isStart)
-            AudioTime = (Time.realtimeSinceStartup - startTime) * speed + offset;
+            AudioTime = (Time.time - startTime) + offset;
     }
 }
