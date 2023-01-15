@@ -21,6 +21,6 @@ public class Floating : MonoBehaviour
     void Update()
     {
         rectTransform.Rotate(new Vector3(0f, 0f, rotate));
-        rectTransform.localPosition = startPos + new Vector3(Mathf.Sin(Time.realtimeSinceStartup * wx), Mathf.Sin(Time.realtimeSinceStartup * wy));
+        rectTransform.localPosition = startPos + new Vector3(Mathf.Sin(Time.time * wx), Mathf.Sin(Time.time * wy));
     }
 }

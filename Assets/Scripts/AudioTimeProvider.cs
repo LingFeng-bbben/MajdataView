@@ -11,16 +11,27 @@ public class AudioTimeProvider : MonoBehaviour
     float speed;
     long ticks = 0;
     public bool isStart = false;
+    public bool isRecord = false;
     public float offset = 0f;
-    public void SetStartTime(long _ticks, float _offset,float _speed)
+    public void SetStartTime(long _ticks, float _offset, float _speed, bool _isRecord = false)
     {
         ticks = _ticks;
         offset = _offset;
         AudioTime = offset;
         var dateTime = new DateTime(ticks);
         var seconds = (dateTime - DateTime.Now).TotalSeconds;
-        startTime = Time.time + (float)seconds;
-        Time.timeScale = _speed;
+        isRecord = _isRecord;
+        if (_isRecord) {
+            startTime = Time.time + (float)seconds;
+            Time.timeScale = _speed;
+            Time.captureFramerate = 60;
+        }
+        else
+        {
+            startTime = Time.realtimeSinceStartup + (float)seconds;
+            speed = _speed;
+            Time.captureFramerate = 0;
+        }
         isStart = true;
     }
 
@@ -34,6 +45,16 @@ public class AudioTimeProvider : MonoBehaviour
     void Update()
     {
         if (isStart)
-            AudioTime = (Time.time - startTime) + offset;
+        {
+            if (isRecord)
+            {
+                AudioTime = (Time.time - startTime) + offset;
+            }
+            else
+            {
+                AudioTime = (Time.realtimeSinceStartup - startTime) *speed + offset;
+            }
+        }
     }
+
 }

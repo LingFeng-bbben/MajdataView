@@ -66,6 +66,7 @@ public class HttpHandler : MonoBehaviour
         var bgManager = GameObject.Find("Background").GetComponent<BGManager>();
         var bgCover = GameObject.Find("BackgroundCover").GetComponent<SpriteRenderer>();
         var SongDetail = GameObject.Find("CanvasSongDetail");
+        var screenRecorder = GameObject.Find("ScreenRecorder").GetComponent<ScreenRecorder>();
 
         if (data.control == EditorControlMethod.Start)
         {
@@ -93,13 +94,28 @@ public class HttpHandler : MonoBehaviour
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
             bgManager.PlaySongDetail();
         }
-        if(data.control == EditorControlMethod.Pause)
+        if (data.control == EditorControlMethod.Record)
+        {
+            request = "";
+            timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed,true);
+            screenRecorder.StartRecording();
+            loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
+            loader.touchSpeed = data.touchSpeed;
+            loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
+            GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>().clearSlots();
+
+            bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
+            bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
+            bgManager.PlaySongDetail();
+        }
+        if (data.control == EditorControlMethod.Pause)
         {
             timeProvider.isStart = false;
             bgManager.PauseVideo();
         }
         if (data.control == EditorControlMethod.Stop)
         {
+            screenRecorder.StopRecording();
             timeProvider.ResetStartTime();
             SceneManager.LoadScene(1);
         }
