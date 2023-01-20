@@ -97,14 +97,15 @@ public class HttpHandler : MonoBehaviour
         if (data.control == EditorControlMethod.Record)
         {
             request = "";
+            var maidataPath = new FileInfo(data.jsonPath).DirectoryName;
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed,true);
-            screenRecorder.StartRecording();
+            screenRecorder.StartRecording(maidataPath);
             loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
             loader.touchSpeed = data.touchSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
             GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>().clearSlots();
 
-            bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
+            bgManager.LoadBGFromPath(maidataPath, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
             bgManager.PlaySongDetail();
         }

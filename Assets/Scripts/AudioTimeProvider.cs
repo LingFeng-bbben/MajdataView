@@ -22,7 +22,7 @@ public class AudioTimeProvider : MonoBehaviour
         var seconds = (dateTime - DateTime.Now).TotalSeconds;
         isRecord = _isRecord;
         if (_isRecord) {
-            startTime = Time.time + (float)seconds;
+            startTime = Time.time +5;
             Time.timeScale = _speed;
             Time.captureFramerate = 60;
         }
