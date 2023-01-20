@@ -27,19 +27,19 @@ public class ScreenRecorder : MonoBehaviour
     bool isRecording = false;
     IEnumerator CaptureScreen(string maidata_path)
     {
-        Screen.SetResolution(1920, 1080, false);
-        yield return new WaitForEndOfFrame();
-        var texture = ScreenCapture.CaptureScreenshotAsTexture();
-        byte[] data = texture.GetRawTextureData();
-        print(texture.width + "x" + texture.height);
-        int BUFFERSIZE = texture.width * texture.height * 4;
+        if (Screen.width % 2 != 0 || Screen.height % 2 != 0)
+        {
+            GameObject.Find("ErrText").GetComponent<Text>().text = "无法开始编码，因为分辨率宽度不是偶数。\n请调到全屏模式或改变窗口大小来尝试解决该问题\n当前:"+Screen.width+"x"+Screen.height;
+        }
+        byte[] data;
+        var texture = new Texture2D(0,0);
         using (NamedPipeServerStream pipeServer = 
             new NamedPipeServerStream("majdataRec", PipeDirection.Out))
         {
             var wavpath = maidata_path + "/out.wav";
             var outputfile = maidata_path + "/out.mp4";
             var arguments = string.Format(@"-y -f rawvideo -vcodec rawvideo -pix_fmt rgba -s {3}x{4} -r 60 -i \\.\pipe\majdataRec -i {0} -vf {1} -c:v libx264 -preset fast -pix_fmt yuv422p -c:a aac {2}",
-                wavpath, "\"vflip\"", outputfile , texture.width, texture.height);
+                wavpath, "\"vflip\"", outputfile , Screen.width, Screen.height);
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "/ffmpeg.exe", arguments);
             startinfo.WorkingDirectory = maidata_path;
             print(arguments);
