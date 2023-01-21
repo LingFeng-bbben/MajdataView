@@ -27,17 +27,19 @@ public class ScreenRecorder : MonoBehaviour
     bool isRecording = false;
     IEnumerator CaptureScreen(string maidata_path)
     {
-        if (Screen.width % 2 != 0 || Screen.height % 2 != 0)
+        if (Screen.width % 2 != 0)
         {
             GameObject.Find("ErrText").GetComponent<Text>().text = "无法开始编码，因为分辨率宽度不是偶数。\n请调到全屏模式或改变窗口大小来尝试解决该问题\n当前:"+Screen.width+"x"+Screen.height;
         }
+        if (File.Exists(maidata_path + "/out.mp4"))
+            File.Delete(maidata_path + "/out.mp4");
         byte[] data;
         var texture = new Texture2D(0,0);
         using (NamedPipeServerStream pipeServer = 
             new NamedPipeServerStream("majdataRec", PipeDirection.Out))
         {
-            var wavpath = maidata_path + "/out.wav";
-            var outputfile = maidata_path + "/out.mp4";
+            var wavpath = "out.wav";
+            var outputfile = "out.mp4";
             var arguments = string.Format(@"-y -f rawvideo -vcodec rawvideo -pix_fmt rgba -s {3}x{4} -r 60 -i \\.\pipe\majdataRec -i {0} -vf {1} -c:v libx264 -preset fast -pix_fmt yuv422p -c:a aac {2}",
                 wavpath, "\"vflip\"", outputfile , Screen.width, Screen.height);
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "/ffmpeg.exe", arguments);
@@ -67,10 +69,14 @@ public class ScreenRecorder : MonoBehaviour
                     }
                     catch { }
                 }
-                while (pipeServer.IsConnected && isRecording);
+                while (pipeServer.IsConnected && isRecording && !p.HasExited);
             }
-            //var output = p.StandardError.ReadToEnd();
-            //GameObject.Find("ErrText").GetComponent<Text>().text = output.Substring(output.Length - 500);
+            p.WaitForExit();
+            
+            if(File.Exists(maidata_path + "/out.mp4"))
+                GameObject.Find("ErrText").GetComponent<Text>().text = "编码器已退出，视频生成在铺面目录out.mp4\n"+ p.ExitCode;
+            else
+                GameObject.Find("ErrText").GetComponent<Text>().text = "编码器已退出\n" + p.ExitCode;
         }
     }
 
