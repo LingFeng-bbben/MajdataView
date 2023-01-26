@@ -58,7 +58,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Alpha: 1
-    - _Brightness: 1
+    - _Brightness: 1.3
     - _BumpScale: 1
     - _Contrast: 1
     - _Cutoff: 0.5
