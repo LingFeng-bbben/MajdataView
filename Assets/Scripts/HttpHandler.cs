@@ -65,8 +65,8 @@ public class HttpHandler : MonoBehaviour
         var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         var bgManager = GameObject.Find("Background").GetComponent<BGManager>();
         var bgCover = GameObject.Find("BackgroundCover").GetComponent<SpriteRenderer>();
-        var SongDetail = GameObject.Find("CanvasSongDetail");
         var screenRecorder = GameObject.Find("ScreenRecorder").GetComponent<ScreenRecorder>();
+        var multTouchHandler = GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>();
 
         if (data.control == EditorControlMethod.Start)
         {
@@ -103,11 +103,12 @@ public class HttpHandler : MonoBehaviour
             loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
             loader.touchSpeed = data.touchSpeed;
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
-            GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>().clearSlots();
+            multTouchHandler.clearSlots();
 
             bgManager.LoadBGFromPath(maidataPath, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
             bgManager.PlaySongDetail();
+            GameObject.Find("CanvasButtons").SetActive(false);
         }
         if (data.control == EditorControlMethod.Pause)
         {

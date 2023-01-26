@@ -24,6 +24,12 @@ public class ToggleFullScreen : MonoBehaviour
         Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
     }
     Dropdown dd;
+    public void DisplayDropdown()
+    {
+        dd.value = 999;
+        dd.gameObject.SetActive(true);
+        
+    }
     public void SetResolution()
     {
         var i = dd.value;
