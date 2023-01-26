@@ -37,6 +37,7 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-Skin/*.*
+UserSettings/*
+Skin/*
 [Ll]ogs/*
 */[Ll]ogs/

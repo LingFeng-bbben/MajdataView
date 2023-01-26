@@ -553,7 +553,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 214877814}
-  - {fileID: 61505686}
   - {fileID: 781543824}
   m_Father: {fileID: 341740016}
   m_RootOrder: 0
@@ -605,7 +604,7 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 214877815}
   toggleTransition: 1
-  graphic: {fileID: 61505687}
+  graphic: {fileID: 0}
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
@@ -4264,7 +4263,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 483431728}
-  - {fileID: 1945398741}
   - {fileID: 2015046460}
   - {fileID: 569942661}
   m_Father: {fileID: 0}
