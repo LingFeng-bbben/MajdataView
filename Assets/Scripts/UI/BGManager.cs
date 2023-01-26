@@ -111,11 +111,22 @@ public class BGManager : MonoBehaviour
         gameObject.transform.localScale = new Vector3(1f, scale);
     }
     // Update is called once per frame
+    float smoothRDelta = 0;
     void Update()
     {
+        
         //videoPlayer.externalReferenceTime = provider.AudioTime;
-        var delta = videoPlayer.clockTime - provider.AudioTime;
-        //print(delta);
+        float delta = (float)videoPlayer.clockTime - provider.AudioTime;
+        smoothRDelta += (Time.unscaledDeltaTime - smoothRDelta) * 0.01f;
+        if (provider.AudioTime < 0) return;
+        var realSpeed = Time.deltaTime / smoothRDelta;
+        
+        if (Time.captureFramerate != 0)
+        {
+            print("speed="+realSpeed+" delta="+delta);
+            videoPlayer.playbackSpeed = realSpeed - delta;
+            return;
+        }
         if (delta < -0.01f)
         {
             videoPlayer.playbackSpeed = playSpeed + 0.2f;

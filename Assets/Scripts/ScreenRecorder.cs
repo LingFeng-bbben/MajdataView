@@ -40,7 +40,7 @@ public class ScreenRecorder : MonoBehaviour
         {
             var wavpath = "out.wav";
             var outputfile = "out.mp4";
-            var arguments = string.Format(@"-y -f rawvideo -vcodec rawvideo -pix_fmt rgba -s {3}x{4} -r 60 -i \\.\pipe\majdataRec -i {0} -vf {1} -c:v libx264 -preset fast -pix_fmt yuv422p -c:a aac {2}",
+            var arguments = string.Format(@"-y -f rawvideo -vcodec rawvideo -pix_fmt rgba -s {3}x{4} -r 60 -i \\.\pipe\majdataRec -i {0} -vf {1} -c:v libx264 -preset fast -pix_fmt yuv420p -c:a aac {2}",
                 wavpath, "\"vflip\"", outputfile , Screen.width, Screen.height);
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "/ffmpeg.exe", arguments);
             startinfo.WorkingDirectory = maidata_path;
