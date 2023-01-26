@@ -40,8 +40,9 @@ public class ScreenRecorder : MonoBehaviour
         {
             var wavpath = "out.wav";
             var outputfile = "out.mp4";
-            var arguments = string.Format(@"-y -f rawvideo -vcodec rawvideo -pix_fmt rgba -s {3}x{4} -r 60 -i \\.\pipe\majdataRec -i {0} -vf {1} -c:v libx264 -preset fast -pix_fmt yuv420p -c:a aac {2}",
-                wavpath, "\"vflip\"", outputfile , Screen.width, Screen.height);
+            
+            var arguments = string.Format(File.ReadAllText(Application.streamingAssetsPath+ "/ffarguments.txt"),
+                Screen.width, Screen.height, wavpath, outputfile );
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "/ffmpeg.exe", arguments);
             startinfo.WorkingDirectory = maidata_path;
             print(arguments);
@@ -73,8 +74,8 @@ public class ScreenRecorder : MonoBehaviour
             }
             p.WaitForExit();
             
-            if(File.Exists(maidata_path + "/out.mp4"))
-                GameObject.Find("ErrText").GetComponent<Text>().text = "编码器已退出，视频生成在铺面目录out.mp4\n"+ p.ExitCode;
+            if(File.Exists(maidata_path + "/out.mp4")&& p.ExitCode ==0)
+                GameObject.Find("ErrText").GetComponent<Text>().text = "渲染成功，视频生成在铺面目录out.mp4\n"+ p.ExitCode;
             else
                 GameObject.Find("ErrText").GetComponent<Text>().text = "编码器已退出\n" + p.ExitCode;
         }
