@@ -123,7 +123,7 @@ public class BGManager : MonoBehaviour
         
         if (Time.captureFramerate != 0)
         {
-            print("speed="+realSpeed+" delta="+delta);
+            //print("speed="+realSpeed+" delta="+delta);
             videoPlayer.playbackSpeed = realSpeed - delta;
             return;
         }
