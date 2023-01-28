@@ -169,11 +169,11 @@ public class SlideDrop : MonoBehaviour
                     // 只有组内最后一个Slide完成 才会显示判定条并增加总数
                     if (isBreak)
                     {
-                        GameObject.Find("ObjectCount").GetComponent<ObjectCount>().breakCount++;
+                        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
                     }
                     else
                     {
-                        GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
+                        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
                     }
                     slideOK.SetActive(true);
                 }

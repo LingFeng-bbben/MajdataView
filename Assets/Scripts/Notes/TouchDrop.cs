@@ -97,7 +97,7 @@ public class TouchDrop : MonoBehaviour
         {
             multTouchHandler.cancelTouch(this);
             Instantiate(tapEffect, transform.position, transform.rotation);
-            GameObject.Find("ObjectCount").GetComponent<ObjectCount>().touchCount++;
+            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().touchCount++;
             if (isFirework) {
                 fireworkEffect.SetTrigger("Fire");
                 firework.transform.position = transform.position;

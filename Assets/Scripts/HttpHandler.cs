@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class HttpHandler : MonoBehaviour
 {
@@ -44,8 +45,6 @@ public class HttpHandler : MonoBehaviour
             stream.WriteLine("Hello!!!");
             stream.Close();
             context.Response.Close();
-
-
         }
         print("exit listen");
     }
@@ -61,12 +60,14 @@ public class HttpHandler : MonoBehaviour
         
         if (request == "") return;
         var data = JsonConvert.DeserializeObject<EditRequestjson>(request);
+
         var loader = GameObject.Find("DataLoader").GetComponent<JsonDataLoader>();
         var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         var bgManager = GameObject.Find("Background").GetComponent<BGManager>();
         var bgCover = GameObject.Find("BackgroundCover").GetComponent<SpriteRenderer>();
         var screenRecorder = GameObject.Find("ScreenRecorder").GetComponent<ScreenRecorder>();
         var multTouchHandler = GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>();
+        var objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
 
         if (data.control == EditorControlMethod.Start)
         {
@@ -74,6 +75,7 @@ public class HttpHandler : MonoBehaviour
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
             loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
             loader.touchSpeed = data.touchSpeed;
+            objectCounter.ComboSetActive(data.isComboEnabled);
             loader.LoadJson(File.ReadAllText(data.jsonPath),data.startTime);
             GameObject.Find("Notes").GetComponent<PlayAllPerfect>().enabled = false;
             GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>().clearSlots();
@@ -87,6 +89,7 @@ public class HttpHandler : MonoBehaviour
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
             loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
             loader.touchSpeed = data.touchSpeed;
+            objectCounter.ComboSetActive(data.isComboEnabled);
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
             GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>().clearSlots();
 
@@ -102,6 +105,7 @@ public class HttpHandler : MonoBehaviour
             screenRecorder.StartRecording(maidataPath);
             loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
             loader.touchSpeed = data.touchSpeed;
+            objectCounter.ComboSetActive(data.isComboEnabled);
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
             multTouchHandler.clearSlots();
 

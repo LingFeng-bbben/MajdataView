@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ObjectCount : MonoBehaviour
+public class ObjectCounter : MonoBehaviour
 {
-    Text text;
+    Text table;
     Text rate;
     Text combo;
-    GameObject comboObj;
-
-    static bool isComboEnabled = false;
 
     public int tapCount;
     public int holdCount;
@@ -27,21 +24,19 @@ public class ObjectCount : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        text = GetComponent<Text>();
+        table = GameObject.Find("ObjectCount").GetComponent<Text>();
         rate = GameObject.Find("ObjectRate").GetComponent<Text>();
-        comboObj = GameObject.Find("ComboText");
-        combo = comboObj.GetComponent<Text>();
-        comboObj.SetActive(false);
+        combo = GameObject.Find("ComboText").GetComponent<Text>();
+        combo.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         if (FiSumScore() == 0) return;
-        comboObj.SetActive(isComboEnabled);
         var comboN = tapCount + holdCount + slideCount + touchCount + breakCount;
         combo.text = comboN.ToString();
-        text.text = string.Format(
+        table.text = string.Format(
             "TAP: {0} / {5}\n" +
             "HOD: {1} / {6}\n" +
             "SLD: {2} / {7}\n" +
@@ -64,19 +59,9 @@ public class ObjectCount : MonoBehaviour
             );
     }
 
-    public void ToggleCombo()
+    public void ComboSetActive(bool isActive)
     {
-        if (FiSumScore() == 0) return;
-        if (isComboEnabled)
-        {
-            comboObj.SetActive(false);
-            isComboEnabled = false;
-        }
-        else
-        {
-            comboObj.SetActive(true);
-            isComboEnabled = true;
-        }
+        combo.gameObject.SetActive(isActive);
     }
 
     int FiSumScore()

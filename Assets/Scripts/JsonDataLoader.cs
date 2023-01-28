@@ -32,7 +32,7 @@ public class JsonDataLoader : MonoBehaviour
     public RawImage cardImage;
     public Color[] diffColors = new Color[7];
 
-    ObjectCount objectCount;
+    ObjectCounter ObjectCounter;
     CustomSkin customSkin;
 
     int slideLayer = -10000;
@@ -40,7 +40,7 @@ public class JsonDataLoader : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 120;
-        objectCount = GameObject.Find("ObjectCount").GetComponent<ObjectCount>();
+        ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
         customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
     }
 
@@ -205,20 +205,20 @@ public class JsonDataLoader : MonoBehaviour
             {
                 if (!note.isBreak)
                 {
-                    if (note.noteType == SimaiNoteType.Tap) objectCount.tapSum++;
-                    if (note.noteType == SimaiNoteType.Hold) objectCount.holdSum++;
-                    if (note.noteType == SimaiNoteType.TouchHold) objectCount.holdSum++;
-                    if (note.noteType == SimaiNoteType.Touch) objectCount.touchSum++;
+                    if (note.noteType == SimaiNoteType.Tap) ObjectCounter.tapSum++;
+                    if (note.noteType == SimaiNoteType.Hold) ObjectCounter.holdSum++;
+                    if (note.noteType == SimaiNoteType.TouchHold) ObjectCounter.holdSum++;
+                    if (note.noteType == SimaiNoteType.Touch) ObjectCounter.touchSum++;
                     if (note.noteType == SimaiNoteType.Slide)
                     {
-                        if (!note.isSlideNoHead) objectCount.tapSum++;
+                        if (!note.isSlideNoHead) ObjectCounter.tapSum++;
                         if (note.isSlideBreak)
                         {
-                            objectCount.breakSum++;
+                            ObjectCounter.breakSum++;
                         }
                         else
                         {
-                            objectCount.slideSum++;
+                            ObjectCounter.slideSum++;
                         }
                     }
                 }
@@ -226,17 +226,17 @@ public class JsonDataLoader : MonoBehaviour
                 {
                     if (note.noteType == SimaiNoteType.Slide)
                     {
-                        if (!note.isSlideNoHead) objectCount.breakSum++;
+                        if (!note.isSlideNoHead) ObjectCounter.breakSum++;
                         if (note.isSlideBreak)
                         {
-                            objectCount.breakSum++;
+                            ObjectCounter.breakSum++;
                         }
                         else
                         {
-                            objectCount.slideSum++;
+                            ObjectCounter.slideSum++;
                         }
                     }
-                    else { objectCount.breakSum++; }
+                    else { ObjectCounter.breakSum++; }
                 }
             }
         }
@@ -248,20 +248,20 @@ public class JsonDataLoader : MonoBehaviour
         {
             if (!note.isBreak)
             {
-                if (note.noteType == SimaiNoteType.Tap) objectCount.tapCount++;
-                if (note.noteType == SimaiNoteType.Hold) objectCount.holdCount++;
-                if (note.noteType == SimaiNoteType.TouchHold) objectCount.holdCount++;
-                if (note.noteType == SimaiNoteType.Touch) objectCount.touchCount++;
+                if (note.noteType == SimaiNoteType.Tap) ObjectCounter.tapCount++;
+                if (note.noteType == SimaiNoteType.Hold) ObjectCounter.holdCount++;
+                if (note.noteType == SimaiNoteType.TouchHold) ObjectCounter.holdCount++;
+                if (note.noteType == SimaiNoteType.Touch) ObjectCounter.touchCount++;
                 if (note.noteType == SimaiNoteType.Slide)
                 {
-                    if (!note.isSlideNoHead) objectCount.tapCount++;
+                    if (!note.isSlideNoHead) ObjectCounter.tapCount++;
                     if (note.isSlideBreak)
                     {
-                        objectCount.breakCount++;
+                        ObjectCounter.breakCount++;
                     }
                     else
                     {
-                        objectCount.slideCount++;
+                        ObjectCounter.slideCount++;
                     }
                 }
             }
@@ -269,17 +269,17 @@ public class JsonDataLoader : MonoBehaviour
             {
                 if (note.noteType == SimaiNoteType.Slide)
                 {
-                    if (!note.isSlideNoHead) objectCount.breakCount++;
+                    if (!note.isSlideNoHead) ObjectCounter.breakCount++;
                     if (note.isSlideBreak)
                     {
-                        objectCount.breakCount++;
+                        ObjectCounter.breakCount++;
                     }
                     else
                     {
-                        objectCount.slideCount++;
+                        ObjectCounter.slideCount++;
                     }
                 }
-                else { objectCount.breakCount++; }
+                else { ObjectCounter.breakCount++; }
             }
         }
     }
