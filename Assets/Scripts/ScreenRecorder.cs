@@ -31,8 +31,8 @@ public class ScreenRecorder : MonoBehaviour
         {
             GameObject.Find("ErrText").GetComponent<Text>().text = "无法开始编码，因为分辨率宽度不是偶数。\nCan not start render because the width is not even.\n当前分辨率:"+Screen.width+"x"+Screen.height+"\n";
         }
-        if (File.Exists(maidata_path + "/out.mp4"))
-            File.Delete(maidata_path + "/out.mp4");
+        if (File.Exists(maidata_path + "\\out.mp4"))
+            File.Delete(maidata_path + "\\out.mp4");
         byte[] data;
         var texture = new Texture2D(0,0);
         using (NamedPipeServerStream pipeServer = 
@@ -41,9 +41,9 @@ public class ScreenRecorder : MonoBehaviour
             var wavpath = "out.wav";
             var outputfile = "out.mp4";
             
-            var arguments = string.Format(File.ReadAllText(Application.streamingAssetsPath+ "/ffarguments.txt"),
+            var arguments = string.Format(File.ReadAllText(Application.streamingAssetsPath+ "\\ffarguments.txt"),
                 Screen.width, Screen.height, wavpath, outputfile );
-            var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "/ffmpeg.exe", arguments);
+            var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "\\ffmpeg.exe", arguments);
             startinfo.WorkingDirectory = maidata_path;
             print(arguments);
             
