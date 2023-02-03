@@ -10,6 +10,7 @@ public class WifiDrop : MonoBehaviour
 
     SpriteRenderer[] spriteRenderer_star = new SpriteRenderer[3];
 
+    public Sprite[] normalSlide = new Sprite[11];
     public Sprite[] eachSlide = new Sprite[11];
     public Sprite[] breakSlide = new Sprite[11];
     public Sprite normalStar;
@@ -96,6 +97,10 @@ public class WifiDrop : MonoBehaviour
             {
                 sr.sprite = eachSlide[i];
             }
+            else
+            {
+                sr.sprite = normalSlide[i];
+            }
 
             sbRender.Add(sr);
             sr.color = new Color(1f, 1f, 1f, 0f);
@@ -168,11 +173,11 @@ public class WifiDrop : MonoBehaviour
                 {
                     if (isBreak)
                     {
-                        GameObject.Find("ObjectCount").GetComponent<ObjectCount>().breakCount++;
+                        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
                     }
                     else
                     {
-                        GameObject.Find("ObjectCount").GetComponent<ObjectCount>().slideCount++;
+                        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
                     }
                     slideOK.SetActive(true);
                 }

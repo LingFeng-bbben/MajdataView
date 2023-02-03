@@ -1,0 +1,1 @@
+./ffmpeg -y -f rawvideo -vcodec rawvideo -pix_fmt rgba -s 1920x1080 -r 60 -i \\.\pipe\test111sb -vf "vflip" -c:v libx264 -preset fast -an aaa.mp4

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3167371521363346914}
   - component: {fileID: 3167371521363346913}
   m_Layer: 0
-  m_Name: UI_NOTES_Touch_01
+  m_Name: TouchPart_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 3167371521865756102}
   - component: {fileID: 3167371521865756103}
   m_Layer: 0
-  m_Name: UI_NOTES_Touch_Just
+  m_Name: Touch_Just
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 3167371521975138487}
   - component: {fileID: 3167371521975138486}
   m_Layer: 0
-  m_Name: UI_NOTES_Touch_01 (3)
+  m_Name: TouchPart_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 3167371522082856908}
   - component: {fileID: 3167371522082856915}
   m_Layer: 0
-  m_Name: UI_NOTES_Touch_Point
+  m_Name: Touch_Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -392,8 +392,6 @@ MonoBehaviour:
   tapEffect: {fileID: 544298055609030963, guid: ce8dca9ef711fc640a1b90ad7fb49838,
     type: 3}
   justEffect: {fileID: 3167371521865756101}
-  fireworkEffect: {fileID: 4239088390834088340, guid: c1701d28c8a13d74a90a9e4dea169092,
-    type: 3}
   multTouchEffect2: {fileID: 3167371522247862228}
   multTouchEffect3: {fileID: 3167371522402805961}
   faneachSprite: {fileID: 21300000, guid: f3974af5b544d2f459706acf1fa30d1e, type: 3}
@@ -421,7 +419,7 @@ GameObject:
   - component: {fileID: 3167371522247862229}
   - component: {fileID: 3167371522247862230}
   m_Layer: 0
-  m_Name: UI_NOTES_Touch_two
+  m_Name: Touch_border_two
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -504,7 +502,7 @@ GameObject:
   - component: {fileID: 3167371522283853493}
   - component: {fileID: 3167371522283853492}
   m_Layer: 0
-  m_Name: UI_NOTES_Touch_01 (1)
+  m_Name: TouchPart_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -587,7 +585,7 @@ GameObject:
   - component: {fileID: 3167371522402805962}
   - component: {fileID: 3167371522402805963}
   m_Layer: 0
-  m_Name: UI_NOTES_Touch_three
+  m_Name: Touch_border_three
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -670,7 +668,7 @@ GameObject:
   - component: {fileID: 3167371522500999631}
   - component: {fileID: 3167371522500999630}
   m_Layer: 0
-  m_Name: UI_NOTES_Touch_01 (2)
+  m_Name: TouchPart_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

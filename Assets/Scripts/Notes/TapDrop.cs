@@ -36,7 +36,7 @@ public class TapDrop : MonoBehaviour
     SpriteRenderer lineSpriteRender;
     SpriteRenderer exSpriteRender;
 
-    ObjectCount objectCount;
+    ObjectCounter ObjectCounter;
 
     bool breakAnimStart = false;
     Animator animator;
@@ -50,7 +50,7 @@ public class TapDrop : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-        objectCount = GameObject.Find("ObjectCount").GetComponent<ObjectCount>();
+        ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
         
         int sortOrder = (int)(time * -100);
         spriteRenderer.sortingOrder = sortOrder;
@@ -110,9 +110,9 @@ public class TapDrop : MonoBehaviour
 
         if (timing > 0)
         {
-            GameObject.Find("TapEffects").GetComponent<TapEffectManager>().PlayEffect(startPosition, isBreak);
-            if (isBreak) objectCount.breakCount++;
-            else objectCount.tapCount++;
+            GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
+            if (isBreak) ObjectCounter.breakCount++;
+            else ObjectCounter.tapCount++;
 
             Destroy(tapLine);
             Destroy(gameObject);

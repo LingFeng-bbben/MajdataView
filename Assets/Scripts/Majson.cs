@@ -63,9 +63,10 @@ class EditRequestjson
     public float touchSpeed;
     public float backgroundCover;
     public float audioSpeed;
+    public bool isComboEnabled;
 }
 
 enum EditorControlMethod
 {
-    Start, Stop, OpStart, Pause, Continue
+    Start, Stop, OpStart, Pause, Continue, Record
 }
