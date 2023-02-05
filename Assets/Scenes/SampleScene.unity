@@ -1540,6 +1540,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d6456f9b10fc5f49a417eda1dbf2e63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AchievementDudColor: {r: 0.12041651, g: 0.45439216, b: 0.6226415, a: 1}
+  AchievementBronzeColor: {r: 0.67058825, g: 0.21176471, b: 0.11764706, a: 1}
+  AchievementSilverColor: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
+  AchievementGoldColor: {r: 0.78431374, g: 0.6431373, b: 0, a: 1}
   tapCount: 0
   holdCount: 0
   slideCount: 0

@@ -16,10 +16,10 @@ public class ObjectCounter : MonoBehaviour
 
     EditorComboIndicator textMode = EditorComboIndicator.Combo;
 
-    static readonly Color AchievementDudColor = new Color32(63, 127, 176, 255);
-    static readonly Color AchievementBronzeColor = new Color32(127, 48, 32, 255);
-    static readonly Color AchievementSilverColor = new Color32(160, 160, 160, 255);
-    static readonly Color AchievementGoldColor = new Color32(224, 191, 127, 255);
+    public Color AchievementDudColor;// = new Color32(63, 127, 176, 255);
+    public Color AchievementBronzeColor;// = new Color32(127, 48, 32, 255);
+    public Color AchievementSilverColor;// = new Color32(160, 160, 160, 255);
+    public Color AchievementGoldColor;// = new Color32(224, 191, 127, 255);
 
     public int tapCount;
     public int holdCount;
