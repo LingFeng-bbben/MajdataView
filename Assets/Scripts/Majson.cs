@@ -63,7 +63,19 @@ class EditRequestjson
     public float touchSpeed;
     public float backgroundCover;
     public float audioSpeed;
-    public bool isComboEnabled;
+    public EditorComboIndicator comboStatusType;
+}
+
+public enum EditorComboIndicator
+{
+    None,
+    // List of viable indicators that won't be a static content.
+    // ScoreBorder, AchievementMaxDown, ScoreDownDeluxe are static.
+    Combo, ScoreClassic, AchievementClassic, AchievementDownClassic,
+    AchievementDeluxe = 11, AchievementDownDeluxe, ScoreDeluxe,
+    // Please prefix custom indicator with C
+    CScoreDedeluxe = 101, CScoreDownDedeluxe,
+    MAX
 }
 
 enum EditorControlMethod
