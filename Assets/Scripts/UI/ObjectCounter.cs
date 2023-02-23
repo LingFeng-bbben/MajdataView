@@ -84,19 +84,19 @@ public class ObjectCounter : MonoBehaviour
           break;
         case EditorComboIndicator.AchievementClassic: // Achievement (+) Classic
           UpdateAchievementColor(accValues[0]);
-          statusAchievement.text = string.Format("{0:0.00}%", accValues[0]);
+          statusAchievement.text = string.Format("{0,6:0.00}%", accValues[0]);
           break;
         case EditorComboIndicator.AchievementDownClassic: // Achievement (-) Classic (from 100%)
           UpdateAchievementColor(accValues[1]);
-          statusAchievement.text = string.Format("{0:0.00}%", accValues[1]);
+          statusAchievement.text = string.Format("{0,6:0.00}%", accValues[1]);
           break;
         case EditorComboIndicator.AchievementDeluxe: // Achievement (+) Deluxe
           UpdateAchievementColor(accValues[2]);
-          statusAchievement.text = string.Format("{0:0.0000}%", accValues[2]);
+          statusAchievement.text = string.Format("{0,8:0.0000}%", accValues[2]);
           break;
         case EditorComboIndicator.AchievementDownDeluxe: // Achievement (-) Deluxe (from 100%)
           UpdateAchievementColor(accValues[3]);
-          statusAchievement.text = string.Format("{0:0.0000}%", accValues[3]);
+          statusAchievement.text = string.Format("{0,8:0.0000}%", accValues[3]);
           break;
         case EditorComboIndicator.ScoreDeluxe: // DX Score (+)
           statusDXScore.text = DxExNowScore().ToString();
