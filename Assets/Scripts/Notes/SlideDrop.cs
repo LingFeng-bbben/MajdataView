@@ -16,6 +16,7 @@ public class SlideDrop : MonoBehaviour
 
     public bool isMirror;
     public bool isJustR;
+    public bool isSpecialFlip; // fixes known star problem
     public bool isEach;
     public bool isBreak;
     public bool isGroupPart;
@@ -152,9 +153,9 @@ public class SlideDrop : MonoBehaviour
                 alpha = alpha < 0.5f ? 0.5f : alpha;
             }
             spriteRenderer_star.color = new Color(1, 1, 1, alpha);
-            star_slide.transform.localScale = new Vector3(alpha+0.5f, alpha + 0.5f, alpha + 0.5f);
+            star_slide.transform.localScale = new Vector3(alpha + 0.5f, alpha + 0.5f, alpha + 0.5f);
             star_slide.transform.position = slidePositions[0];
-            star_slide.transform.rotation = slideRotations[0];
+            applyStarRotation(slideRotations[0]);
         }
         if (timing > 0f)
         {
@@ -194,8 +195,10 @@ public class SlideDrop : MonoBehaviour
                 //star_slide.transform.rotation = slideRotations[index];
                 var delta = Mathf.DeltaAngle(slideRotations[index + 1].eulerAngles.z , slideRotations[index].eulerAngles.z) * (pos - index);
                 delta = Mathf.Abs(delta);
-                star_slide.transform.rotation = Quaternion.Euler(0f, 0f,
-                     Mathf.MoveTowardsAngle(slideRotations[index].eulerAngles.z, slideRotations[index + 1].eulerAngles.z, delta)
+                applyStarRotation(
+                     Quaternion.Euler(0f, 0f,
+                         Mathf.MoveTowardsAngle(slideRotations[index].eulerAngles.z, slideRotations[index + 1].eulerAngles.z, delta)
+                     )
                 );
                 for (int i = 0; i < pos; i++)
                 {
@@ -218,5 +221,14 @@ public class SlideDrop : MonoBehaviour
         return new Vector3(
             distance * Mathf.Cos((startPosition * -2f + 5f) * 0.125f * Mathf.PI),
             distance * Mathf.Sin((startPosition * -2f + 5f) * 0.125f * Mathf.PI));
+    }
+    void applyStarRotation(Quaternion newRotation)
+    {
+        var halfFlip = newRotation.eulerAngles;
+        halfFlip.z += 180f;
+        if (isSpecialFlip)
+            star_slide.transform.rotation = Quaternion.Euler(halfFlip);
+        else
+            star_slide.transform.rotation = newRotation;
     }
 }
