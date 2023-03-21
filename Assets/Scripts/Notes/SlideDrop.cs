@@ -88,7 +88,7 @@ public class SlideDrop : MonoBehaviour
         foreach (var bars in slideBars)
         {
             slidePositions.Add(bars.transform.position);
-            slideRotations.Add( Quaternion.Euler(bars.transform.rotation.eulerAngles+new Vector3(0f,0f,15f)));
+            slideRotations.Add(Quaternion.Euler(bars.transform.rotation.eulerAngles + new Vector3(0f, 0f, 18f)));
         }
         foreach (var gm in slideBars)
         {
