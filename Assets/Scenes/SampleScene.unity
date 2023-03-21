@@ -4083,8 +4083,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d7ff2b6cb0ca2b34e8503767640c2f11, type: 2}
-  m_sharedMaterial: {fileID: -4464831289724477432, guid: d7ff2b6cb0ca2b34e8503767640c2f11,
+  m_fontAsset: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  m_sharedMaterial: {fileID: -4464831289724477432, guid: 75efbe0ae053d5c4a9a6983514232a25,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6171,8 +6171,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d7ff2b6cb0ca2b34e8503767640c2f11, type: 2}
-  m_sharedMaterial: {fileID: -4464831289724477432, guid: d7ff2b6cb0ca2b34e8503767640c2f11,
+  m_fontAsset: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  m_sharedMaterial: {fileID: -4464831289724477432, guid: 75efbe0ae053d5c4a9a6983514232a25,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -6879,8 +6879,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d7ff2b6cb0ca2b34e8503767640c2f11, type: 2}
-  m_sharedMaterial: {fileID: -4464831289724477432, guid: d7ff2b6cb0ca2b34e8503767640c2f11,
+  m_fontAsset: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  m_sharedMaterial: {fileID: -4464831289724477432, guid: 75efbe0ae053d5c4a9a6983514232a25,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -8845,8 +8845,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d7ff2b6cb0ca2b34e8503767640c2f11, type: 2}
-  m_sharedMaterial: {fileID: -4464831289724477432, guid: d7ff2b6cb0ca2b34e8503767640c2f11,
+  m_fontAsset: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  m_sharedMaterial: {fileID: -4464831289724477432, guid: 75efbe0ae053d5c4a9a6983514232a25,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
