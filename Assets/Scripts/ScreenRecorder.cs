@@ -27,9 +27,9 @@ public class ScreenRecorder : MonoBehaviour
     bool isRecording = false;
     IEnumerator CaptureScreen(string maidata_path)
     {
-        if (Screen.width % 2 != 0)
+        if (Screen.width % 2 != 0 || Screen.height % 2 != 0)
         {
-            GameObject.Find("ErrText").GetComponent<Text>().text = "无法开始编码，因为分辨率宽度不是偶数。\nCan not start render because the width is not even.\n当前分辨率:"+Screen.width+"x"+Screen.height+"\n";
+            GameObject.Find("ErrText").GetComponent<Text>().text = "无法开始编码，因为分辨率宽度或高度不是偶数。\nCan not start render because the width/height is not even.\n当前分辨率:"+Screen.width+"x"+Screen.height+"\n";
         }
         if (File.Exists(maidata_path + "\\out.mp4"))
             File.Delete(maidata_path + "\\out.mp4");
