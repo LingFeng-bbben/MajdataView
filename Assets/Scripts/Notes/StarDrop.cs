@@ -136,6 +136,7 @@ public class StarDrop : MonoBehaviour
         var timing = timeProvider.AudioTime - time;
         var distance = timing * speed + 4.8f;
         var destScale = distance * 0.4f + 0.51f;
+        var songSpeed = timeProvider.CurrentSpeed;
         if (destScale < 0f) { 
             destScale = 0f;
             return;
@@ -162,14 +163,13 @@ public class StarDrop : MonoBehaviour
             Destroy(gameObject); 
         }
 
-        transform.Rotate(0f, 0f, -180f*Time.deltaTime/rotateSpeed);
+        if (timeProvider.isStart)
+            transform.Rotate(0f, 0f, -180f * Time.deltaTime * songSpeed / rotateSpeed);
 
         tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
 
         if (distance < 1.225f)
         {
-
-
             transform.localScale = new Vector3(destScale, destScale);
 
             distance = 1.225f;

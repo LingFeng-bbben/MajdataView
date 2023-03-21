@@ -41,6 +41,13 @@ public class AudioTimeProvider : MonoBehaviour
         isStart = false;
     }
 
+    public float CurrentSpeed
+    {
+        get {
+            return isRecord ? Time.timeScale : speed;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -52,7 +59,7 @@ public class AudioTimeProvider : MonoBehaviour
             }
             else
             {
-                AudioTime = (Time.realtimeSinceStartup - startTime) *speed + offset;
+                AudioTime = (Time.realtimeSinceStartup - startTime) * speed + offset;
             }
         }
     }

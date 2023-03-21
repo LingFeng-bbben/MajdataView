@@ -642,6 +642,17 @@ public class JsonDataLoader : MonoBehaviour
 
         SliCompo.isMirror = isMirror;
         SliCompo.isJustR = detectJustType(note.noteContent);
+        if ((slideIndex - 26) > 0 && (slideIndex - 26) <= 8)
+        {
+            // known slide sprite issue
+            //    1 2 3 4 5 6 7 8
+            // p  X X X X X X O O
+            // q  X O O X X X X X
+            int pqEndPos = slideIndex - 26;
+            SliCompo.isSpecialFlip = isMirror == (pqEndPos == 7 || pqEndPos == 8);
+        } else {
+            SliCompo.isSpecialFlip = isMirror;
+        }
         SliCompo.speed = noteSpeed * timing.HSpeed;
         SliCompo.timeStar = (float)timing.time;
         SliCompo.startPosition = note.startPosition;
