@@ -9,10 +9,9 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Minimoon Atlas Material
   m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
-  m_ValidKeywords: []
-  m_InvalidKeywords:
-  - MASK_HARD
-  - RATIOS_OFF
+  m_ValidKeywords:
+  - GLOW_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -55,10 +54,10 @@ Material:
     - _ColorMask: 15
     - _CullMode: 0
     - _Diffuse: 0.5
-    - _FaceDilate: 0.1
+    - _FaceDilate: 0
     - _FaceUVSpeedX: 0
     - _FaceUVSpeedY: 0
-    - _GlowInner: 0.08
+    - _GlowInner: 0.07
     - _GlowOffset: 0.962
     - _GlowOuter: 1
     - _GlowPower: 1
@@ -69,12 +68,12 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0.334
+    - _OutlineWidth: 0.255
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 1
-    - _ScaleRatioB: 1
-    - _ScaleRatioC: 1
+    - _ScaleRatioA: 0.9
+    - _ScaleRatioB: 0.3727064
+    - _ScaleRatioC: 0.365625
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -87,9 +86,9 @@ Material:
     - _StencilWriteMask: 255
     - _TextureHeight: 1024
     - _TextureWidth: 1024
-    - _UnderlayDilate: 0.624
-    - _UnderlayOffsetX: 0.305
-    - _UnderlayOffsetY: -0.442
+    - _UnderlayDilate: 1
+    - _UnderlayOffsetX: -0.139
+    - _UnderlayOffsetY: -1
     - _UnderlaySoftness: 0
     - _VertexOffsetX: 0
     - _VertexOffsetY: 0
@@ -101,7 +100,7 @@ Material:
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
     - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}
-    - _OutlineColor: {r: 0.72305536, g: 0.72305536, b: 0.72305536, a: 1}
+    - _OutlineColor: {r: 0.097009815, g: 0, b: 0.38679248, a: 1}
     - _ReflectFaceColor: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
     - _ReflectOutlineColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
@@ -117,11 +116,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: Minimoon SDF
+  m_Name: Minimoon General SDF Center
   m_EditorClassIdentifier: 
-  hashCode: -1504515471
+  hashCode: 877905383
   material: {fileID: -4464831289724477432}
-  materialHashCode: 315202865
+  materialHashCode: -2103400473
   m_Version: 1.1.0
   m_SourceFontFileGUID: e330574b8b2e3fb48b915214d9946961
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: e330574b8b2e3fb48b915214d9946961,

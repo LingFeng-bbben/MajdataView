@@ -339,11 +339,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfc7bd3604b9604e951263b773b7934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalFont: {fileID: 0}
-  AllPerfectFont: {fileID: 0}
-  SongInfoFont: {fileID: 0}
-  SideInfoFont: {fileID: 0}
-  CenterInfoFont: {fileID: 0}
+  GlobalFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  AllPerfectFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  SongInfoFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  SideInfoFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  CenterInfoFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
 --- !u!4 &48237939
 Transform:
   m_ObjectHideFlags: 0
@@ -1122,8 +1122,8 @@ MonoBehaviour:
 
     PERFECT'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 63c4f7fce8a784f4c8a93c827a0a9f64, type: 2}
-  m_sharedMaterial: {fileID: 3282851818692712712, guid: 63c4f7fce8a784f4c8a93c827a0a9f64,
+  m_fontAsset: {fileID: 11400000, guid: 06d35c484df569643b3e11fabfd6c226, type: 2}
+  m_sharedMaterial: {fileID: -4464831289724477432, guid: 06d35c484df569643b3e11fabfd6c226,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1148,8 +1148,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 21
-  m_fontSizeBase: 21
+  m_fontSize: 19
+  m_fontSizeBase: 19
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
