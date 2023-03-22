@@ -1,4 +1,3 @@
-#define COUNTER_USE_TEXTMESHPRO
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,17 +48,17 @@ public class ObjectCounter : MonoBehaviour
         table = GameObject.Find("ObjectCount").GetComponent<Text>();
         rate = GameObject.Find("ObjectRate").GetComponent<Text>();
 
-#if COUNTER_USE_TEXTMESHPRO
+        #if COUNTER_USE_TEXTMESHPRO
         statusCombo       = GameObject.Find("ComboText").GetComponent<TextMeshProUGUI>();
         statusScore       = GameObject.Find("ScoreText").GetComponent<TextMeshProUGUI>();
         statusAchievement = GameObject.Find("AchievementText").GetComponent<TextMeshProUGUI>();
         statusDXScore     = GameObject.Find("DXScoreText").GetComponent<TextMeshProUGUI>();
-#else
+        #else
         statusCombo       = GameObject.Find("ComboTextOriginal").GetComponent<Text>();
         statusScore       = GameObject.Find("ScoreTextOriginal").GetComponent<Text>();
         statusAchievement = GameObject.Find("AchievementTextOriginal").GetComponent<Text>();
         statusDXScore     = GameObject.Find("DXScoreTextOriginal").GetComponent<Text>();
-#endif
+        #endif
 
         statusCombo.gameObject.SetActive(false);
         statusScore.gameObject.SetActive(false);
@@ -162,9 +161,9 @@ public class ObjectCounter : MonoBehaviour
 
     void UpdateState()
     {
-// Only define this when debugging (of this feature) is needed.
-// I don't bother compiling this as Debug.
-#if COMBO_CAN_SWAP_NOW
+        // Only define this when debugging (of this feature) is needed.
+        // I don't bother compiling this as Debug.
+        #if DEVELOPMENT_BUILD || COMBO_CAN_SWAP_NOW
         if (Input.GetKeyDown(KeyCode.Space)) {
             var validModes = Enum.GetValues(textMode.GetType());
             int i = 0;
@@ -176,7 +175,7 @@ public class ObjectCounter : MonoBehaviour
                 i += 1;
             }
         }
-#endif
+        #endif
     }
 
     void ApplyMonospaceText(Text obj, string content, float width)
