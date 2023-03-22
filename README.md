@@ -1,13 +1,13 @@
 # MajdataView&Edit
 
 ![Majdata Festival](https://img.shields.io/badge/Majdata-FESTiVAL-ff69b4)
-![version v4.1.1](https://img.shields.io/badge/version-v4.0--rc-green)
+![version v4.1.1](https://img.shields.io/badge/version-v4.1.1-green)
 ![license GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)
 [![State-of-the-art Shitcode](https://img.shields.io/static/v1?label=State-of-the-art&message=Shitcode&color=7B5804)](https://github.com/trekhleb/state-of-the-art-shitcode)
 
 ## Credits
 
-- Main Programmer: bbben([>Twitter](https://twitter.com/bbben132329)), [Moying-moe](https://github.com/Moying-moe/maimaiMuriDetector)
+- Main Programmer: bbben([Twitter](https://twitter.com/bbben132329)), [Moying-moe](https://github.com/Moying-moe/maimaiMuriDetector)
 - Mirroring: [Wh1tyEnd](https://github.com/Wh1tyEnd)
 - Hanabi Effect: 青山散人
 - *Special thanks*: Simai developed by [Celeca](https://twitter.com/formiku39854)
@@ -18,9 +18,21 @@
 - 設定メニューをご利用して下さい
 - Please use the setting menu.
 
-# [查看使用说明](https://github.com/LingFeng-bbben/MajdataView/wiki)
+# [>>>查看使用说明Wiki<<<](https://github.com/LingFeng-bbben/MajdataView/wiki)
+# [>>>Release(高速无毒无码绿色版下载)<<<](https://github.com/LingFeng-bbben/MajdataView/releases)
 
-## 我在使用过程中遇到了问题
+## 已知问题
+
+1. **不支持动态比特率的mp3文件**
+2. 部分语法规则较为宽松，可以在Majdata中运行的谱面可能无法在其他软件中（如maipad、simai、Astro）运行
+3. 软件渲染可能不支持3：00以上的歌，可以缩小下面的预览图解决（很难修！！）
+4. 使用内置录屏时，请确保view的分辨率是偶数。点击之后可能会有较长卡顿，请耐心等待。
+
+其他问题见[issue页面](https://github.com/LingFeng-bbben/MajdataView/issues)
+
+欢迎各种PR贡献，但请最好先开issue讨论一下。
+
+## 我在使用过程中遇到了更多的问题
 
 如果您在使用过程中遇到了问题，**请先对照下文的Q&A中列出的常见问题进行排查**。
 
@@ -44,8 +56,7 @@
 ## 已知问题
 
 1. **不支持动态比特率的mp3文件**
-2. 暂不支持Touch、Wifi等要素的皮肤定制
-3. 部分语法规则较为宽松，可以在Majdata中运行的谱面可能无法在其他软件中（如maipad、simai）运行
+2. 部分语法规则较为宽松，可以在Majdata中运行的谱面可能无法在其他软件中（如maipad、simai、Astro）运行
 
 其他问题见[issue页面](https://github.com/LingFeng-bbben/MajdataView/issues)
 
