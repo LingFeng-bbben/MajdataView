@@ -1,4 +1,5 @@
-# MajdataView&Edit
+# <img src="https://user-images.githubusercontent.com/51612155/226972003-1928ce4d-56ce-497d-b958-d6aec38a602c.png" width="100px"> MajdataView&Edit
+
 
 ![Majdata Festival](https://img.shields.io/badge/Majdata-FESTiVAL-ff69b4)
 ![version v4.1.1](https://img.shields.io/badge/version-v4.1.1-green)
@@ -51,13 +52,3 @@
 - **尽可能详尽的描述您的操作**。我们知道绝大部分的使用者并非专业人士，因此，如果您说了很多废话，我们的社区维护者并不会怪罪您，并可以很轻松的忽略掉没用的那部分。**但是如果您说的太少，那么维护者还需要反复与您沟通，这会浪费很多时间与精力**。
 - **尝试重复这个问题**。如果您可以通过某些操作稳定的触发这个问题，您可以将您的这些操作写下来，**这十分有帮助**。同样的，如果您重复之前遇到这个问题的操作，结果发现问题消失了，也请告诉我们这一点。
 - **如果情况十分难以描述，您可以附上截图或者视频作为辅助**。此外，您最好可以将出现问题时您正在编辑的谱面也一起发给我们。
-
-
-## 已知问题
-
-1. **不支持动态比特率的mp3文件**
-2. 部分语法规则较为宽松，可以在Majdata中运行的谱面可能无法在其他软件中（如maipad、simai、Astro）运行
-
-其他问题见[issue页面](https://github.com/LingFeng-bbben/MajdataView/issues)
-
-
