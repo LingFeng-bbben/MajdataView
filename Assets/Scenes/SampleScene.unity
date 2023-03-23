@@ -339,11 +339,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfc7bd3604b9604e951263b773b7934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
-  AllPerfectFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
-  SongInfoFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
-  SideInfoFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
-  CenterInfoFont: {fileID: 11400000, guid: 75efbe0ae053d5c4a9a6983514232a25, type: 2}
+  GlobalFont: {fileID: 0}
+  AllPerfectFont: {fileID: 0}
+  SongInfoFont: {fileID: 0}
+  SideInfoFont: {fileID: 0}
+  CenterInfoFont: {fileID: 0}
 --- !u!4 &48237939
 Transform:
   m_ObjectHideFlags: 0
