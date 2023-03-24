@@ -44,7 +44,9 @@ public class ScreenRecorder : MonoBehaviour
             var arguments = string.Format(File.ReadAllText(Application.streamingAssetsPath+ "\\ffarguments.txt"),
                 Screen.width, Screen.height, wavpath, outputfile );
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "\\ffmpeg.exe", arguments);
+            startinfo.UseShellExecute = false;
             startinfo.WorkingDirectory = maidata_path;
+            startinfo.EnvironmentVariables.Add("FFREPORT", "file=out.log:level=24");
             print(arguments);
             
             var p = Process.Start(startinfo);
