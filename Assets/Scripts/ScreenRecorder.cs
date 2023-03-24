@@ -27,6 +27,8 @@ public class ScreenRecorder : MonoBehaviour
     bool isRecording = false;
     IEnumerator CaptureScreen(string maidata_path)
     {
+        var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
+        var bgManager = GameObject.Find("Background").GetComponent<BGManager>();
         if (Screen.width % 2 != 0 || Screen.height % 2 != 0)
         {
             GameObject.Find("ErrText").GetComponent<Text>().text = "无法开始编码，因为分辨率宽度或高度不是偶数。\nCan not start render because the width/height is not even.\n当前分辨率:"+Screen.width+"x"+Screen.height+"\n";
@@ -84,6 +86,8 @@ public class ScreenRecorder : MonoBehaviour
             else
                 GameObject.Find("ErrText").GetComponent<Text>().text += "编码器已退出\nFFmpeg Exited.\nExitCode:" + p.ExitCode;
         }
+        timeProvider.isStart = false;
+        bgManager.PauseVideo();
     }
 
     // Start is called before the first frame update
