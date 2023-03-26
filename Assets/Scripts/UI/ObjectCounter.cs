@@ -84,19 +84,19 @@ public class ObjectCounter : MonoBehaviour
           break;
         case EditorComboIndicator.AchievementClassic: // Achievement (+) Classic
           UpdateAchievementColor(accValues[0]);
-          statusAchievement.text = string.Format("{0,6:0.00}%", accValues[0]);
+          statusAchievement.text = string.Format("{0,6:0.00}%", Math.Truncate(accValues[0]*100)/100);
           break;
         case EditorComboIndicator.AchievementDownClassic: // Achievement (-) Classic (from 100%)
           UpdateAchievementColor(accValues[1]);
-          statusAchievement.text = string.Format("{0,6:0.00}%", accValues[1]);
+          statusAchievement.text = string.Format("{0,6:0.00}%", Math.Truncate(accValues[1] * 100) / 100);
           break;
         case EditorComboIndicator.AchievementDeluxe: // Achievement (+) Deluxe
           UpdateAchievementColor(accValues[2]);
-          statusAchievement.text = string.Format("{0,8:0.0000}%", accValues[2]);
+          statusAchievement.text = string.Format("{0,8:0.0000}%", Math.Truncate(accValues[2] * 10000) / 10000);
           break;
         case EditorComboIndicator.AchievementDownDeluxe: // Achievement (-) Deluxe (from 100%)
           UpdateAchievementColor(accValues[3]);
-          statusAchievement.text = string.Format("{0,8:0.0000}%", accValues[3]);
+          statusAchievement.text = string.Format("{0,8:0.0000}%", Math.Truncate(accValues[3] * 10000) / 10000);
           break;
         case EditorComboIndicator.ScoreDeluxe: // DX Score (+)
           statusDXScore.text = DxExNowScore().ToString();
@@ -136,9 +136,10 @@ public class ObjectCounter : MonoBehaviour
             "{0:000.00}   %\n" +
             "DELUXE Rate:\n" +
             "{1:000.0000} % ",
-            ((float)FiNowScore() / FiSumScore()) * 100,
-            ((float)DxNowScore() / DxSumScore()) * 100 + BreakRate()
+            Math.Truncate(((float)FiNowScore() / FiSumScore()) * 10000)/100,
+            Math.Truncate((((float)DxNowScore() / DxSumScore()) * 100 + BreakRate())*10000)/10000
             );
+        
     }
 
     void UpdateState()
