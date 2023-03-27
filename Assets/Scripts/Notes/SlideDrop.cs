@@ -74,7 +74,32 @@ public class SlideDrop : MonoBehaviour
                 var angel = slideOK.transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
                 slideOK.transform.position += new Vector3(Mathf.Sin(angel) * 0.27f, Mathf.Cos(angel) * -0.27f);
             }
+
+            var okType = slideOK.GetComponent<LoadJustSprite>()._0curv1str2wifi;
+
+            if (okType == 1)
+            {
+                GameObject lazer = slideOK.transform.GetChild(0).gameObject;
+                lazer.transform.Rotate(new Vector3(0f, 0f, 180f));
+                lazer.transform.localPosition += new Vector3(9.94f, 0f);
+            }
+            else if (okType == 0)
+            {
+                GameObject lazer = slideOK.transform.GetChild(0).gameObject;
+                lazer.transform.Rotate(new Vector3(0f, 0f, 150f));
+                lazer.transform.localPosition += new Vector3(9.94f, 0f);
+            }
+            
         }
+        //if (slideOK.GetComponent<LoadJustSprite>()._0curv1str2wifi == 0)
+        //{
+        //    if (isJustR && !isMirror || !isJustR && isMirror)
+        //    {
+        //        GameObject lazer = slideOK.transform.GetChild(0).gameObject;
+        //        lazer.transform.Rotate(new Vector3(0f, 0f, 180f));
+        //        lazer.transform.localPosition += new Vector3(9.94f, 0f);
+        //    }
+        //}
 
         
         spriteRenderer_star = star_slide.GetComponent<SpriteRenderer>();
@@ -177,6 +202,7 @@ public class SlideDrop : MonoBehaviour
                         GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
                     }
                     slideOK.SetActive(true);
+                    slideOK.GetComponent<Animator>().SetInteger("OverSel", (int)Random.Range(1, 4));
                 }
                 else
                 {

@@ -76,6 +76,9 @@ public class WifiDrop : MonoBehaviour
         {
             slideOK.GetComponent<LoadJustSprite>().setL();
             slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
+            GameObject lazer = slideOK.transform.GetChild(0).gameObject;
+            lazer.transform.Rotate(new Vector3(0f, 0f, 180f));
+            lazer.transform.localPosition += new Vector3(0f, 12f);
         }
         slideOK.SetActive(false);
         slideOK.transform.SetParent(transform.parent);
@@ -180,6 +183,7 @@ public class WifiDrop : MonoBehaviour
                         GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
                     }
                     slideOK.SetActive(true);
+                    slideOK.GetComponent<Animator>().SetInteger("OverSel", (int)Random.Range(1, 4));
                 }
                 for (int i = 0; i < star_slide.Length; i++)
                     Destroy(star_slide[i]);
