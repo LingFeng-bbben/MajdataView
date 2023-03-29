@@ -140,7 +140,7 @@ public class HttpHandler : MonoBehaviour
     private float getChartLength()
     {
         float length = 0f;
-        foreach (NoteDrop noteData in GameObject.Find("Notes").GetComponentsInChildren<NoteDrop>())
+        foreach (NoteDrop noteData in GameObject.Find("Notes").GetComponentsInChildren<NoteDrop>(true))
         {
             length = Math.Max(length, noteData.time);
             
