@@ -47,8 +47,12 @@ public class ScreenRecorder : MonoBehaviour
             var wavpath = "out.wav";
             var outputfile = "out.mp4";
             
-            var arguments = string.Format(File.ReadAllText(Application.streamingAssetsPath+ "\\ffarguments.txt"),
-                Screen.width, Screen.height, wavpath, outputfile );
+            var arguments = string.Format(
+              File.ReadAllText(Application.streamingAssetsPath+ "\\ffarguments.txt").Trim(),
+                Screen.width, Screen.height,
+                wavpath, outputfile,
+                CutoffTime
+              );
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "\\ffmpeg.exe", arguments);
             startinfo.UseShellExecute = false;
             startinfo.WorkingDirectory = maidata_path;
@@ -78,7 +82,11 @@ public class ScreenRecorder : MonoBehaviour
                     }
                     catch { }
                 }
-                while (pipeServer.IsConnected && isRecording && !p.HasExited);
+                while (
+                  pipeServer.IsConnected &&
+                  isRecording &&
+                  !p.HasExited
+                );
             }
             p.WaitForExit();
 
