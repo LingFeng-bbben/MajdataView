@@ -12,6 +12,8 @@ using UnityEngine.UI;
 
 public class ScreenRecorder : MonoBehaviour
 {
+    public float CutoffTime;
+    
     public void StartRecording(string maidata_path)
     {
         StartCoroutine(CaptureScreen(maidata_path));
@@ -36,6 +38,7 @@ public class ScreenRecorder : MonoBehaviour
         }
         if (File.Exists(maidata_path + "\\out.mp4"))
             File.Delete(maidata_path + "\\out.mp4");
+        
         byte[] data;
         var texture = new Texture2D(0,0);
         using (NamedPipeServerStream pipeServer = 

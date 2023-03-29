@@ -116,7 +116,7 @@ public class JsonDataLoader : MonoBehaviour
 
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.time = (float)timing.time;
-                        NDCompo.lastFor = (float)note.holdTime;
+                        NDCompo.LastFor = (float)note.holdTime;
                         NDCompo.startPosition = note.startPosition;
                         NDCompo.speed = noteSpeed * timing.HSpeed;
                         NDCompo.isEX = note.isEx;
@@ -127,7 +127,7 @@ public class JsonDataLoader : MonoBehaviour
                         var GOnote = Instantiate(touchHoldPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TouchHoldDrop>();
                         NDCompo.time = (float)timing.time;
-                        NDCompo.lastFor = (float)note.holdTime;
+                        NDCompo.LastFor = (float)note.holdTime;
                         NDCompo.speed = touchSpeed * timing.HSpeed;
                         NDCompo.isFirework = note.isHanabi;
 

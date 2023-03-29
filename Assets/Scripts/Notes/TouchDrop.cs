@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TouchDrop : MonoBehaviour
+public class TouchDrop : NoteDrop
 {
-    public float time;
+    // public float time;
     public float speed = 7;
     public char areaPosition;
     public bool isEach;

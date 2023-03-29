@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlideDrop : MonoBehaviour
+public class SlideDrop : NoteLongDrop
 {
     // Start is called before the first frame update
     public GameObject star_slide;
@@ -21,9 +21,9 @@ public class SlideDrop : MonoBehaviour
     public bool isBreak;
     public bool isGroupPart;
     public bool isGroupPartEnd;
-    public float time;
+    // public float time;
     public float timeStar;
-    public float LastFor = 1f;
+    // public float LastFor = 1f;
     public float speed;
 
     public int startPosition =1;
