@@ -55,6 +55,7 @@ public class ScreenRecorder : MonoBehaviour
               );
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "\\ffmpeg.exe", arguments);
             startinfo.UseShellExecute = false;
+            startinfo.CreateNoWindow = true;
             startinfo.WorkingDirectory = maidata_path;
             startinfo.EnvironmentVariables.Add("FFREPORT", "file=out.log:level=24");
             print(arguments);
