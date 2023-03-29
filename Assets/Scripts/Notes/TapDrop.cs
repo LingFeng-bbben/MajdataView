@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TapDrop : MonoBehaviour
+public class TapDrop : NoteDrop
 {
     // Start is called before the first frame update
-    public float time;
+    // public float time;
     public int startPosition = 1;
     public float speed = 1;
 

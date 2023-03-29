@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WifiDrop : MonoBehaviour
+public class WifiDrop : NoteLongDrop
 {
     // Start is called before the first frame update
     public GameObject star_slidePrefab;
@@ -20,9 +20,9 @@ public class WifiDrop : MonoBehaviour
     public RuntimeAnimatorController slideShine;
 
     public bool isJustR;
-    public float time;
+    // public float time;
     public float timeStart;
-    public float LastFor = 1f;
+    // public float LastFor = 1f;
     public float speed;
     public bool isEach;
     public bool isBreak;
