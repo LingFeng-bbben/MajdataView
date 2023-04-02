@@ -1,1 +1,1 @@
--y -f rawvideo -vcodec rawvideo -pix_fmt rgba -s {0}x{1} -r 60 -i \\.\pipe\majdataRec -i {2} -vf "vflip" -c:v libx264 -preset fast -pix_fmt yuv420p -c:a aac {3}
+-hide_banner -y -f rawvideo -vcodec rawvideo -pix_fmt rgba -s "{0}x{1}" -r 60 -i \\.\pipe\majdataRec -i "{2}" -vf "vflip" -c:v libx264 -preset fast -pix_fmt yuv420p -t "{4:0.0000}" -b:a 320k -c:a aac "{3}"

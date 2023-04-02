@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -102,12 +103,15 @@ public class HttpHandler : MonoBehaviour
             request = "";
             var maidataPath = new FileInfo(data.jsonPath).DirectoryName;
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed,true);
-            screenRecorder.StartRecording(maidataPath);
             loader.noteSpeed = (float)(107.25 / (71.4184491 * Mathf.Pow(data.noteSpeed + 0.9975f, -0.985558604f)));
             loader.touchSpeed = data.touchSpeed;
             objectCounter.ComboSetActive(data.comboStatusType);
             loader.LoadJson(File.ReadAllText(data.jsonPath), data.startTime);
             multTouchHandler.clearSlots();
+            
+            screenRecorder.CutoffTime = getChartLength();
+            screenRecorder.CutoffTime += 10f;
+            screenRecorder.StartRecording(maidataPath);
 
             bgManager.LoadBGFromPath(maidataPath, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
@@ -131,5 +135,22 @@ public class HttpHandler : MonoBehaviour
             bgManager.ContinueVideo(data.audioSpeed);
         }
         request = "";
+    }
+
+    private float getChartLength()
+    {
+        float length = 0f;
+        foreach (NoteDrop noteData in GameObject.Find("Notes").GetComponentsInChildren<NoteDrop>(true))
+        {
+            length = Math.Max(length, noteData.time);
+            
+            NoteLongDrop longData = noteData as NoteLongDrop;
+            if (longData != null)
+            {
+                length = Math.Max(length, noteData.time + longData.LastFor);
+                continue;
+            }
+        }
+        return length;
     }
 }

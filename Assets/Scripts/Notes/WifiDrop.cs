@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WifiDrop : MonoBehaviour
+public class WifiDrop : NoteLongDrop
 {
     // Start is called before the first frame update
     public GameObject star_slidePrefab;
@@ -20,9 +20,9 @@ public class WifiDrop : MonoBehaviour
     public RuntimeAnimatorController slideShine;
 
     public bool isJustR;
-    public float time;
+    // public float time;
     public float timeStart;
-    public float LastFor = 1f;
+    // public float LastFor = 1f;
     public float speed;
     public bool isEach;
     public bool isBreak;
@@ -56,7 +56,7 @@ public class WifiDrop : MonoBehaviour
             if (isEach) spriteRenderer_star[i].sprite = eachStar;
             else if (isBreak) spriteRenderer_star[i].sprite = breakStar;
             else spriteRenderer_star[i].sprite = normalStar;
-            star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (i + 3 + startPosition)));
+            star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f * (8 + i + 2 * (startPosition - 1)));
             SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
             star_slide[i].SetActive(false);
         }

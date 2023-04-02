@@ -12,6 +12,8 @@ using UnityEngine.UI;
 
 public class ScreenRecorder : MonoBehaviour
 {
+    public float CutoffTime;
+    
     public void StartRecording(string maidata_path)
     {
         StartCoroutine(CaptureScreen(maidata_path));
@@ -27,12 +29,16 @@ public class ScreenRecorder : MonoBehaviour
     bool isRecording = false;
     IEnumerator CaptureScreen(string maidata_path)
     {
-        if (Screen.width % 2 != 0)
+        var timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
+        var bgManager = GameObject.Find("Background").GetComponent<BGManager>();
+        if (Screen.width % 2 != 0 || Screen.height % 2 != 0)
         {
-            GameObject.Find("ErrText").GetComponent<Text>().text = "无法开始编码，因为分辨率宽度不是偶数。\nCan not start render because the width is not even.\n当前分辨率:"+Screen.width+"x"+Screen.height+"\n";
+            GameObject.Find("ErrText").GetComponent<Text>().text = "无法开始编码，因为分辨率宽度或高度不是偶数。\nCan not start render because the width/height is not even.\n当前分辨率:"+Screen.width+"x"+Screen.height+"\n";
+            yield break;
         }
         if (File.Exists(maidata_path + "\\out.mp4"))
             File.Delete(maidata_path + "\\out.mp4");
+        
         byte[] data;
         var texture = new Texture2D(0,0);
         using (NamedPipeServerStream pipeServer = 
@@ -41,10 +47,17 @@ public class ScreenRecorder : MonoBehaviour
             var wavpath = "out.wav";
             var outputfile = "out.mp4";
             
-            var arguments = string.Format(File.ReadAllText(Application.streamingAssetsPath+ "\\ffarguments.txt"),
-                Screen.width, Screen.height, wavpath, outputfile );
+            var arguments = string.Format(
+              File.ReadAllText(Application.streamingAssetsPath+ "\\ffarguments.txt").Trim(),
+                Screen.width, Screen.height,
+                wavpath, outputfile,
+                CutoffTime
+              );
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "\\ffmpeg.exe", arguments);
+            startinfo.UseShellExecute = false;
+            startinfo.CreateNoWindow = true;
             startinfo.WorkingDirectory = maidata_path;
+            startinfo.EnvironmentVariables.Add("FFREPORT", "file=out.log:level=24");
             print(arguments);
             
             var p = Process.Start(startinfo);
@@ -70,7 +83,11 @@ public class ScreenRecorder : MonoBehaviour
                     }
                     catch { }
                 }
-                while (pipeServer.IsConnected && isRecording && !p.HasExited);
+                while (
+                  pipeServer.IsConnected &&
+                  isRecording &&
+                  !p.HasExited
+                );
             }
             p.WaitForExit();
 
@@ -82,6 +99,8 @@ public class ScreenRecorder : MonoBehaviour
             else
                 GameObject.Find("ErrText").GetComponent<Text>().text += "编码器已退出\nFFmpeg Exited.\nExitCode:" + p.ExitCode;
         }
+        timeProvider.isStart = false;
+        bgManager.PauseVideo();
     }
 
     // Start is called before the first frame update

@@ -10,17 +10,17 @@ public class ObjectCounter : MonoBehaviour
     Text table;
     Text rate;
 
-#if COUNTER_USE_TEXTMESHPRO
+    #if COUNTER_USE_TEXTMESHPRO
     TextMeshProUGUI statusCombo;
     TextMeshProUGUI statusScore;
     TextMeshProUGUI statusAchievement;
     TextMeshProUGUI statusDXScore;
-#else
+    #else
     Text statusCombo;
     Text statusScore;
     Text statusAchievement;
     Text statusDXScore;
-#endif
+    #endif
 
     EditorComboIndicator textMode = EditorComboIndicator.Combo;
 
@@ -94,6 +94,11 @@ public class ObjectCounter : MonoBehaviour
           100f + BreakRate()
         };
 
+        Func<double, int, double> cutToDecimals = (value, decimalNum) => {
+            double rate = Math.Pow(10, decimalNum);
+            return Math.Truncate(value * rate) / rate;
+        };
+
         float monowidth = 0.7f;
 
         switch(textMode) {
@@ -102,22 +107,22 @@ public class ObjectCounter : MonoBehaviour
           break;
         case EditorComboIndicator.AchievementClassic: // Achievement (+) Classic
           UpdateAchievementColor(accValues[0]);
-          ApplyMonospaceText(statusAchievement, string.Format("{0,6:0.00}%", accValues[0]), monowidth);
+          ApplyMonospaceText(statusAchievement, string.Format("{0,6:0.00}%", cutToDecimals(accValues[0], 2)), monowidth);
           break;
         case EditorComboIndicator.AchievementDownClassic: // Achievement (-) Classic (from 100%)
           UpdateAchievementColor(accValues[1]);
-          ApplyMonospaceText(statusAchievement, string.Format("{0,6:0.00}%", accValues[1]), monowidth);
+          ApplyMonospaceText(statusAchievement, string.Format("{0,6:0.00}%", cutToDecimals(accValues[1], 2)), monowidth);
           break;
         case EditorComboIndicator.AchievementDeluxe: // Achievement (+) Deluxe
           UpdateAchievementColor(accValues[2]);
-          ApplyMonospaceText(statusAchievement, string.Format("{0,8:0.0000}%", accValues[2]), monowidth);
+          ApplyMonospaceText(statusAchievement, string.Format("{0,8:0.0000}%", cutToDecimals(accValues[2], 4)), monowidth);
           break;
         case EditorComboIndicator.AchievementDownDeluxe: // Achievement (-) Deluxe (from 100%)
           UpdateAchievementColor(accValues[3]);
-          ApplyMonospaceText(statusAchievement, string.Format("{0,8:0.0000}%", accValues[3]), monowidth);
+          ApplyMonospaceText(statusAchievement, string.Format("{0,8:0.0000}%", cutToDecimals(accValues[3], 4)), monowidth);
           break;
         case EditorComboIndicator.ScoreDeluxe: // DX Score (+)
-          statusDXScore.text = DxExNowScore().ToString();
+          ApplyMonospaceText(statusDXScore, DxExNowScore().ToString(), monowidth);
           break;
         case EditorComboIndicator.CScoreDedeluxe: // Score (+) DeDX
           ApplyMonospaceText(statusScore, string.Format("{0:#,##0}", scoreValues[1]), monowidth);
@@ -127,7 +132,7 @@ public class ObjectCounter : MonoBehaviour
           break;
         case EditorComboIndicator.Combo:
         default:
-          statusCombo.text = comboValue > 0 ? comboValue.ToString() : "";
+          ApplyMonospaceText(statusCombo, comboValue > 0 ? comboValue.ToString() : "", monowidth);
           break;
         }
     }
@@ -154,9 +159,10 @@ public class ObjectCounter : MonoBehaviour
             "{0:000.00}   %\n" +
             "DELUXE Rate:\n" +
             "{1:000.0000} % ",
-            ((float)FiNowScore() / FiSumScore()) * 100,
-            ((float)DxNowScore() / DxSumScore()) * 100 + BreakRate()
+            Math.Truncate(((float)FiNowScore() / FiSumScore()) * 10000)/100,
+            Math.Truncate((((float)DxNowScore() / DxSumScore()) * 100 + BreakRate())*10000)/10000
             );
+        
     }
 
     void UpdateState()

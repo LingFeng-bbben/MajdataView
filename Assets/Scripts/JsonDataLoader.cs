@@ -116,7 +116,7 @@ public class JsonDataLoader : MonoBehaviour
 
                         if (timing.noteList.Count > 1) NDCompo.isEach = true;
                         NDCompo.time = (float)timing.time;
-                        NDCompo.lastFor = (float)note.holdTime;
+                        NDCompo.LastFor = (float)note.holdTime;
                         NDCompo.startPosition = note.startPosition;
                         NDCompo.speed = noteSpeed * timing.HSpeed;
                         NDCompo.isEX = note.isEx;
@@ -127,7 +127,7 @@ public class JsonDataLoader : MonoBehaviour
                         var GOnote = Instantiate(touchHoldPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TouchHoldDrop>();
                         NDCompo.time = (float)timing.time;
-                        NDCompo.lastFor = (float)note.holdTime;
+                        NDCompo.LastFor = (float)note.holdTime;
                         NDCompo.speed = touchSpeed * timing.HSpeed;
                         NDCompo.isFirework = note.isHanabi;
 
@@ -642,6 +642,17 @@ public class JsonDataLoader : MonoBehaviour
 
         SliCompo.isMirror = isMirror;
         SliCompo.isJustR = detectJustType(note.noteContent);
+        if ((slideIndex - 26) > 0 && (slideIndex - 26) <= 8)
+        {
+            // known slide sprite issue
+            //    1 2 3 4 5 6 7 8
+            // p  X X X X X X O O
+            // q  X O O X X X X X
+            int pqEndPos = slideIndex - 26;
+            SliCompo.isSpecialFlip = isMirror == (pqEndPos == 7 || pqEndPos == 8);
+        } else {
+            SliCompo.isSpecialFlip = isMirror;
+        }
         SliCompo.speed = noteSpeed * timing.HSpeed;
         SliCompo.timeStar = (float)timing.time;
         SliCompo.startPosition = note.startPosition;

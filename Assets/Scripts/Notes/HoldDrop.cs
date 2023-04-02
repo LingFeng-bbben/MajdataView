@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HoldDrop : MonoBehaviour
+public class HoldDrop : NoteLongDrop
 {
-    public float time;
-    public float lastFor = 1f;
+    // public float time;
+    // public float LastFor = 1f;
     public int startPosition = 1;
     public float speed = 1;
 
@@ -126,7 +126,7 @@ public class HoldDrop : MonoBehaviour
 
         spriteRenderer.size = new Vector2(1.22f, 1.4f);
 
-        var holdTime = timing - lastFor;
+        var holdTime = timing - LastFor;
         var holdDistance = holdTime * speed + 4.8f;
         if (holdTime > 0) {
             GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
