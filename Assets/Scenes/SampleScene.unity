@@ -5432,6 +5432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d58a05adbb88e644cab548f31f077071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CutoffTime: 0
 --- !u!4 &1463030766
 Transform:
   m_ObjectHideFlags: 0
@@ -6481,6 +6482,67 @@ MonoBehaviour:
   isStart: 0
   isRecord: 0
   offset: 0
+--- !u!1 &1659660521
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1659660523}
+  - component: {fileID: 1659660522}
+  m_Layer: 0
+  m_Name: SoundEffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1659660522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659660521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c813dd1ffb8fd4b90dfd3339069400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bgmStream: -114514
+  answerStream: -114514
+  judgeStream: -114514
+  judgeBreakStream: -114514
+  breakStream: -114514
+  judgeExStream: -114514
+  hanabiStream: -114514
+  holdRiserStream: -114514
+  trackStartStream: -114514
+  slideStream: -114514
+  touchStream: -114514
+  allperfectStream: -114514
+  fanfareStream: -114514
+  clockStream: -114514
+  breakSlideStartStream: -114514
+  breakSlideStream: -114514
+  judgeBreakSlideStream: -114514
+--- !u!4 &1659660523
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659660521}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1673765535
 PrefabInstance:
   m_ObjectHideFlags: 0

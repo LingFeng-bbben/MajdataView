@@ -41,6 +41,8 @@ public class TapDrop : NoteDrop
     bool breakAnimStart = false;
     Animator animator;
 
+    SoundEffectManager seManager;
+
     void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -51,6 +53,7 @@ public class TapDrop : NoteDrop
         exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
+        seManager = GameObject.Find("SoundEffectManager").GetComponent<SoundEffectManager>();
         
         int sortOrder = (int)(time * -100);
         spriteRenderer.sortingOrder = sortOrder;
@@ -110,6 +113,8 @@ public class TapDrop : NoteDrop
 
         if (timing > 0)
         {
+            seManager.PlayTap(isBreak, isEX);
+
             GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
             if (isBreak) ObjectCounter.breakCount++;
             else ObjectCounter.tapCount++;
