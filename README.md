@@ -20,7 +20,8 @@
 - Please use the setting menu.
 
 # [>>>查看使用说明Wiki<<<](https://github.com/LingFeng-bbben/MajdataView/wiki)
-# [>>>Release(高速无毒无码绿色版下载)<<<](https://github.com/LingFeng-bbben/MajdataView/releases)
+# [English Guide On Charting](https://rentry.co/maiguide#making-the-chart)
+# [>>>Release Download(高速无毒无码绿色版下载)<<<](https://github.com/LingFeng-bbben/MajdataView/releases)
 
 ## 已知问题
 
