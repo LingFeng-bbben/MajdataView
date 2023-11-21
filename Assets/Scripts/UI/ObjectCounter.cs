@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,10 +10,17 @@ public class ObjectCounter : MonoBehaviour
     Text table;
     Text rate;
 
+    #if COUNTER_USE_TEXTMESHPRO
+    TextMeshProUGUI statusCombo;
+    TextMeshProUGUI statusScore;
+    TextMeshProUGUI statusAchievement;
+    TextMeshProUGUI statusDXScore;
+    #else
     Text statusCombo;
     Text statusScore;
     Text statusAchievement;
     Text statusDXScore;
+    #endif
 
     EditorComboIndicator textMode = EditorComboIndicator.Combo;
 
@@ -21,6 +29,7 @@ public class ObjectCounter : MonoBehaviour
     public Color AchievementSilverColor;// = new Color32(160, 160, 160, 255);
     public Color AchievementGoldColor;// = new Color32(224, 191, 127, 255);
 
+    // Public Accessible Stat
     public int tapCount;
     public int holdCount;
     public int slideCount;
@@ -39,10 +48,17 @@ public class ObjectCounter : MonoBehaviour
         table = GameObject.Find("ObjectCount").GetComponent<Text>();
         rate = GameObject.Find("ObjectRate").GetComponent<Text>();
 
-        statusCombo       = GameObject.Find("ComboText").GetComponent<Text>();
-        statusScore       = GameObject.Find("ScoreText").GetComponent<Text>();
-        statusAchievement = GameObject.Find("AchievementText").GetComponent<Text>();
-        statusDXScore     = GameObject.Find("DXScoreText").GetComponent<Text>();
+        #if COUNTER_USE_TEXTMESHPRO
+        statusCombo       = GameObject.Find("ComboText").GetComponent<TextMeshProUGUI>();
+        statusScore       = GameObject.Find("ScoreText").GetComponent<TextMeshProUGUI>();
+        statusAchievement = GameObject.Find("AchievementText").GetComponent<TextMeshProUGUI>();
+        statusDXScore     = GameObject.Find("DXScoreText").GetComponent<TextMeshProUGUI>();
+        #else
+        statusCombo       = GameObject.Find("ComboTextOriginal").GetComponent<Text>();
+        statusScore       = GameObject.Find("ScoreTextOriginal").GetComponent<Text>();
+        statusAchievement = GameObject.Find("AchievementTextOriginal").GetComponent<Text>();
+        statusDXScore     = GameObject.Find("DXScoreTextOriginal").GetComponent<Text>();
+        #endif
 
         statusCombo.gameObject.SetActive(false);
         statusScore.gameObject.SetActive(false);
@@ -78,38 +94,45 @@ public class ObjectCounter : MonoBehaviour
           100f + BreakRate()
         };
 
+        Func<double, int, double> cutToDecimals = (value, decimalNum) => {
+            double rate = Math.Pow(10, decimalNum);
+            return Math.Truncate(value * rate) / rate;
+        };
+
+        float monowidth = 0.7f;
+
         switch(textMode) {
         case EditorComboIndicator.ScoreClassic: // Score (+) Classic
-          statusScore.text = string.Format("{0:#,##0}", scoreValues[0]);
+          ApplyMonospaceText(statusScore, string.Format("{0:#,##0}", scoreValues[0]), monowidth);
           break;
         case EditorComboIndicator.AchievementClassic: // Achievement (+) Classic
           UpdateAchievementColor(accValues[0]);
-          statusAchievement.text = string.Format("{0,6:0.00}%", Math.Truncate(accValues[0]*100)/100);
+          ApplyMonospaceText(statusAchievement, string.Format("{0,6:0.00}%", cutToDecimals(accValues[0], 2)), monowidth);
           break;
         case EditorComboIndicator.AchievementDownClassic: // Achievement (-) Classic (from 100%)
           UpdateAchievementColor(accValues[1]);
-          statusAchievement.text = string.Format("{0,6:0.00}%", Math.Truncate(accValues[1] * 100) / 100);
+          ApplyMonospaceText(statusAchievement, string.Format("{0,6:0.00}%", cutToDecimals(accValues[1], 2)), monowidth);
           break;
         case EditorComboIndicator.AchievementDeluxe: // Achievement (+) Deluxe
           UpdateAchievementColor(accValues[2]);
-          statusAchievement.text = string.Format("{0,8:0.0000}%", Math.Truncate(accValues[2] * 10000) / 10000);
+          ApplyMonospaceText(statusAchievement, string.Format("{0,8:0.0000}%", cutToDecimals(accValues[2], 4)), monowidth);
           break;
         case EditorComboIndicator.AchievementDownDeluxe: // Achievement (-) Deluxe (from 100%)
           UpdateAchievementColor(accValues[3]);
-          statusAchievement.text = string.Format("{0,8:0.0000}%", Math.Truncate(accValues[3] * 10000) / 10000);
+          ApplyMonospaceText(statusAchievement, string.Format("{0,8:0.0000}%", cutToDecimals(accValues[3], 4)), monowidth);
           break;
         case EditorComboIndicator.ScoreDeluxe: // DX Score (+)
-          statusDXScore.text = DxExNowScore().ToString();
+          ApplyMonospaceText(statusDXScore, DxExNowScore().ToString(), monowidth);
           break;
         case EditorComboIndicator.CScoreDedeluxe: // Score (+) DeDX
-          statusScore.text = string.Format("{0:#,##0}", scoreValues[1]);
+          ApplyMonospaceText(statusScore, string.Format("{0:#,##0}", scoreValues[1]), monowidth);
           break;
         case EditorComboIndicator.CScoreDownDedeluxe: // Score (-) DeDX (from 100% rate)
-          statusScore.text = string.Format("{0:#,##0}", scoreValues[2]);
+          ApplyMonospaceText(statusScore, string.Format("{0:#,##0}", scoreValues[2]), monowidth);
           break;
         case EditorComboIndicator.Combo:
         default:
-          statusCombo.text = comboValue > 0 ? comboValue.ToString() : "";
+          ApplyMonospaceText(statusCombo, comboValue > 0 ? comboValue.ToString() : "", monowidth);
           break;
         }
     }
@@ -144,9 +167,9 @@ public class ObjectCounter : MonoBehaviour
 
     void UpdateState()
     {
-// Only define this when debugging (of this feature) is needed.
-// I don't bother compiling this as Debug.
-#if COMBO_CAN_SWAP_NOW
+        // Only define this when debugging (of this feature) is needed.
+        // I don't bother compiling this as Debug.
+        #if DEVELOPMENT_BUILD || COMBO_CAN_SWAP_NOW
         if (Input.GetKeyDown(KeyCode.Space)) {
             var validModes = Enum.GetValues(textMode.GetType());
             int i = 0;
@@ -158,7 +181,18 @@ public class ObjectCounter : MonoBehaviour
                 i += 1;
             }
         }
-#endif
+        #endif
+    }
+
+    void ApplyMonospaceText(Text obj, string content, float width)
+    {
+        // Just a normal overload.
+        obj.text = string.Format("{0}", content);
+    }
+
+    void ApplyMonospaceText(TextMeshProUGUI obj, string content, float width)
+    {
+        obj.text = string.Format("<{0}={1:0.00}em>{2}", "mspace", width, content);
     }
 
     private void UpdateAchievementColor(float achievementRate)
@@ -171,11 +205,18 @@ public class ObjectCounter : MonoBehaviour
         else if (achievementRate >= 80f)
             newColor = AchievementBronzeColor;
 
-        Text[] textElements = statusAchievement.gameObject.GetComponentsInChildren<Text>();
+        TextMeshProUGUI[] tmpElms = statusAchievement.gameObject.GetComponentsInChildren<TextMeshProUGUI>();
 
-        foreach(Text celm in textElements) {
-            if (celm.color != newColor)
-                celm.color = newColor;
+        foreach(TextMeshProUGUI cElm in tmpElms) {
+            if (cElm.color != newColor)
+                cElm.color = newColor;
+        }
+ 
+        Text[] textElms = statusAchievement.gameObject.GetComponentsInChildren<Text>();
+
+        foreach(Text cElm in textElms) {
+            if (cElm.color != newColor)
+                cElm.color = newColor;
         }
     }
 
