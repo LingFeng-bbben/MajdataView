@@ -72,9 +72,6 @@ public class BGManager : MonoBehaviour
 
     public void LoadBGFromPath(string path, float speed)
     {
-        // var pictureName = [ "Cover", "bg" ];
-        // var pictureExt = [ ".png", ".jpg", ".jpeg" ];
-
         var pictureName = new[] { "Cover", "bg" };
         var pictureExt = new[] { ".png", ".jpg", ".jpeg" };
 
@@ -96,15 +93,10 @@ public class BGManager : MonoBehaviour
 
         foreach (var name in videoName)
         {
-            var finished = false;
-            foreach (var ext in pictureExt)
-                if (File.Exists(path + "/" + name + ext))
-                {
-                    loadVideo(path + "/" + name + ext, speed);
-                    finished = true;
-                }
-
-            if (finished) break;
+            if (!File.Exists(path + "/" + name)) continue;
+            
+            loadVideo(path + "/" + name, speed);
+            break;
         }
     }
 
