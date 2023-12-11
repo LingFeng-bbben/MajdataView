@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TouchDrop : NoteDrop
 {
@@ -14,7 +12,7 @@ public class TouchDrop : NoteDrop
 
     public GameObject tapEffect;
     public GameObject justEffect;
-    
+
     public GameObject multTouchEffect2;
     public GameObject multTouchEffect3;
 
@@ -29,23 +27,23 @@ public class TouchDrop : NoteDrop
     public Sprite[] multTouchNormalSprite = new Sprite[2];
     public Sprite[] multTouchEachSprite = new Sprite[2];
 
-    AudioTimeProvider timeProvider;
-    MultTouchHandler multTouchHandler;
-
-    GameObject firework;
-    Animator fireworkEffect;
-
     public GameObject[] fans;
-    SpriteRenderer[] fansSprite = new SpriteRenderer[7];
+    private readonly SpriteRenderer[] fansSprite = new SpriteRenderer[7];
+    private float displayDuration;
+
+    private GameObject firework;
+    private Animator fireworkEffect;
+    private bool isStarted;
+    private int layer;
+    private float moveDuration;
+    private MultTouchHandler multTouchHandler;
+
+    private AudioTimeProvider timeProvider;
 
     private float wholeDuration;
-    private float moveDuration;
-    private float displayDuration;
-    private int layer = 0;
-    private bool isStarted = false;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         wholeDuration = 3.209385682f * Mathf.Pow(speed, -0.9549621752f);
         moveDuration = 0.8f * wholeDuration;
@@ -58,12 +56,10 @@ public class TouchDrop : NoteDrop
         firework = GameObject.Find("Firework");
         fireworkEffect = firework.GetComponent<Animator>();
 
-        for (int i = 0; i < 7; i++)
-        {
-            fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
-        }
+        for (var i = 0; i < 7; i++) fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
 
-        if (isEach) { 
+        if (isEach)
+        {
             SetfanSprite(fanEachSprite);
             fansSprite[4].sprite = pointEachSprite;
             fansSprite[5].sprite = multTouchEachSprite[0];
@@ -76,6 +72,7 @@ public class TouchDrop : NoteDrop
             fansSprite[5].sprite = multTouchNormalSprite[0];
             fansSprite[6].sprite = multTouchNormalSprite[1];
         }
+
         justEffect.GetComponent<SpriteRenderer>().sprite = justSprite;
 
         transform.position = GetAreaPos(startPosition, areaPosition);
@@ -84,13 +81,13 @@ public class TouchDrop : NoteDrop
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var timing = timeProvider.AudioTime - time;
-        
+
         //var timing = time;
         //var pow = Mathf.Pow(-timing * speed, 0.1f)-0.4f;
-        var pow = -Mathf.Exp(8 * (timing*0.4f/moveDuration) - 0.85f) + 0.42f;
+        var pow = -Mathf.Exp(8 * (timing * 0.4f / moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
         if (timing > 0.05f)
@@ -98,16 +95,16 @@ public class TouchDrop : NoteDrop
             multTouchHandler.cancelTouch(this);
             Instantiate(tapEffect, transform.position, transform.rotation);
             GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().touchCount++;
-            if (isFirework) {
+            if (isFirework)
+            {
                 fireworkEffect.SetTrigger("Fire");
                 firework.transform.position = transform.position;
             }
+
             Destroy(gameObject);
         }
-        if (timing > 0f)
-        {
-            justEffect.SetActive(true);
-        }
+
+        if (timing > 0f) justEffect.SetActive(true);
 
         if (-timing <= wholeDuration && -timing > moveDuration)
         {
@@ -116,7 +113,8 @@ public class TouchDrop : NoteDrop
                 isStarted = true;
                 multTouchHandler.registerTouch(this);
             }
-            SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((wholeDuration+timing)/displayDuration, 0f, 1f)));
+
+            SetfanColor(new Color(1f, 1f, 1f, Mathf.Clamp((wholeDuration + timing) / displayDuration, 0f, 1f)));
         }
         else if (-timing < moveDuration)
         {
@@ -125,16 +123,16 @@ public class TouchDrop : NoteDrop
                 isStarted = true;
                 multTouchHandler.registerTouch(this);
             }
+
             SetfanColor(Color.white);
         }
 
         if (float.IsNaN(distance)) distance = 0f;
-        for (int i = 0; i < 4; i++)
+        for (var i = 0; i < 4; i++)
         {
             var pos = (0.226f + distance) * GetAngle(i);
             fans[i].transform.localPosition = pos;
         }
-
     }
 
     public void setLayer(int newLayer)
@@ -144,11 +142,13 @@ public class TouchDrop : NoteDrop
         {
             multTouchEffect2.SetActive(true);
             multTouchEffect3.SetActive(false);
-        } else if (layer == 2)
+        }
+        else if (layer == 2)
         {
             multTouchEffect2.SetActive(false);
             multTouchEffect3.SetActive(true);
-        } else
+        }
+        else
         {
             multTouchEffect2.SetActive(false);
             multTouchEffect3.SetActive(false);
@@ -160,56 +160,56 @@ public class TouchDrop : NoteDrop
         setLayer(layer - 1);
     }
 
-    Vector3 GetAngle(int index)
+    private Vector3 GetAngle(int index)
     {
-        var angle = (index * (Mathf.PI / 2));
+        var angle = index * (Mathf.PI / 2);
         return new Vector3(Mathf.Sin(angle), Mathf.Cos(angle));
     }
-    Vector3 GetAreaPos(int index,char area)
-    {    
+
+    private Vector3 GetAreaPos(int index, char area)
+    {
         /// <summary>
-         /// AreaDistance: 
-         /// C:   0
-         /// E:   3.1
-         /// B:   2.21
-         /// A,D: 4.8
-         /// </summary>
+        /// AreaDistance: 
+        /// C:   0
+        /// E:   3.1
+        /// B:   2.21
+        /// A,D: 4.8
+        /// </summary>
         if (area == 'C') return Vector3.zero;
         if (area == 'B')
         {
-            var angle = (-index * (Mathf.PI / 4)) + ((Mathf.PI * 5) / 8);
-            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle))*2.3f;
+            var angle = -index * (Mathf.PI / 4) + Mathf.PI * 5 / 8;
+            return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 2.3f;
         }
+
         if (area == 'A')
         {
-            var angle = (-index * (Mathf.PI / 4)) + ((Mathf.PI * 5) / 8);
+            var angle = -index * (Mathf.PI / 4) + Mathf.PI * 5 / 8;
             return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 4.1f;
         }
+
         if (area == 'E')
         {
-            var angle = (-index * (Mathf.PI / 4)) + ((Mathf.PI * 6) / 8);
+            var angle = -index * (Mathf.PI / 4) + Mathf.PI * 6 / 8;
             return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 3.0f;
         }
+
         if (area == 'D')
         {
-            var angle = (-index * (Mathf.PI / 4)) + ((Mathf.PI * 6) / 8);
+            var angle = -index * (Mathf.PI / 4) + Mathf.PI * 6 / 8;
             return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * 4.1f;
         }
+
         return Vector3.zero;
     }
 
-    void SetfanColor(Color color)
+    private void SetfanColor(Color color)
     {
-        foreach (var fan in fansSprite)
-        {
-            fan.color = color;
-        }
+        foreach (var fan in fansSprite) fan.color = color;
     }
-    void SetfanSprite(Sprite sprite)
+
+    private void SetfanSprite(Sprite sprite)
     {
-        for (int i = 0; i < 4; i++)
-        {
-            fansSprite[i].sprite = sprite;
-        }
+        for (var i = 0; i < 4; i++) fansSprite[i].sprite = sprite;
     }
 }

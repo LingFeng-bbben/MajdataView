@@ -1,84 +1,97 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-
-class Majson
+internal class Majson
 {
-    public string level = "1";
-    public string difficulty = "EZ";
-    public int diffNum = 0;
-    public string title = "default";
     public string artist = "default";
     public string designer = "default";
-    public List<SimaiTimingPoint> timingList = new List<SimaiTimingPoint>();
+    public string difficulty = "EZ";
+    public int diffNum = 0;
+    public string level = "1";
+    public List<SimaiTimingPoint> timingList = new();
+    public string title = "default";
 }
 
-class SimaiTimingPoint
+internal class SimaiTimingPoint
 {
-    public double time;
+    public float currentBpm;
     public bool havePlayed;
+    public float HSpeed = 1.0f;
+    public string noteContent;
+    public List<SimaiNote> noteList = new();
     public int rawTextPositionX;
     public int rawTextPositionY;
-    public string noteContent;
-    public float currentBpm;
-    public List<SimaiNote> noteList = new List<SimaiNote>();
-    public float HSpeed = 1.0f;
+    public double time;
 }
-enum SimaiNoteType
+
+internal enum SimaiNoteType
 {
-    Tap, Slide, Hold, Touch, TouchHold
+    Tap,
+    Slide,
+    Hold,
+    Touch,
+    TouchHold
 }
-class SimaiNote
+
+internal class SimaiNote
 {
-    public SimaiNoteType noteType;
-    public bool isBreak = false;
-    public bool isSlideBreak = false;
-    public bool isHanabi = false;
-    public bool isEx = false;
-    public bool isSlideNoHead = false;
-    public bool isForceStar = false;
-    public bool isFakeRotate = false;
-
-    public int startPosition = 1; //键位（1-8）
-    public char touchArea = ' ';
-
     public double holdTime = 0d;
+    public bool isBreak = false;
+    public bool isEx = false;
+    public bool isFakeRotate = false;
+    public bool isForceStar = false;
+    public bool isHanabi = false;
+    public bool isSlideBreak = false;
+    public bool isSlideNoHead = false;
+
+    public string noteContent; //used for star explain
+    public SimaiNoteType noteType;
 
     public double slideStartTime = 0d;
     public double slideTime = 0d;
 
-    public string noteContent; //used for star explain
+    public int startPosition = 1; //键位（1-8）
+    public char touchArea = ' ';
 }
 
-class EditRequestjson
+internal class EditRequestjson
 {
+    public float audioSpeed;
+    public float backgroundCover;
+    public EditorComboIndicator comboStatusType;
     public EditorControlMethod control;
-    public float startTime;
-    public long startAt;
     public string jsonPath;
     public float noteSpeed;
+    public long startAt;
+    public float startTime;
     public float touchSpeed;
-    public float backgroundCover;
-    public float audioSpeed;
-    public EditorComboIndicator comboStatusType;
 }
 
 public enum EditorComboIndicator
 {
     None,
+
     // List of viable indicators that won't be a static content.
     // ScoreBorder, AchievementMaxDown, ScoreDownDeluxe are static.
-    Combo, ScoreClassic, AchievementClassic, AchievementDownClassic,
-    AchievementDeluxe = 11, AchievementDownDeluxe, ScoreDeluxe,
+    Combo,
+    ScoreClassic,
+    AchievementClassic,
+    AchievementDownClassic,
+    AchievementDeluxe = 11,
+    AchievementDownDeluxe,
+    ScoreDeluxe,
+
     // Please prefix custom indicator with C
-    CScoreDedeluxe = 101, CScoreDownDedeluxe,
+    CScoreDedeluxe = 101,
+    CScoreDownDedeluxe,
     MAX
 }
 
-enum EditorControlMethod
+internal enum EditorControlMethod
 {
-    Start, Stop, OpStart, Pause, Continue, Record
+    Start,
+    Stop,
+    OpStart,
+    Pause,
+    Continue,
+    Record
 }

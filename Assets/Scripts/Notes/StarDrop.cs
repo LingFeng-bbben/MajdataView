@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StarDrop : NoteDrop
 {
@@ -10,11 +8,11 @@ public class StarDrop : NoteDrop
     public float speed = 1;
     public float rotateSpeed = 1f;
 
-    public bool isEach = false;
-    public bool isBreak = false;
-    public bool isDouble = false;
-    public bool isEX = false;
-    public bool isNoHead = false;
+    public bool isEach;
+    public bool isBreak;
+    public bool isDouble;
+    public bool isEX;
+    public bool isNoHead;
 
     public Sprite tapSpr;
     public Sprite eachSpr;
@@ -37,22 +35,22 @@ public class StarDrop : NoteDrop
     public Color exEffectTap;
     public Color exEffectEach;
     public Color exEffectBreak;
+    private Animator animator;
 
-    AudioTimeProvider timeProvider;
+    private bool breakAnimStart;
+    private SpriteRenderer exSpriteRender;
+    private SpriteRenderer lineSpriteRender;
 
-    SpriteRenderer spriteRenderer;
-    SpriteRenderer lineSpriteRender;
-    SpriteRenderer exSpriteRender;
+    private ObjectCounter ObjectCounter;
 
-    ObjectCounter ObjectCounter;
+    private SpriteRenderer spriteRenderer;
 
-    bool breakAnimStart = false;
-    Animator animator;
+    private AudioTimeProvider timeProvider;
 
-    void Start()
+    private void Start()
     {
         var notes = GameObject.Find("Notes").transform;
-        tapLine = Instantiate(tapLine,notes);
+        tapLine = Instantiate(tapLine, notes);
         tapLine.SetActive(false);
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -60,7 +58,7 @@ public class StarDrop : NoteDrop
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
 
-        int sortOrder = (int)(time * -100);
+        var sortOrder = (int)(time * -100);
         spriteRenderer.sortingOrder = sortOrder;
         exSpriteRender.sortingOrder = sortOrder;
 
@@ -68,28 +66,20 @@ public class StarDrop : NoteDrop
         {
             exSpriteRender.sprite = exSpr_Double;
             spriteRenderer.sprite = tapSpr_Double;
-            if (isEX)
-            {
-                exSpriteRender.color = exEffectTap;
-            }
+            if (isEX) exSpriteRender.color = exEffectTap;
             if (isEach)
             {
                 lineSpriteRender.sprite = eachLine;
                 spriteRenderer.sprite = eachSpr_Double;
-                if (isEX)
-                {
-                    exSpriteRender.color = exEffectEach;
-                }
+                if (isEX) exSpriteRender.color = exEffectEach;
             }
+
             if (isBreak)
             {
                 lineSpriteRender.sprite = breakLine;
                 spriteRenderer.sprite = breakSpr_Double;
-                if (isEX)
-                {
-                    exSpriteRender.color = exEffectBreak;
-                }
-                Animator anim = gameObject.AddComponent<Animator>();  // break star闪烁
+                if (isEX) exSpriteRender.color = exEffectBreak;
+                var anim = gameObject.AddComponent<Animator>(); // break star闪烁
                 anim.runtimeAnimatorController = BreakShine;
                 anim.enabled = false;
                 animator = anim;
@@ -99,53 +89,49 @@ public class StarDrop : NoteDrop
         {
             exSpriteRender.sprite = exSpr;
             spriteRenderer.sprite = tapSpr;
-            if (isEX)
-            {
-                exSpriteRender.color = exEffectTap;
-            }
+            if (isEX) exSpriteRender.color = exEffectTap;
             if (isEach)
             {
                 lineSpriteRender.sprite = eachLine;
                 spriteRenderer.sprite = eachSpr;
-                if (isEX)
-                {
-                    exSpriteRender.color = exEffectEach;
-                }
+                if (isEX) exSpriteRender.color = exEffectEach;
             }
+
             if (isBreak)
             {
                 lineSpriteRender.sprite = breakLine;
                 spriteRenderer.sprite = breakSpr;
-                if (isEX)
-                {
-                    exSpriteRender.color = exEffectBreak;
-                }
-                Animator anim = gameObject.AddComponent<Animator>();  // break star闪烁
+                if (isEX) exSpriteRender.color = exEffectBreak;
+                var anim = gameObject.AddComponent<Animator>(); // break star闪烁
                 anim.runtimeAnimatorController = BreakShine;
                 anim.enabled = false;
                 animator = anim;
             }
         }
+
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var timing = timeProvider.AudioTime - time;
         var distance = timing * speed + 4.8f;
         var destScale = distance * 0.4f + 0.51f;
         var songSpeed = timeProvider.CurrentSpeed;
-        if (destScale < 0f) { 
+        if (destScale < 0f)
+        {
             destScale = 0f;
             return;
         }
+
         if (!isNoHead)
         {
             spriteRenderer.forceRenderingOff = false;
             if (isEX) exSpriteRender.forceRenderingOff = false;
         }
+
         if (isBreak && !breakAnimStart)
         {
             breakAnimStart = true;
@@ -153,43 +139,47 @@ public class StarDrop : NoteDrop
             animator.Play("BreakShine", -1, 0.5f);
         }
 
-        if (timing > 0) {
-            if (!isNoHead) {
+        if (timing > 0)
+        {
+            if (!isNoHead)
+            {
                 GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
                 if (isBreak) ObjectCounter.breakCount++;
                 else ObjectCounter.tapCount++;
             }
+
             Destroy(tapLine);
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
 
         if (timeProvider.isStart)
             transform.Rotate(0f, 0f, -180f * Time.deltaTime * songSpeed / rotateSpeed);
 
-        tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
+        tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
 
         if (distance < 1.225f)
         {
             transform.localScale = new Vector3(destScale, destScale);
 
             distance = 1.225f;
-            Vector3 pos = getPositionFromDistance(distance);
+            var pos = getPositionFromDistance(distance);
             transform.position = pos;
             if (destScale > 0.3f && !isNoHead) tapLine.SetActive(true);
         }
         else
         {
             if (!slide.activeSelf) slide.SetActive(true);
-            Vector3 pos = getPositionFromDistance(distance);
+            var pos = getPositionFromDistance(distance);
             transform.position = pos;
             transform.localScale = new Vector3(1f, 1f);
         }
+
         var lineScale = Mathf.Abs(distance / 4.8f);
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 
-    Vector3 getPositionFromDistance(float distance)
+    private Vector3 getPositionFromDistance(float distance)
     {
         return new Vector3(
             distance * Mathf.Cos((startPosition * -2f + 5f) * 0.125f * Mathf.PI),

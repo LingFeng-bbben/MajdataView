@@ -1,18 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using System;
 
 public class AudioTimeProvider : MonoBehaviour
 {
-    public float AudioTime = 0f; //notes get this value
+    public float AudioTime; //notes get this value
+    public bool isStart;
+    public bool isRecord;
+    public float offset;
+    private float speed;
 
-    float startTime;
-    float speed;
-    long ticks = 0;
-    public bool isStart = false;
-    public bool isRecord = false;
-    public float offset = 0f;
+    private float startTime;
+    private long ticks;
+
+    public float CurrentSpeed => isRecord ? Time.timeScale : speed;
+
+    // Update is called once per frame
+    private void Update()
+    {
+        if (isStart)
+        {
+            if (isRecord)
+                AudioTime = Time.time - startTime + offset;
+            else
+                AudioTime = (Time.realtimeSinceStartup - startTime) * speed + offset;
+        }
+    }
+
     public void SetStartTime(long _ticks, float _offset, float _speed, bool _isRecord = false)
     {
         ticks = _ticks;
@@ -21,8 +34,9 @@ public class AudioTimeProvider : MonoBehaviour
         var dateTime = new DateTime(ticks);
         var seconds = (dateTime - DateTime.Now).TotalSeconds;
         isRecord = _isRecord;
-        if (_isRecord) {
-            startTime = Time.time +5;
+        if (_isRecord)
+        {
+            startTime = Time.time + 5;
             Time.timeScale = _speed;
             Time.captureFramerate = 60;
         }
@@ -32,6 +46,7 @@ public class AudioTimeProvider : MonoBehaviour
             speed = _speed;
             Time.captureFramerate = 0;
         }
+
         isStart = true;
     }
 
@@ -40,28 +55,4 @@ public class AudioTimeProvider : MonoBehaviour
         offset = 0f;
         isStart = false;
     }
-
-    public float CurrentSpeed
-    {
-        get {
-            return isRecord ? Time.timeScale : speed;
-        }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (isStart)
-        {
-            if (isRecord)
-            {
-                AudioTime = (Time.time - startTime) + offset;
-            }
-            else
-            {
-                AudioTime = (Time.realtimeSinceStartup - startTime) * speed + offset;
-            }
-        }
-    }
-
 }
