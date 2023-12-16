@@ -1,24 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class Floating : MonoBehaviour
 {
     public float rotate;
     public float wx;
     public float wy;
-    Vector3 startPos;
-    RectTransform rectTransform;
+    private RectTransform rectTransform;
+
+    private Vector3 startPos;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
         startPos = rectTransform.localPosition;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         rectTransform.Rotate(new Vector3(0f, 0f, rotate));
         rectTransform.localPosition = startPos + new Vector3(Mathf.Sin(Time.time * wx), Mathf.Sin(Time.time * wy));

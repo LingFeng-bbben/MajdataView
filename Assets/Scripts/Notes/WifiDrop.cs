@@ -1,14 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class WifiDrop : NoteLongDrop
 {
     // Start is called before the first frame update
     public GameObject star_slidePrefab;
-    GameObject[] star_slide = new GameObject[3];
-
-    SpriteRenderer[] spriteRenderer_star = new SpriteRenderer[3];
 
     public Sprite[] normalSlide = new Sprite[11];
     public Sprite[] eachSlide = new Sprite[11];
@@ -20,8 +16,10 @@ public class WifiDrop : NoteLongDrop
     public RuntimeAnimatorController slideShine;
 
     public bool isJustR;
+
     // public float time;
     public float timeStart;
+
     // public float LastFor = 1f;
     public float speed;
     public bool isEach;
@@ -31,25 +29,28 @@ public class WifiDrop : NoteLongDrop
 
     public int startPosition = 1;
 
-    public int sortIndex = 0;
+    public int sortIndex;
+    private readonly List<Animator> animators = new();
+    private readonly List<SpriteRenderer> sbRender = new();
 
-    AudioTimeProvider timeProvider;
+    private readonly List<GameObject> slideBars = new();
+    private readonly Vector3[] SlidePositionEnd = new Vector3[3];
 
-    List<GameObject> slideBars = new List<GameObject>();
-    GameObject slideOK;
-    List<SpriteRenderer> sbRender = new List<SpriteRenderer>();
+    private readonly SpriteRenderer[] spriteRenderer_star = new SpriteRenderer[3];
+    private readonly GameObject[] star_slide = new GameObject[3];
+    private GameObject slideOK;
 
-    Vector3 SlidePositionStart = new Vector3();
-    Vector3[] SlidePositionEnd = new Vector3[3];
+    private Vector3 SlidePositionStart;
 
-    bool startShining = false;
-    List<Animator> animators = new List<Animator>();
+    private bool startShining;
 
-    void Start()
+    private AudioTimeProvider timeProvider;
+
+    private void Start()
     {
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         var notes = GameObject.Find("Notes").transform;
-        for (int i = 0; i < star_slide.Length; i++)
+        for (var i = 0; i < star_slide.Length; i++)
         {
             star_slide[i] = Instantiate(star_slidePrefab, notes);
             spriteRenderer_star[i] = star_slide[i].GetComponent<SpriteRenderer>();
@@ -63,11 +64,8 @@ public class WifiDrop : NoteLongDrop
 
         transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
         slideBars.Clear();
-        for (int i = 0; i < transform.childCount - 1; i++)
-        {
-            slideBars.Add(transform.GetChild(i).gameObject);
-        }
-        slideOK = transform.GetChild(transform.childCount - 1).gameObject;//slideok is the last one
+        for (var i = 0; i < transform.childCount - 1; i++) slideBars.Add(transform.GetChild(i).gameObject);
+        slideOK = transform.GetChild(transform.childCount - 1).gameObject; //slideok is the last one
         if (isJustR)
         {
             slideOK.GetComponent<LoadJustSprite>().setR();
@@ -77,18 +75,19 @@ public class WifiDrop : NoteLongDrop
             slideOK.GetComponent<LoadJustSprite>().setL();
             slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
         }
+
         slideOK.SetActive(false);
         slideOK.transform.SetParent(transform.parent);
         SlidePositionStart = getPositionFromDistance(4.8f);
 
-        for (int i = 0; i < slideBars.Count; i++)
+        for (var i = 0; i < slideBars.Count; i++)
         {
             var sr = slideBars[i].GetComponent<SpriteRenderer>();
 
             if (isBreak)
             {
                 sr.sprite = breakSlide[i];
-                Animator anim = slideBars[i].AddComponent<Animator>();
+                var anim = slideBars[i].AddComponent<Animator>();
                 anim.runtimeAnimatorController = slideShine;
                 anim.enabled = false;
                 animators.Add(anim);
@@ -109,13 +108,8 @@ public class WifiDrop : NoteLongDrop
         }
     }
 
-    private void OnEnable()
-    {
-
-    }
-
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var startiming = timeProvider.AudioTime - timeStart;
         if (startiming <= 0f)
@@ -126,12 +120,13 @@ public class WifiDrop : NoteLongDrop
             setSlideBarAlpha(alpha);
             return;
         }
+
         setSlideBarAlpha(1f);
 
         if (isBreak && !startShining)
         {
             startShining = true;
-            foreach (Animator anim in animators)
+            foreach (var anim in animators)
             {
                 anim.enabled = true;
                 anim.Play("BreakShine", -1, 0f);
@@ -151,20 +146,21 @@ public class WifiDrop : NoteLongDrop
             }
             else
             {
-                alpha = 1f - (-timing / (time - timeStart));
+                alpha = 1f - -timing / (time - timeStart);
                 alpha = alpha > 1f ? 1f : alpha;
                 alpha = alpha < 0.5f ? 0.5f : alpha;
             }
-            for (int i = 0; i < star_slide.Length; i++)
+
+            for (var i = 0; i < star_slide.Length; i++)
             {
                 spriteRenderer_star[i].color = new Color(1, 1, 1, alpha);
                 star_slide[i].transform.localScale = new Vector3(alpha + 0.5f, alpha + 0.5f, alpha + 0.5f);
                 star_slide[i].transform.position = SlidePositionStart;
             }
         }
+
         if (timing > 0f)
         {
-
             var process = (LastFor - timing) / LastFor;
             process = 1f - process;
             if (process > 1)
@@ -172,49 +168,52 @@ public class WifiDrop : NoteLongDrop
                 if (isGroupPartEnd)
                 {
                     if (isBreak)
-                    {
                         GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-                    }
                     else
-                    {
                         GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
-                    }
                     slideOK.SetActive(true);
                 }
-                for (int i = 0; i < star_slide.Length; i++)
+
+                for (var i = 0; i < star_slide.Length; i++)
                     Destroy(star_slide[i]);
                 Destroy(gameObject);
             }
+
             var pos = (slideBars.Count - 1) * process;
-            for (int i = 0; i < star_slide.Length; i++)
+            for (var i = 0; i < star_slide.Length; i++)
             {
                 spriteRenderer_star[i].color = Color.white;
-                star_slide[i].transform.position = (SlidePositionEnd[i] - SlidePositionStart) * process + SlidePositionStart; //TODO add some runhua
+                star_slide[i].transform.position =
+                    (SlidePositionEnd[i] - SlidePositionStart) * process + SlidePositionStart; //TODO add some runhua
                 star_slide[i].transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             }
-            for (int i = 0; i < pos; i++)
-            {
-                slideBars[i].SetActive(false);
-            }
+
+            for (var i = 0; i < pos; i++) slideBars[i].SetActive(false);
         }
     }
-    void setSlideBarAlpha(float alpha)
+
+    private void OnEnable()
+    {
+    }
+
+    private void setSlideBarAlpha(float alpha)
     {
         foreach (var sr in sbRender)
         {
-            Color oldColor = sr.color;
+            var oldColor = sr.color;
             oldColor.a = alpha;
             sr.color = oldColor;
         }
     }
 
-    Vector3 getPositionFromDistance(float distance)
+    private Vector3 getPositionFromDistance(float distance)
     {
         return new Vector3(
             distance * Mathf.Cos((startPosition * -2f + 5f) * 0.125f * Mathf.PI),
             distance * Mathf.Sin((startPosition * -2f + 5f) * 0.125f * Mathf.PI));
     }
-    Vector3 getPositionFromDistance(float distance, int position)
+
+    private Vector3 getPositionFromDistance(float distance, int position)
     {
         return new Vector3(
             distance * Mathf.Cos((position * -2f + 5f) * 0.125f * Mathf.PI),

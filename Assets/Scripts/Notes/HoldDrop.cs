@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HoldDrop : NoteLongDrop
 {
@@ -9,9 +7,9 @@ public class HoldDrop : NoteLongDrop
     public int startPosition = 1;
     public float speed = 1;
 
-    public bool isEach = false;
-    public bool isEX = false;
-    public bool isBreak = false;
+    public bool isEach;
+    public bool isEX;
+    public bool isBreak;
 
     public Sprite tapSpr;
     public Sprite eachSpr;
@@ -34,36 +32,36 @@ public class HoldDrop : NoteLongDrop
     public Color exEffectTap;
     public Color exEffectEach;
     public Color exEffectBreak;
+    private Animator animator;
 
-    AudioTimeProvider timeProvider;
+    private bool breakAnimStart;
+    private SpriteRenderer exSpriteRender;
+    private bool holdAnimStart;
+    private SpriteRenderer holdEndRender;
+    private SpriteRenderer lineSpriteRender;
 
-    SpriteRenderer spriteRenderer;
-    SpriteRenderer lineSpriteRender;
-    SpriteRenderer exSpriteRender;
-    SpriteRenderer holdEndRender;
+    private SpriteRenderer spriteRenderer;
 
-    bool breakAnimStart = false;
-    bool holdAnimStart = false;
-    Animator animator;
+    private AudioTimeProvider timeProvider;
 
-    void Start()
+    private void Start()
     {
         var notes = GameObject.Find("Notes").transform;
-        holdEffect = Instantiate(holdEffect,notes);
+        holdEffect = Instantiate(holdEffect, notes);
         holdEffect.SetActive(false);
-        
-        tapLine = Instantiate(tapLine,notes);
+
+        tapLine = Instantiate(tapLine, notes);
         tapLine.SetActive(false);
         lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
-        
+
         exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        
+
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         holdEndRender = transform.GetChild(1).GetComponent<SpriteRenderer>();
 
-        int sortOrder = (int)(time * -100);
+        var sortOrder = (int)(time * -100);
         spriteRenderer.sortingOrder = sortOrder;
         exSpriteRender.sortingOrder = sortOrder;
         holdEndRender.sortingOrder = sortOrder;
@@ -71,49 +69,44 @@ public class HoldDrop : NoteLongDrop
         spriteRenderer.sprite = tapSpr;
         exSpriteRender.sprite = exSpr;
 
-        Animator anim = gameObject.AddComponent<Animator>();
+        var anim = gameObject.AddComponent<Animator>();
         anim.enabled = false;
         animator = anim;
 
-        if (isEX)
-        {
-            exSpriteRender.color = exEffectTap;
-        }
+        if (isEX) exSpriteRender.color = exEffectTap;
         if (isEach)
         {
             spriteRenderer.sprite = eachSpr;
             lineSpriteRender.sprite = eachLine;
             holdEndRender.sprite = holdEachEnd;
-            if (isEX)
-            {
-                exSpriteRender.color = exEffectEach;
-            }
+            if (isEX) exSpriteRender.color = exEffectEach;
         }
+
         if (isBreak)
         {
             spriteRenderer.sprite = breakSpr;
             lineSpriteRender.sprite = breakLine;
             holdEndRender.sprite = holdBreakEnd;
-            if (isEX)
-            {
-                exSpriteRender.color = exEffectBreak;
-            }
+            if (isEX) exSpriteRender.color = exEffectBreak;
         }
+
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;
         holdEndRender.enabled = false;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var timing = timeProvider.AudioTime - time;
         var distance = timing * speed + 4.8f;
         var destScale = distance * 0.4f + 0.51f;
-        if (destScale < 0f) { 
+        if (destScale < 0f)
+        {
             destScale = 0f;
             return;
         }
+
         spriteRenderer.forceRenderingOff = false;
         if (isEX) exSpriteRender.forceRenderingOff = false;
 
@@ -128,34 +121,29 @@ public class HoldDrop : NoteLongDrop
 
         var holdTime = timing - LastFor;
         var holdDistance = holdTime * speed + 4.8f;
-        if (holdTime > 0) {
+        if (holdTime > 0)
+        {
             GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
             if (isBreak)
-            {
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-            }
             else
-            {
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
-            }
             Destroy(tapLine);
             Destroy(holdEffect);
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
 
 
-        transform.rotation = Quaternion.Euler(0, 0, -22.5f + (-45f * (startPosition - 1)));
+        transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
         tapLine.transform.rotation = transform.rotation;
         holdEffect.transform.position = getPositionFromDistance(4.8f);
 
         if (distance < 1.225f)
         {
-
-
             transform.localScale = new Vector3(destScale, destScale);
             spriteRenderer.size = new Vector2(1.22f, 1.42f);
             distance = 1.225f;
-            Vector3 pos = getPositionFromDistance(distance);
+            var pos = getPositionFromDistance(distance);
             transform.position = pos;
 
             if (destScale > 0.3f) tapLine.SetActive(true);
@@ -185,13 +173,15 @@ public class HoldDrop : NoteLongDrop
             {
                 holdEndRender.enabled = true;
             }
+
             var dis = (distance - holdDistance) / 2 + holdDistance;
-            transform.position = getPositionFromDistance(dis);//0.325
+            transform.position = getPositionFromDistance(dis); //0.325
             var size = distance - holdDistance + 1.4f;
             spriteRenderer.size = new Vector2(1.22f, size);
-            holdEndRender.transform.localPosition = new Vector3(0f, 0.6825f-size/2);
+            holdEndRender.transform.localPosition = new Vector3(0f, 0.6825f - size / 2);
             transform.localScale = new Vector3(1f, 1f);
         }
+
         var lineScale = Mathf.Abs(distance / 4.8f);
         lineScale = lineScale >= 1f ? 1f : lineScale;
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
@@ -199,7 +189,7 @@ public class HoldDrop : NoteLongDrop
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 
-    void startHoldShine()
+    private void startHoldShine()
     {
         if (!holdAnimStart)
         {
@@ -209,7 +199,7 @@ public class HoldDrop : NoteLongDrop
         }
     }
 
-    Vector3 getPositionFromDistance(float distance)
+    private Vector3 getPositionFromDistance(float distance)
     {
         return new Vector3(
             distance * Mathf.Cos((startPosition * -2f + 5f) * 0.125f * Mathf.PI),

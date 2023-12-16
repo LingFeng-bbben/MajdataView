@@ -1,22 +1,25 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Networking;
-using UnityEngine.Video;
 using System.IO;
-using System.Drawing;
+using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class BGManager : MonoBehaviour
 {
-    GameObject SongDetail;
-    SpriteRenderer spriteRender;
-    VideoPlayer videoPlayer;
-    RawImage rawImage;
-    AudioTimeProvider provider;
-    float playSpeed;
+    private float playSpeed;
+    private AudioTimeProvider provider;
+
+    private RawImage rawImage;
+
+    // Update is called once per frame
+    private float smoothRDelta;
+    private GameObject SongDetail;
+    private SpriteRenderer spriteRender;
+
+    private VideoPlayer videoPlayer;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         spriteRender = GetComponent<SpriteRenderer>();
         videoPlayer = GetComponent<VideoPlayer>();
@@ -24,6 +27,29 @@ public class BGManager : MonoBehaviour
         provider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         SongDetail = GameObject.Find("CanvasSongDetail");
         SongDetail.SetActive(false);
+    }
+
+    private void Update()
+    {
+        //videoPlayer.externalReferenceTime = provider.AudioTime;
+        var delta = (float)videoPlayer.clockTime - provider.AudioTime;
+        smoothRDelta += (Time.unscaledDeltaTime - smoothRDelta) * 0.01f;
+        if (provider.AudioTime < 0) return;
+        var realSpeed = Time.deltaTime / smoothRDelta;
+
+        if (Time.captureFramerate != 0)
+        {
+            //print("speed="+realSpeed+" delta="+delta);
+            videoPlayer.playbackSpeed = realSpeed - delta;
+            return;
+        }
+
+        if (delta < -0.01f)
+            videoPlayer.playbackSpeed = playSpeed + 0.2f;
+        else if (delta > 0.01f)
+            videoPlayer.playbackSpeed = playSpeed - 0.2f;
+        else
+            videoPlayer.playbackSpeed = playSpeed;
     }
 
     public void PlaySongDetail()
@@ -35,6 +61,7 @@ public class BGManager : MonoBehaviour
     {
         videoPlayer.Pause();
     }
+
     public void ContinueVideo(float speed)
     {
         videoPlayer.playbackSpeed = speed;
@@ -43,52 +70,47 @@ public class BGManager : MonoBehaviour
     }
 
 
-    public void LoadBGFromPath(string path,float speed)
+    public void LoadBGFromPath(string path, float speed)
     {
-        if (File.Exists(path + "/Cover.jpg"))
+        var pictureName = new[] { "Cover", "bg" };
+        var pictureExt = new[] { ".png", ".jpg", ".jpeg" };
+
+        var videoName = new[] { "pv.mp4", "mv.mp4", "bg.mp4" };
+
+        foreach (var name in pictureName)
         {
-            StartCoroutine(loadPic(path + "/Cover.jpg"));
+            var finished = false;
+            foreach (var ext in pictureExt)
+                if (File.Exists(path + "/" + name + ext))
+                {
+                    StartCoroutine(loadPic(path + "/" + name + ext));
+                    finished = true;
+                    break;
+                }
+
+            if (finished) break;
         }
-        if (File.Exists(path + "/Cover.png"))
+
+        foreach (var name in videoName)
         {
-            StartCoroutine(loadPic(path + "/Cover.png"));
-        }
-        if (File.Exists(path + "/bg.jpg"))
-        {
-            StartCoroutine(loadPic(path + "/bg.jpg"));
-        }
-        if (File.Exists(path + "/bg.png"))
-        {
-            StartCoroutine(loadPic(path + "/bg.png"));
-        }
-        if (File.Exists(path + "/bg.mp4"))
-        {
-            loadVideo(path + "/bg.mp4", speed);
-            return;
-        }
-        if (File.Exists(path + "/mv.mp4"))
-        {
-            loadVideo(path + "/mv.mp4", speed);
-            return;
-        }
-        if (File.Exists(path + "/bg.wmv"))
-        {
-            loadVideo(path + "/bg.wmv", speed);
-            return;
+            if (!File.Exists(path + "/" + name)) continue;
+            
+            loadVideo(path + "/" + name, speed);
+            break;
         }
     }
 
-    IEnumerator loadPic(string path)
+    private IEnumerator loadPic(string path)
     {
         Sprite sprite;
         yield return sprite = SpriteLoader.LoadSpriteFromFile(path);
         rawImage.texture = sprite.texture;
         spriteRender.sprite = sprite;
-        var scale = 1080f/(float)sprite.texture.width;
+        var scale = 1080f / sprite.texture.width;
         gameObject.transform.localScale = new Vector3(scale, scale, scale);
     }
 
-    void loadVideo(string path, float speed)
+    private void loadVideo(string path, float speed)
     {
         videoPlayer.url = "file://" + path;
         videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
@@ -97,7 +119,7 @@ public class BGManager : MonoBehaviour
         StartCoroutine(waitFumenStart());
     }
 
-    IEnumerator waitFumenStart()
+    private IEnumerator waitFumenStart()
     {
         videoPlayer.Prepare();
         //videoPlayer.timeReference = VideoTimeReference.ExternalTime;
@@ -106,37 +128,9 @@ public class BGManager : MonoBehaviour
         videoPlayer.Play();
         videoPlayer.time = provider.AudioTime;
 
-        var scale = (float)videoPlayer.height/(float)videoPlayer.width;
-        spriteRender.sprite = Sprite.Create(new Texture2D(1080, 1080), new Rect(0, 0, 1080, 1080), new Vector2(0.5f, 0.5f));
+        var scale = videoPlayer.height / (float)videoPlayer.width;
+        spriteRender.sprite =
+            Sprite.Create(new Texture2D(1080, 1080), new Rect(0, 0, 1080, 1080), new Vector2(0.5f, 0.5f));
         gameObject.transform.localScale = new Vector3(1f, scale);
-    }
-    // Update is called once per frame
-    float smoothRDelta = 0;
-    void Update()
-    {
-        
-        //videoPlayer.externalReferenceTime = provider.AudioTime;
-        float delta = (float)videoPlayer.clockTime - provider.AudioTime;
-        smoothRDelta += (Time.unscaledDeltaTime - smoothRDelta) * 0.01f;
-        if (provider.AudioTime < 0) return;
-        var realSpeed = Time.deltaTime / smoothRDelta;
-        
-        if (Time.captureFramerate != 0)
-        {
-            //print("speed="+realSpeed+" delta="+delta);
-            videoPlayer.playbackSpeed = realSpeed - delta;
-            return;
-        }
-        if (delta < -0.01f)
-        {
-            videoPlayer.playbackSpeed = playSpeed + 0.2f;
-        }else if(delta > 0.01f)
-        {
-            videoPlayer.playbackSpeed = playSpeed - 0.2f;
-        }
-        else
-        {
-            videoPlayer.playbackSpeed = playSpeed;
-        }
     }
 }

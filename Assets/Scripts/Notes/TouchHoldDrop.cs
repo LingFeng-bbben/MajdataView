@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TouchHoldDrop : NoteLongDrop
 {
@@ -12,24 +10,24 @@ public class TouchHoldDrop : NoteLongDrop
     public GameObject tapEffect;
     public GameObject holdEffect;
 
-    AudioTimeProvider timeProvider;
-
-    GameObject firework;
-    Animator fireworkEffect;
-
     public Sprite[] TouchHoldSprite = new Sprite[5];
     public Sprite TouchPointSprite;
 
     public GameObject[] fans;
-    SpriteRenderer[] fansSprite = new SpriteRenderer[6];
     public SpriteMask mask;
-
-    private float wholeDuration;
-    private float moveDuration;
+    private readonly SpriteRenderer[] fansSprite = new SpriteRenderer[6];
     private float displayDuration;
 
+    private GameObject firework;
+    private Animator fireworkEffect;
+    private float moveDuration;
+
+    private AudioTimeProvider timeProvider;
+
+    private float wholeDuration;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         wholeDuration = 3.209385682f * Mathf.Pow(speed, -0.9549621752f);
         moveDuration = 0.8f * wholeDuration;
@@ -44,16 +42,10 @@ public class TouchHoldDrop : NoteLongDrop
         firework = GameObject.Find("Firework");
         fireworkEffect = firework.GetComponent<Animator>();
 
-        for (int i = 0; i < 6; i++)
-        {
-            fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
-        }
+        for (var i = 0; i < 6; i++) fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
 
-        for (int i = 0; i < 4; i++)
-        {
-            fansSprite[i].sprite = TouchHoldSprite[i];
-        }
-        fansSprite[5].sprite = TouchHoldSprite[4];      // TouchHold Border
+        for (var i = 0; i < 4; i++) fansSprite[i].sprite = TouchHoldSprite[i];
+        fansSprite[5].sprite = TouchHoldSprite[4]; // TouchHold Border
         fansSprite[4].sprite = TouchPointSprite;
 
         SetfanColor(new Color(1f, 1f, 1f, 0f));
@@ -61,7 +53,7 @@ public class TouchHoldDrop : NoteLongDrop
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var timing = timeProvider.AudioTime - time;
         //var pow = Mathf.Pow(-timing * speed, 0.1f) - 0.4f;
@@ -77,6 +69,7 @@ public class TouchHoldDrop : NoteLongDrop
                 fireworkEffect.SetTrigger("Fire");
                 firework.transform.position = transform.position;
             }
+
             Destroy(holdEffect);
             Destroy(gameObject);
         }
@@ -92,32 +85,26 @@ public class TouchHoldDrop : NoteLongDrop
             fans[5].SetActive(true);
             mask.enabled = true;
             SetfanColor(Color.white);
-            mask.alphaCutoff = Mathf.Clamp(0.91f * (1 - ((LastFor - timing) / LastFor)), 0f, 1f);
+            mask.alphaCutoff = Mathf.Clamp(0.91f * (1 - (LastFor - timing) / LastFor), 0f, 1f);
         }
-        
+
         if (float.IsNaN(distance)) distance = 0f;
-        if(distance==0f) holdEffect.SetActive(true);
-        for (int i = 0; i < 4; i++)
+        if (distance == 0f) holdEffect.SetActive(true);
+        for (var i = 0; i < 4; i++)
         {
             var pos = (0.226f + distance) * GetAngle(i);
             fans[i].transform.position = pos;
         }
-
-        
-
     }
 
-    Vector3 GetAngle(int index)
+    private Vector3 GetAngle(int index)
     {
-        var angle = (Mathf.PI / 4) + (index * (Mathf.PI / 2));
+        var angle = Mathf.PI / 4 + index * (Mathf.PI / 2);
         return new Vector3(Mathf.Sin(angle), Mathf.Cos(angle));
     }
 
-    void SetfanColor(Color color)
+    private void SetfanColor(Color color)
     {
-        foreach (var fan in fansSprite)
-        {
-            fan.color =color;
-        }
+        foreach (var fan in fansSprite) fan.color = color;
     }
 }

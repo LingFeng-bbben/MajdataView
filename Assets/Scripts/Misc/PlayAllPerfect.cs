@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayAllPerfect : MonoBehaviour
 {
-    GameObject Allperfect;
-    AudioTimeProvider timeProvider;
-    void Start()
+    private GameObject Allperfect;
+    private AudioTimeProvider timeProvider;
+
+    private void Start()
     {
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         Allperfect = GameObject.Find("CanvasAllPerfect");
@@ -14,8 +13,8 @@ public class PlayAllPerfect : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if(timeProvider.isStart&&transform.childCount==0&&Allperfect) Allperfect.SetActive(true);
+        if (timeProvider.isStart && transform.childCount == 0 && Allperfect) Allperfect.SetActive(true);
     }
 }
