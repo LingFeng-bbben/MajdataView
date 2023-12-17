@@ -61,6 +61,7 @@ public class JsonDataLoader : MonoBehaviour
         {"circle6", 10 },
         {"circle7", 11 },
         {"circle8", 12 },
+        {"v1", 41 },
         {"v2", 13 },
         {"v3", 14 },
         {"v4", 15 },
@@ -879,7 +880,7 @@ public class JsonDataLoader : MonoBehaviour
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
             endPos = getRelativeEndPos(startPos, endPos);
-            if (endPos == 5 || endPos == 1) throw new Exception("v星星不合法\nvスライドエラー");
+            if (endPos == 5) throw new Exception("v星星不合法\nvスライドエラー");
             return SLIDE_PREFAB_MAP["v" + endPos];
         }
 
