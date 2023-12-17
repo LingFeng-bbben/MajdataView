@@ -61,10 +61,9 @@ public class HoldDrop : NoteLongDrop
 
         holdEndRender = transform.GetChild(1).GetComponent<SpriteRenderer>();
 
-        var sortOrder = (int)(time * -100);
-        spriteRenderer.sortingOrder = sortOrder;
-        exSpriteRender.sortingOrder = sortOrder;
-        holdEndRender.sortingOrder = sortOrder;
+        spriteRenderer.sortingOrder += noteSortOrder;
+        exSpriteRender.sortingOrder += noteSortOrder;
+        holdEndRender.sortingOrder += noteSortOrder;
 
         spriteRenderer.sprite = tapSpr;
         exSpriteRender.sprite = exSpr;

@@ -39,6 +39,11 @@ public class TapDrop : NoteDrop
 
     private AudioTimeProvider timeProvider;
 
+    private int GetSortOrder()
+    {
+        return noteSortOrder;
+    }
+
     private void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -50,9 +55,8 @@ public class TapDrop : NoteDrop
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
 
-        var sortOrder = (int)(time * -100);
-        spriteRenderer.sortingOrder = sortOrder;
-        exSpriteRender.sortingOrder = sortOrder;
+        spriteRenderer.sortingOrder += noteSortOrder;
+        exSpriteRender.sortingOrder += noteSortOrder;
 
         spriteRenderer.sprite = normalSpr;
         exSpriteRender.sprite = exSpr;

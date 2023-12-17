@@ -35,6 +35,16 @@ public class JsonDataLoader : MonoBehaviour
     private ObjectCounter ObjectCounter;
 
     private int slideLayer = -10000;
+    private int noteSortOrder = 0;
+
+    private static readonly Dictionary<SimaiNoteType, int> NOTE_LAYER_COUNT = new Dictionary<SimaiNoteType, int>()
+    {
+        {SimaiNoteType.Tap, 2 },
+        {SimaiNoteType.Hold, 3 },
+        {SimaiNoteType.Slide, 2 },
+        {SimaiNoteType.Touch, 7 },
+        {SimaiNoteType.TouchHold, 6 },
+    };
 
     // Start is called before the first frame update
     private void Start()
@@ -81,6 +91,10 @@ public class JsonDataLoader : MonoBehaviour
                         var GOnote = Instantiate(tapPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TapDrop>();
 
+                        // note的图层顺序
+                        NDCompo.noteSortOrder = noteSortOrder;
+                        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
+
                         if (note.isForceStar)
                         {
                             NDCompo.normalSpr = customSkin.Star;
@@ -114,6 +128,10 @@ public class JsonDataLoader : MonoBehaviour
                         var GOnote = Instantiate(holdPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<HoldDrop>();
 
+                        // note的图层顺序
+                        NDCompo.noteSortOrder = noteSortOrder;
+                        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
+
                         NDCompo.tapSpr = customSkin.Hold;
                         NDCompo.eachSpr = customSkin.Hold_Each;
                         NDCompo.exSpr = customSkin.Hold_Ex;
@@ -135,6 +153,11 @@ public class JsonDataLoader : MonoBehaviour
                     {
                         var GOnote = Instantiate(touchHoldPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TouchHoldDrop>();
+
+                        // note的图层顺序
+                        NDCompo.noteSortOrder = noteSortOrder;
+                        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
+
                         NDCompo.time = (float)timing.time;
                         NDCompo.LastFor = (float)note.holdTime;
                         NDCompo.speed = touchSpeed * timing.HSpeed;
@@ -148,6 +171,11 @@ public class JsonDataLoader : MonoBehaviour
                     {
                         var GOnote = Instantiate(touchPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TouchDrop>();
+
+                        // note的图层顺序
+                        NDCompo.noteSortOrder = noteSortOrder;
+                        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
+
                         NDCompo.time = (float)timing.time;
                         NDCompo.areaPosition = note.touchArea;
                         NDCompo.startPosition = note.startPosition;
@@ -466,6 +494,10 @@ public class JsonDataLoader : MonoBehaviour
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
 
+        // note的图层顺序
+        NDCompo.noteSortOrder = noteSortOrder;
+        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
+
         NDCompo.tapSpr = customSkin.Star;
         NDCompo.eachSpr = customSkin.Star_Each;
         NDCompo.breakSpr = customSkin.Star_Break;
@@ -540,6 +572,10 @@ public class JsonDataLoader : MonoBehaviour
     {
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
+
+        // note的图层顺序
+        NDCompo.noteSortOrder = noteSortOrder;
+        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
 
         NDCompo.tapSpr = customSkin.Star;
         NDCompo.eachSpr = customSkin.Star_Each;
