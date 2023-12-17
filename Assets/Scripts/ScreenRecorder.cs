@@ -40,7 +40,7 @@ public class ScreenRecorder : MonoBehaviour
         if (Screen.width % 2 != 0 || Screen.height % 2 != 0)
         {
             GameObject.Find("ErrText").GetComponent<Text>().text =
-                "ÎÞ·¨¿ªÊ¼±àÂë£¬ÒòÎª·Ö±æÂÊ¿í¶È»ò¸ß¶È²»ÊÇÅ¼Êý¡£\nCan not start render because the width/height is not even.\nµ±Ç°·Ö±æÂÊ:" +
+                "无法开始编码，因为分辨率宽度或高度不是偶数。\nCan not start render because the width/height is not even.\n当前分辨率:" +
                 Screen.width + "x" + Screen.height + "\n";
             yield break;
         }
@@ -104,7 +104,7 @@ public class ScreenRecorder : MonoBehaviour
 
             if (File.Exists(maidata_path + "/out.mp4") && p.ExitCode == 0)
             {
-                GameObject.Find("ErrText").GetComponent<Text>().text += "äÖÈ¾³É¹¦£¬ÊÓÆµÉú³ÉÔÚ" + maidata_path +
+                GameObject.Find("ErrText").GetComponent<Text>().text += "渲染成功，视频生成在" + maidata_path +
                                                                         "\\out.mp4\nRender Successed\nExitCode:" +
                                                                         p.ExitCode;
                 Process.Start("explorer", "/select,\"" + maidata_path + "\\out.mp4" + "\"");
@@ -112,7 +112,7 @@ public class ScreenRecorder : MonoBehaviour
             else
             {
                 GameObject.Find("ErrText").GetComponent<Text>().text +=
-                    "±àÂëÆ÷ÒÑÍË³ö\nFFmpeg Exited.\nExitCode:" + p.ExitCode;
+                    "编码器已退出\nFFmpeg Exited.\nExitCode:" + p.ExitCode;
             }
         }
 
