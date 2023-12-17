@@ -46,6 +46,51 @@ public class JsonDataLoader : MonoBehaviour
         {SimaiNoteType.TouchHold, 6 },
     };
 
+    private static readonly Dictionary<string, int> SLIDE_PREFAB_MAP = new Dictionary<string, int>()
+    {
+        {"line3", 0 },
+        {"line4", 1 },
+        {"line5", 2 },
+        {"line6", 3 },
+        {"line7", 4 },
+        {"circle1", 5 },
+        {"circle2", 6 },
+        {"circle3", 7 },
+        {"circle4", 8 },
+        {"circle5", 9 },
+        {"circle6", 10 },
+        {"circle7", 11 },
+        {"circle8", 12 },
+        {"v2", 13 },
+        {"v3", 14 },
+        {"v4", 15 },
+        {"v6", 16 },
+        {"v7", 17 },
+        {"v8", 18 },
+        {"ppqq1", 19 },
+        {"ppqq2", 20 },
+        {"ppqq3", 21 },
+        {"ppqq4", 22 },
+        {"ppqq5", 23 },
+        {"ppqq6", 24 },
+        {"ppqq7", 25 },
+        {"ppqq8", 26 },
+        {"pq1", 27 },
+        {"pq2", 28 },
+        {"pq3", 29 },
+        {"pq4", 30 },
+        {"pq5", 31 },
+        {"pq6", 32 },
+        {"pq7", 33 },
+        {"pq8", 34 },
+        {"s", 35 },
+        {"wifi", 36 },
+        {"L2", 37 },
+        {"L3", 38 },
+        {"L4", 39 },
+        {"L5", 40 },
+    };
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -748,77 +793,59 @@ public class JsonDataLoader : MonoBehaviour
 
     private int detectShapeFromText(string content)
     {
+        int getRelativeEndPos(int startPos, int endPos)
+        {
+            endPos = endPos - startPos;
+            endPos = endPos < 0 ? endPos + 8 : endPos;
+            endPos = endPos > 8 ? endPos - 8 : endPos;
+            return endPos + 1;
+        }
+
         //print(content);
         if (content.Contains('-'))
         {
-            /*
-             * SlidePrefab 0 1 2 3 4
-             * Star_Line   3 4 5 6 7
-             */
+            // line
             var str = content.Substring(0, 3); //something like "8-6"
             var digits = str.Split('-');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
+            endPos = getRelativeEndPos(startPos, endPos);
             if (endPos < 3 || endPos > 7) throw new Exception("-星星至少隔开一键\n-スライドエラー");
-            return endPos - 3;
+            return SLIDE_PREFAB_MAP["line" + endPos];
         }
 
         if (content.Contains('>'))
         {
-            /*
-             * SlidePrefab 5 6 7 8 9 10 11 12
-             * Star_Circle 1 2 3 4 5 6  7  8
-             */
+            // circle 默认顺时针
             var str = content.Substring(0, 3);
             var digits = str.Split('>');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
+            endPos = getRelativeEndPos(startPos, endPos);
             if (isUpperHalf(startPos))
             {
-                endPos = endPos - startPos;
-                endPos = endPos < 0 ? endPos + 8 : endPos;
-                endPos = endPos > 8 ? endPos - 8 : endPos;
-                endPos++;
-                return endPos + 4;
+                return SLIDE_PREFAB_MAP["circle" + endPos];
             }
 
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
-            if (endPos != 1) endPos = MirrorKeys(endPos);
-            return -(endPos + 4); //Mirror
+            endPos = MirrorKeys(endPos);
+            return - SLIDE_PREFAB_MAP["circle" + endPos]; //Mirror
         }
 
         if (content.Contains('<'))
         {
-            /* (Mirror)
-             * SlidePrefab 5 6 7 8 9 10 11 12
-             * Star_Circle 1 2 3 4 5 6  7  8
-             */
+            // circle 默认顺时针
             var str = content.Substring(0, 3);
             var digits = str.Split('<');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
+            endPos = getRelativeEndPos(startPos, endPos);
             if (!isUpperHalf(startPos))
             {
-                endPos = endPos - startPos;
-                endPos = endPos < 0 ? endPos + 8 : endPos;
-                endPos = endPos > 8 ? endPos - 8 : endPos;
-                endPos++;
-                return endPos + 4;
+                return SLIDE_PREFAB_MAP["circle" + endPos];
             }
 
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
-            if (endPos != 1) endPos = MirrorKeys(endPos);
-            return -(endPos + 4); //Mirror
+            endPos = MirrorKeys(endPos);
+            return - SLIDE_PREFAB_MAP["circle" + endPos]; //Mirror
         }
 
         if (content.Contains('^'))
@@ -827,154 +854,126 @@ public class JsonDataLoader : MonoBehaviour
             var digits = str.Split('^');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
+            endPos = getRelativeEndPos(startPos, endPos);
 
-            if (endPos < 4) return endPos + 1 + 4;
-            if (endPos > 4) return -(MirrorKeys(endPos + 1) + 4);
-            throw new Exception("^星星不合法\n^スライドエラー");
+            if (endPos == 1 || endPos == 5)
+            {
+                throw new Exception("^星星不合法\n^スライドエラー");
+            }
+
+            if (endPos < 5)
+            {
+                return SLIDE_PREFAB_MAP["circle" + endPos];
+            }
+            if (endPos > 5)
+            {
+                return - SLIDE_PREFAB_MAP["circle" + MirrorKeys(endPos)];
+            }
         }
 
         if (content.Contains('v'))
         {
-            /* (Mirror)
-             * SlidePrefab 13 14 15 16 17 18
-             * Star_Circle 2  3  4  6  7  8
-             */
+            // v
             var str = content.Substring(0, 3);
             var digits = str.Split('v');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
+            endPos = getRelativeEndPos(startPos, endPos);
             if (endPos == 5 || endPos == 1) throw new Exception("v星星不合法\nvスライドエラー");
-            if (endPos > 4) return endPos + 10;
-            if (endPos < 6) return endPos + 11;
+            return SLIDE_PREFAB_MAP["v" + endPos];
         }
 
         if (content.Contains("pp"))
         {
-            /* (Mirror)
-             * SlidePrefab 19 20 21 22 23 24 25 26
-             * Star_Circle 1  2  3  4  5  6  7  8
-             */
+            // ppqq 默认为pp
             var str = content.Substring(0, 4);
             var digits = str.Split('p');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[2]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
-            return endPos + 18;
+            endPos = getRelativeEndPos(startPos, endPos);
+            return SLIDE_PREFAB_MAP["ppqq" + endPos];
         }
 
         if (content.Contains("qq"))
         {
+            // ppqq 默认为pp
             var str = content.Substring(0, 4);
             var digits = str.Split('q');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[2]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
-            if (endPos != 1) endPos = MirrorKeys(endPos);
-            return -(endPos + 18);
+            endPos = getRelativeEndPos(startPos, endPos);
+            endPos = MirrorKeys(endPos);
+            return - SLIDE_PREFAB_MAP["ppqq" + endPos];
         }
 
         if (content.Contains('p'))
         {
-            /*
-             * SlidePrefab 27 28 29 30 31 32 33 34
-             * Star_Circle 1  2  3  4  5  6  7  8
-             */
+            // pq 默认为p
             var str = content.Substring(0, 3);
             var digits = str.Split('p');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
-            return endPos + 26;
+            endPos = getRelativeEndPos(startPos, endPos);
+            return SLIDE_PREFAB_MAP["pq" + endPos];
         }
 
         if (content.Contains('q'))
         {
+            // pq 默认为p
             var str = content.Substring(0, 3);
             var digits = str.Split('q');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
-            if (endPos != 1) endPos = MirrorKeys(endPos);
-            return -(endPos + 26);
+            endPos = getRelativeEndPos(startPos, endPos);
+            endPos = MirrorKeys(endPos);
+            return - SLIDE_PREFAB_MAP["pq" + endPos];
         }
 
         if (content.Contains('s'))
         {
+            // s
             var str = content.Substring(0, 3);
             var digits = str.Split('s');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
+            endPos = getRelativeEndPos(startPos, endPos);
             if (endPos != 5) throw new Exception("s星星尾部错误\nsスライドエラー");
-            return 35;
+            return SLIDE_PREFAB_MAP["s"];
         }
 
         if (content.Contains('z'))
         {
+            // s镜像
             var str = content.Substring(0, 3);
             var digits = str.Split('z');
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
+            endPos = getRelativeEndPos(startPos, endPos);
             if (endPos != 5) throw new Exception("z星星尾部错误\nzスライドエラー");
-            return -35;
+            return - SLIDE_PREFAB_MAP["s"];
         }
 
         if (content.Contains('V'))
         {
-            /*
-             * SlidePrefab 37  38  39  40
-             * Star_Circle 7-2 7-3 7-4 7-5
-             */
+            // L
             var str = content.Substring(0, 4);
             var digits = str.Split('V');
             var startPos = int.Parse(digits[0]);
             var turnPos = int.Parse(digits[1][0].ToString());
             var endPos = int.Parse(digits[1][1].ToString());
 
-            turnPos = turnPos - startPos;
-            turnPos = turnPos < 0 ? turnPos + 8 : turnPos;
-            turnPos = turnPos > 8 ? turnPos - 8 : turnPos;
-            turnPos++;
-            endPos = endPos - startPos;
-            endPos = endPos < 0 ? endPos + 8 : endPos;
-            endPos = endPos > 8 ? endPos - 8 : endPos;
-            endPos++;
+            turnPos = getRelativeEndPos(startPos, turnPos);
+            endPos = getRelativeEndPos(startPos, endPos);
             if (turnPos == 7)
             {
                 if (endPos < 2 || endPos > 5) throw new Exception("V星星终点不合法\nVスライドエラー");
-                return endPos + 35;
+                return SLIDE_PREFAB_MAP["L" + endPos];
             }
 
             if (turnPos == 3)
             {
                 if (endPos < 5) throw new Exception("V星星终点不合法\nVスライドエラー");
-                return -(MirrorKeys(endPos) + 35);
+                return - SLIDE_PREFAB_MAP["L" + MirrorKeys(endPos)];
             }
 
             throw new Exception("V星星拐点只能隔开一键\nVスライドエラー");
