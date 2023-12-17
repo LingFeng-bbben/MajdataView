@@ -42,7 +42,11 @@ public class TouchHoldDrop : NoteLongDrop
         firework = GameObject.Find("Firework");
         fireworkEffect = firework.GetComponent<Animator>();
 
-        for (var i = 0; i < 6; i++) fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
+        for (var i = 0; i < 6; i++)
+        {
+            fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
+            fansSprite[i].sortingOrder += noteSortOrder;
+        }
 
         for (var i = 0; i < 4; i++) fansSprite[i].sprite = TouchHoldSprite[i];
         fansSprite[5].sprite = TouchHoldSprite[4]; // TouchHold Border

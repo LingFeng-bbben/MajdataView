@@ -56,7 +56,11 @@ public class TouchDrop : NoteDrop
         firework = GameObject.Find("Firework");
         fireworkEffect = firework.GetComponent<Animator>();
 
-        for (var i = 0; i < 7; i++) fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
+        for (var i = 0; i < 7; i++)
+        {
+            fansSprite[i] = fans[i].GetComponent<SpriteRenderer>();
+            fansSprite[i].sortingOrder += noteSortOrder;
+        }
 
         if (isEach)
         {

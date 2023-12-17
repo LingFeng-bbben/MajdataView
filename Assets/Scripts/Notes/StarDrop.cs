@@ -58,9 +58,8 @@ public class StarDrop : NoteDrop
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
 
-        var sortOrder = (int)(time * -100);
-        spriteRenderer.sortingOrder = sortOrder;
-        exSpriteRender.sortingOrder = sortOrder;
+        spriteRenderer.sortingOrder += noteSortOrder;
+        exSpriteRender.sortingOrder += noteSortOrder;
 
         if (isDouble)
         {
