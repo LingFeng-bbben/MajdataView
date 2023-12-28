@@ -92,6 +92,52 @@ public class JsonDataLoader : MonoBehaviour
         {"L5", 40 },
     };
 
+    private static readonly Dictionary<string, List<int>> SLIDE_AREA_STEP_MAP = new Dictionary<string, List<int>>()
+    {
+        {"line3", new List<int>(){ 0, 2, 8, 13 } },
+        {"line4", new List<int>(){ 0, 3, 8, 12, 18 } },
+        {"line5", new List<int>(){ 0, 3, 6, 11, 15, 19 } },
+        {"line6", new List<int>(){ 0, 3, 8, 12, 18 } },
+        {"line7", new List<int>(){ 0, 2, 8, 13 } },
+        {"circle1", new List<int>(){ 0, 3, 11, 19, 27, 35, 43, 50, 58, 63 } },
+        {"circle2", new List<int>(){ 0, 3, 7 } },
+        {"circle3", new List<int>(){ 0, 3, 11, 15 } },
+        {"circle4", new List<int>(){ 0, 3, 11, 19, 23 } },
+        {"circle5", new List<int>(){ 0, 3, 11, 19, 27, 31 } },
+        {"circle6", new List<int>(){ 0, 3, 11, 19, 27, 35, 39 } },
+        {"circle7", new List<int>(){ 0, 3, 11, 19, 27, 35, 43, 47 } },
+        {"circle8", new List<int>(){ 0, 3, 11, 19, 27, 35, 43, 50, 55 } },
+        {"v1", new List<int>(){ 0, 3, 6, 11, 15, 19 } },
+        {"v2", new List<int>(){ 0, 3, 6, 11, 15, 19 } },
+        {"v3", new List<int>(){ 0, 3, 6, 11, 15, 19 } },
+        {"v4", new List<int>(){ 0, 3, 6, 11, 15, 19 } },
+        {"v6", new List<int>(){ 0, 3, 6, 11, 15, 19 } },
+        {"v7", new List<int>(){ 0, 3, 6, 11, 15, 19 } },
+        {"v8", new List<int>(){ 0, 3, 6, 11, 15, 19 } },
+        {"ppqq1", new List<int>(){ 0, 3, 7, 13, 17, 26, 32, 35 } },
+        {"ppqq2", new List<int>(){ 0, 3, 7, 12, 16, 25, 28 } },
+        {"ppqq3", new List<int>(){ 0, 3, 6, 12, 15, 22 } },
+        {"ppqq4", new List<int>(){ 0, 3, 7, 12, 16, 25, 29, 35, 40, 44, 49 } },
+        {"ppqq5", new List<int>(){ 0, 3, 7, 12, 16, 25, 29, 35, 40, 44, 49 } },
+        {"ppqq6", new List<int>(){ 0, 3, 7, 12, 16, 25, 28, 34, 38, 41, 48 } },
+        {"ppqq7", new List<int>(){ 0, 3, 7, 13, 17, 27, 31, 37, 41, 46 } },
+        {"ppqq8", new List<int>(){ 0, 3, 7, 12, 16, 25, 29, 35, 41 } },
+        {"pq1", new List<int>(){ 0, 3, 8, 11, 14, 17, 21, 24, 27, 33 } },
+        {"pq2", new List<int>(){ 0, 3, 8, 11, 14, 18, 21, 24, 30 } },
+        {"pq3", new List<int>(){ 0, 3, 9, 12, 16, 19, 23, 27 } },
+        {"pq4", new List<int>(){ 0, 3, 9, 13, 16, 20, 24 } },
+        {"pq5", new List<int>(){ 0, 3, 9, 13, 17, 21 } },
+        {"pq6", new List<int>(){ 0, 3, 8, 11, 15, 18, 21, 25, 28, 31, 35, 38, 42 } },
+        {"pq7", new List<int>(){ 0, 3, 8, 12, 15, 18, 22, 25, 28, 32, 35, 39 } },
+        {"pq8", new List<int>(){ 0, 3, 8, 11, 14, 17, 21, 24, 27, 30, 36 } },
+        {"s", new List<int>(){ 0, 3, 8, 11, 17, 21, 24, 30 } },
+        {"wifi", new List<int>(){ 0, 3, 6, 7, 9, 11 } },
+        {"L2", new List<int>(){ 0, 2, 7, 15, 21, 26, 32 } },
+        {"L3", new List<int>(){ 0, 2, 8, 17, 20, 26, 29, 34 } },
+        {"L4", new List<int>(){ 0, 2, 8, 17, 22, 26, 32 } },
+        {"L5", new List<int>(){ 0, 2, 8, 16, 22, 28 } },
+    };
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -430,7 +476,12 @@ public class JsonDataLoader : MonoBehaviour
                         throw new Exception("组合星星有错误\nSLIDE CHAIN ERROR");
                 }
 
-                var slideIndex = detectShapeFromText(slidePart.noteContent);
+                string slideShape = detectShapeFromText(slidePart.noteContent);
+                if (slideShape.StartsWith("-"))
+                {
+                    slideShape = slideShape.Substring(1);
+                }
+                int slideIndex = SLIDE_PREFAB_MAP[slideShape];
                 if (slideIndex < 0) slideIndex = -slideIndex;
 
                 var barCount = slidePrefab[slideIndex].transform.childCount;
@@ -535,7 +586,6 @@ public class JsonDataLoader : MonoBehaviour
         endPos = endPos < 0 ? endPos + 8 : endPos;
         endPos = endPos > 8 ? endPos - 8 : endPos;
         endPos++;
-        if (endPos != 5) throw new Exception("w星星尾部错误\nwスライドエラー");
 
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
@@ -560,7 +610,7 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.isEX = note.isEx;
         NDCompo.isBreak = note.isBreak;
 
-        var slideWifi = Instantiate(slidePrefab[36], notes.transform);
+        var slideWifi = Instantiate(slidePrefab[SLIDE_PREFAB_MAP["wifi"]], notes.transform);
         slideWifi.SetActive(false);
         NDCompo.slide = slideWifi;
         var WifiCompo = slideWifi.GetComponent<WifiDrop>();
@@ -569,6 +619,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.eachStar = customSkin.Star_Each;
         WifiCompo.breakStar = customSkin.Star_Break;
         WifiCompo.slideShine = BreakShine;
+        WifiCompo.areaStep = new List<int>(SLIDE_AREA_STEP_MAP["wifi"]);
 
         Array.Copy(customSkin.Wifi, WifiCompo.normalSlide, 11);
         Array.Copy(customSkin.Wifi_Each, WifiCompo.eachSlide, 11);
@@ -639,13 +690,14 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.isEX = note.isEx;
         NDCompo.isBreak = note.isBreak;
 
-        var slideIndex = detectShapeFromText(note.noteContent);
+        string slideShape = detectShapeFromText(note.noteContent);
         var isMirror = false;
-        if (slideIndex < 0)
+        if (slideShape.StartsWith("-"))
         {
             isMirror = true;
-            slideIndex = -slideIndex;
+            slideShape = slideShape.Substring(1);
         }
+        int slideIndex = SLIDE_PREFAB_MAP[slideShape];
 
         var slide = Instantiate(slidePrefab[slideIndex], notes.transform);
         var slide_star = Instantiate(star_slidePrefab, notes.transform);
@@ -659,6 +711,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.spriteEach = customSkin.Slide_Each;
         SliCompo.spriteBreak = customSkin.Slide_Break;
         SliCompo.slideShine = BreakShine;
+        SliCompo.areaStep = new List<int>(SLIDE_AREA_STEP_MAP[slideShape]);
 
         if (timing.noteList.Count > 1)
         {
@@ -792,7 +845,7 @@ public class JsonDataLoader : MonoBehaviour
         return true;
     }
 
-    private int detectShapeFromText(string content)
+    private string detectShapeFromText(string content)
     {
         int getRelativeEndPos(int startPos, int endPos)
         {
@@ -812,7 +865,7 @@ public class JsonDataLoader : MonoBehaviour
             var endPos = int.Parse(digits[1]);
             endPos = getRelativeEndPos(startPos, endPos);
             if (endPos < 3 || endPos > 7) throw new Exception("-星星至少隔开一键\n-スライドエラー");
-            return SLIDE_PREFAB_MAP["line" + endPos];
+            return "line" + endPos;
         }
 
         if (content.Contains('>'))
@@ -825,11 +878,11 @@ public class JsonDataLoader : MonoBehaviour
             endPos = getRelativeEndPos(startPos, endPos);
             if (isUpperHalf(startPos))
             {
-                return SLIDE_PREFAB_MAP["circle" + endPos];
+                return "circle" + endPos;
             }
 
             endPos = MirrorKeys(endPos);
-            return - SLIDE_PREFAB_MAP["circle" + endPos]; //Mirror
+            return "-circle" + endPos; //Mirror
         }
 
         if (content.Contains('<'))
@@ -842,11 +895,11 @@ public class JsonDataLoader : MonoBehaviour
             endPos = getRelativeEndPos(startPos, endPos);
             if (!isUpperHalf(startPos))
             {
-                return SLIDE_PREFAB_MAP["circle" + endPos];
+                return "circle" + endPos;
             }
 
             endPos = MirrorKeys(endPos);
-            return - SLIDE_PREFAB_MAP["circle" + endPos]; //Mirror
+            return "-circle" + endPos; //Mirror
         }
 
         if (content.Contains('^'))
@@ -864,11 +917,11 @@ public class JsonDataLoader : MonoBehaviour
 
             if (endPos < 5)
             {
-                return SLIDE_PREFAB_MAP["circle" + endPos];
+                return "circle" + endPos;
             }
             if (endPos > 5)
             {
-                return - SLIDE_PREFAB_MAP["circle" + MirrorKeys(endPos)];
+                return "-circle" + MirrorKeys(endPos);
             }
         }
 
@@ -881,7 +934,7 @@ public class JsonDataLoader : MonoBehaviour
             var endPos = int.Parse(digits[1]);
             endPos = getRelativeEndPos(startPos, endPos);
             if (endPos == 5) throw new Exception("v星星不合法\nvスライドエラー");
-            return SLIDE_PREFAB_MAP["v" + endPos];
+            return "v" + endPos;
         }
 
         if (content.Contains("pp"))
@@ -892,7 +945,7 @@ public class JsonDataLoader : MonoBehaviour
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[2]);
             endPos = getRelativeEndPos(startPos, endPos);
-            return SLIDE_PREFAB_MAP["ppqq" + endPos];
+            return "ppqq" + endPos;
         }
 
         if (content.Contains("qq"))
@@ -904,7 +957,7 @@ public class JsonDataLoader : MonoBehaviour
             var endPos = int.Parse(digits[2]);
             endPos = getRelativeEndPos(startPos, endPos);
             endPos = MirrorKeys(endPos);
-            return - SLIDE_PREFAB_MAP["ppqq" + endPos];
+            return "-ppqq" + endPos;
         }
 
         if (content.Contains('p'))
@@ -915,7 +968,7 @@ public class JsonDataLoader : MonoBehaviour
             var startPos = int.Parse(digits[0]);
             var endPos = int.Parse(digits[1]);
             endPos = getRelativeEndPos(startPos, endPos);
-            return SLIDE_PREFAB_MAP["pq" + endPos];
+            return "pq" + endPos;
         }
 
         if (content.Contains('q'))
@@ -927,7 +980,7 @@ public class JsonDataLoader : MonoBehaviour
             var endPos = int.Parse(digits[1]);
             endPos = getRelativeEndPos(startPos, endPos);
             endPos = MirrorKeys(endPos);
-            return - SLIDE_PREFAB_MAP["pq" + endPos];
+            return "-pq" + endPos;
         }
 
         if (content.Contains('s'))
@@ -939,7 +992,7 @@ public class JsonDataLoader : MonoBehaviour
             var endPos = int.Parse(digits[1]);
             endPos = getRelativeEndPos(startPos, endPos);
             if (endPos != 5) throw new Exception("s星星尾部错误\nsスライドエラー");
-            return SLIDE_PREFAB_MAP["s"];
+            return "s";
         }
 
         if (content.Contains('z'))
@@ -951,7 +1004,7 @@ public class JsonDataLoader : MonoBehaviour
             var endPos = int.Parse(digits[1]);
             endPos = getRelativeEndPos(startPos, endPos);
             if (endPos != 5) throw new Exception("z星星尾部错误\nzスライドエラー");
-            return - SLIDE_PREFAB_MAP["s"];
+            return "-s";
         }
 
         if (content.Contains('V'))
@@ -968,19 +1021,31 @@ public class JsonDataLoader : MonoBehaviour
             if (turnPos == 7)
             {
                 if (endPos < 2 || endPos > 5) throw new Exception("V星星终点不合法\nVスライドエラー");
-                return SLIDE_PREFAB_MAP["L" + endPos];
+                return "L" + endPos;
             }
 
             if (turnPos == 3)
             {
                 if (endPos < 5) throw new Exception("V星星终点不合法\nVスライドエラー");
-                return - SLIDE_PREFAB_MAP["L" + MirrorKeys(endPos)];
+                return "-L" + MirrorKeys(endPos);
             }
 
             throw new Exception("V星星拐点只能隔开一键\nVスライドエラー");
         }
 
-        return 0;
+        if (content.Contains('w'))
+        {
+            // wifi
+            var str = content.Substring(0, 3);
+            var digits = str.Split('w');
+            var startPos = int.Parse(digits[0]);
+            var endPos = int.Parse(digits[1]);
+            endPos = getRelativeEndPos(startPos, endPos);
+            if (endPos != 5) throw new Exception("w星星尾部错误\nwスライドエラー");
+            return "wifi";
+        }
+
+        return "";
     }
 
     private bool isUpperHalf(int key)

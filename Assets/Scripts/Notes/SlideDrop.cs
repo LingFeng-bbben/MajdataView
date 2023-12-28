@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SlideDrop : NoteLongDrop
@@ -29,6 +31,9 @@ public class SlideDrop : NoteLongDrop
     public int startPosition = 1;
 
     public int sortIndex;
+
+    public List<int> areaStep = new List<int>();
+
     private readonly List<Animator> animators = new();
 
     private readonly List<GameObject> slideBars = new();
@@ -105,6 +110,12 @@ public class SlideDrop : NoteLongDrop
             process = 1f - process;
             if (process > 1)
             {
+                // TODO: FES星星最后一个判定区箭头的消失效果
+                foreach (GameObject obj in slideBars)
+                {
+                    obj.SetActive(false);
+                }
+
                 if (isGroupPartEnd)
                 {
                     // 只有组内最后一个Slide完成 才会显示判定条并增加总数
@@ -127,6 +138,7 @@ public class SlideDrop : NoteLongDrop
             //print(process);
             var pos = (slidePositions.Count - 1) * process;
             var index = (int)pos;
+            int slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
             try
             {
                 star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) +
@@ -141,7 +153,7 @@ public class SlideDrop : NoteLongDrop
                             slideRotations[index + 1].eulerAngles.z, delta)
                     )
                 );
-                for (var i = 0; i < pos; i++) slideBars[i].SetActive(false);
+                for (var i = 0; i < slideAreaIndex; i++) slideBars[i].SetActive(false);
             }
             catch
             {
