@@ -64,6 +64,7 @@ internal class EditRequestjson
     public long startAt;
     public float startTime;
     public float touchSpeed;
+    public bool smoothSlideAnime;
 }
 
 public enum EditorComboIndicator
