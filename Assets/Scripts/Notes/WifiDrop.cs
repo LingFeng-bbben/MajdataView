@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WifiDrop : NoteLongDrop
@@ -32,6 +33,7 @@ public class WifiDrop : NoteLongDrop
     public int sortIndex;
 
     public List<int> areaStep = new List<int>();
+    public bool smoothSlideAnime = false;
 
     private readonly List<Animator> animators = new();
     private readonly List<SpriteRenderer> sbRender = new();
@@ -188,7 +190,17 @@ public class WifiDrop : NoteLongDrop
             }
 
             var pos = (slideBars.Count - 1) * process;
-            int slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+            // Slide的箭头消失到哪里
+            int slideAreaIndex;
+            if (smoothSlideAnime)
+            {
+                slideAreaIndex = (int)pos + 1;
+            }
+            else
+            {
+                slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+            }
+
             for (var i = 0; i < star_slide.Length; i++)
             {
                 spriteRenderer_star[i].color = Color.white;

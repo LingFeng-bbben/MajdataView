@@ -9,6 +9,7 @@ public class JsonDataLoader : MonoBehaviour
 {
     public float noteSpeed = 7f;
     public float touchSpeed = 7.5f;
+    public bool smoothSlideAnime = false;
     public Sprite starEach;
     public GameObject tapPrefab;
     public GameObject holdPrefab;
@@ -620,6 +621,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.breakStar = customSkin.Star_Break;
         WifiCompo.slideShine = BreakShine;
         WifiCompo.areaStep = new List<int>(SLIDE_AREA_STEP_MAP["wifi"]);
+        WifiCompo.smoothSlideAnime = smoothSlideAnime;
 
         Array.Copy(customSkin.Wifi, WifiCompo.normalSlide, 11);
         Array.Copy(customSkin.Wifi_Each, WifiCompo.eachSlide, 11);
@@ -712,6 +714,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.spriteBreak = customSkin.Slide_Break;
         SliCompo.slideShine = BreakShine;
         SliCompo.areaStep = new List<int>(SLIDE_AREA_STEP_MAP[slideShape]);
+        SliCompo.smoothSlideAnime = smoothSlideAnime;
 
         if (timing.noteList.Count > 1)
         {

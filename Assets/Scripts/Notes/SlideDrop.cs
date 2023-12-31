@@ -33,6 +33,7 @@ public class SlideDrop : NoteLongDrop
     public int sortIndex;
 
     public List<int> areaStep = new List<int>();
+    public bool smoothSlideAnime = false;
 
     private readonly List<Animator> animators = new();
 
@@ -138,7 +139,17 @@ public class SlideDrop : NoteLongDrop
             //print(process);
             var pos = (slidePositions.Count - 1) * process;
             var index = (int)pos;
-            int slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+
+            // Slide的箭头消失到哪里
+            int slideAreaIndex;
+            if (smoothSlideAnime)
+            {
+                slideAreaIndex = index + 1;
+            } else
+            {
+                slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+            }
+
             try
             {
                 star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) +
