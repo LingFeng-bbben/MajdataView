@@ -1,5 +1,5 @@
 name: Build Project
-run-name: ${{ github.actor }} is learning GitHub Actions
+run-name: Build exe for Windows Standalone
 on: [push]
 jobs:
   build:
@@ -19,7 +19,8 @@ jobs:
         with:
           targetPlatform: StandaloneWindows
           versioning: Semantic
+          buildName: MajdataView
       - uses: actions/upload-artifact@v3
         with:
           name: Build
-          path: build
+          path: build/MajdataView
