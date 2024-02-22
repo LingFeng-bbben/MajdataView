@@ -20,7 +20,8 @@ jobs:
           targetPlatform: StandaloneWindows
           versioning: Semantic
           buildName: MajdataView
+      - run: ls -R
       - uses: actions/upload-artifact@v3
         with:
           name: Build
-          path: build/MajdataView
+          path: build
