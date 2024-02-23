@@ -5,7 +5,7 @@ public class PlayAllPerfect : MonoBehaviour
     private GameObject Allperfect;
     private AudioTimeProvider timeProvider;
 
-    private void Start()
+    /*private void Start()
     {
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         Allperfect = GameObject.Find("CanvasAllPerfect");
@@ -16,5 +16,5 @@ public class PlayAllPerfect : MonoBehaviour
     private void Update()
     {
         if (timeProvider.isStart && transform.childCount == 0 && Allperfect) Allperfect.SetActive(true);
-    }
+    }*/
 }

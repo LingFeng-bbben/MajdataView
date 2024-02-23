@@ -9,11 +9,8 @@ public class BGManager : MonoBehaviour
     private float playSpeed;
     private AudioTimeProvider provider;
 
-    private RawImage rawImage;
-
     // Update is called once per frame
     private float smoothRDelta;
-    private GameObject SongDetail;
     private SpriteRenderer spriteRender;
 
     private VideoPlayer videoPlayer;
@@ -23,10 +20,7 @@ public class BGManager : MonoBehaviour
     {
         spriteRender = GetComponent<SpriteRenderer>();
         videoPlayer = GetComponent<VideoPlayer>();
-        rawImage = GameObject.Find("Jacket").GetComponent<RawImage>();
         provider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-        SongDetail = GameObject.Find("CanvasSongDetail");
-        SongDetail.SetActive(false);
     }
 
     private void Update()
@@ -54,7 +48,7 @@ public class BGManager : MonoBehaviour
 
     public void PlaySongDetail()
     {
-        SongDetail.SetActive(true);
+        
     }
 
     public void PauseVideo()
@@ -104,7 +98,6 @@ public class BGManager : MonoBehaviour
     {
         Sprite sprite;
         yield return sprite = SpriteLoader.LoadSpriteFromFile(path);
-        rawImage.texture = sprite.texture;
         spriteRender.sprite = sprite;
         var scale = 1080f / sprite.texture.width;
         gameObject.transform.localScale = new Vector3(scale, scale, scale);

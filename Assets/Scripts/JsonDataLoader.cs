@@ -156,12 +156,12 @@ public class JsonDataLoader : MonoBehaviour
     {
         var loadedData = JsonConvert.DeserializeObject<Majson>(json);
 
-        diffText.text = loadedData.difficulty;
-        levelText.text = loadedData.level;
-        titleText.text = loadedData.title;
-        artistText.text = loadedData.artist;
-        designText.text = loadedData.designer;
-        cardImage.color = diffColors[loadedData.diffNum];
+        //diffText.text = loadedData.difficulty;
+        //levelText.text = loadedData.level;
+        //titleText.text = loadedData.title;
+        //artistText.text = loadedData.artist;
+        //designText.text = loadedData.designer;
+        //cardImage.color = diffColors[loadedData.diffNum];
 
         CountNoteSum(loadedData);
 
