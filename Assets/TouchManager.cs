@@ -12,12 +12,14 @@ public class TouchManager : MonoBehaviour
 
     public bool[] sensorStates = new bool[35];
     public GameObject[] touchDisplays;
-    public Text debugtext;
+    //public Text debugtext;
+    public bool display_Debug = false;
     // Start is called before the first frame update
     void Start()
     {
-        debugtext = GameObject.Find("SerialDebug").GetComponent<Text>();
-        debugtext.text = "OpenSerial";
+        DontDestroyOnLoad(this);
+        //debugtext = GameObject.Find("SerialDebug").GetComponent<Text>();
+        //debugtext.text = "OpenSerial";
         sensorStates = new bool[35];
         ser = new SerialPort("COM3",9600);
         ser.Open();
@@ -64,11 +66,14 @@ public class TouchManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        debugtext.text = "";
-        for (int i = 0; i < 34; i++)
+        if (display_Debug)
         {
-            debugtext.text += sensorStates[i] ? 1 : 0;
-            touchDisplays[i].SetActive(sensorStates[i]);
+            //debugtext.text = "";
+            for (int i = 0; i < 34; i++)
+            {
+                //debugtext.text += sensorStates[i] ? 1 : 0;
+                touchDisplays[i].SetActive(sensorStates[i]);
+            }
         }
     }
 }
