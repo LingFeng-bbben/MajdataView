@@ -5489,7 +5489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d17174e6ac1e19246be2c6384f6dada6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensorStates: 00000000000000000000000000000000000000000000000000000000000000000000
+  sensorStates: 0000000000000000000000000000000000000000000000000000000000000000000000
   touchDisplays:
   - {fileID: 435170758}
   - {fileID: 1583423601}
@@ -7817,7 +7817,6 @@ GameObject:
   - component: {fileID: 2010231679}
   - component: {fileID: 2010231682}
   - component: {fileID: 2010231681}
-  - component: {fileID: 2010231680}
   m_Layer: 5
   m_Name: SerialDebug
   m_TagString: Untagged
@@ -7841,21 +7840,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -20.1, y: 36.2}
-  m_SizeDelta: {x: 16.637001, y: 4.625}
+  m_AnchoredPosition: {x: -0.000091136, y: 30.016}
+  m_SizeDelta: {x: 60.775, y: 16.518}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2010231680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2010231678}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c6ad208514d9944682be6c3d5c5b1b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2010231681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7878,7 +7865,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: e330574b8b2e3fb48b915214d9946961, type: 3}
-    m_FontSize: 3
+    m_FontSize: 1
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0

@@ -10,7 +10,7 @@ public class TouchManager : MonoBehaviour
 {
     private SerialPort ser;
 
-    public bool[] sensorStates = new bool[34];
+    public bool[] sensorStates = new bool[35];
     public GameObject[] touchDisplays;
     public Text debugtext;
     // Start is called before the first frame update
@@ -18,6 +18,7 @@ public class TouchManager : MonoBehaviour
     {
         debugtext = GameObject.Find("SerialDebug").GetComponent<Text>();
         debugtext.text = "OpenSerial";
+        sensorStates = new bool[35];
         ser = new SerialPort("COM3",9600);
         ser.Open();
         ser.Write("{STAT}");
@@ -34,19 +35,23 @@ public class TouchManager : MonoBehaviour
                 int count = ser.BytesToRead;
                 var buf = new byte[count];
                 ser.Read(buf, 0, count);
-                debugtext.text = buf[0].ToString();
-                if (buf[0] == '(')
+                if (buf.Length > 0)
                 {
-                    int k = 0;
-                    for (int i = 1; i < 8; i++)
+                    
+                    if (buf[0] == '(')
                     {
-                        print(buf[i].ToString("X2"));
-                        for(int j = 0; j < 5; j++)
+                        int k = 0;
+                        for (int i = 1; i < 8; i++)
                         {
-                            sensorStates[k] = (buf[i] & (0x01 << j))>0;
-                            k++;
+                            print(buf[i].ToString("X2"));
+                            for (int j = 0; j < 5; j++)
+                            {
+                                sensorStates[k] = (buf[i] & (0x01 << j)) > 0;
+                                k++;
+                            }
                         }
                     }
+                    
                 }
             }
         }
@@ -59,8 +64,10 @@ public class TouchManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        for(int i = 0; i < sensorStates.Length; i++)
+        debugtext.text = "";
+        for (int i = 0; i < 34; i++)
         {
+            debugtext.text += sensorStates[i] ? 1 : 0;
             touchDisplays[i].SetActive(sensorStates[i]);
         }
     }
