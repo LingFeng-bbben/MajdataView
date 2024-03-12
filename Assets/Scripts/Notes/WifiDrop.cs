@@ -153,7 +153,7 @@ public class WifiDrop : NoteLongDrop
             {
                 alpha = 1f - -timing / (time - timeStart);
                 alpha = alpha > 1f ? 1f : alpha;
-                alpha = alpha < 0.5f ? 0.5f : alpha;
+                alpha = alpha < 0f ? 0f : alpha;
             }
 
             for (var i = 0; i < star_slide.Length; i++)
