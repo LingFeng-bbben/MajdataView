@@ -60,8 +60,9 @@ public class SlideDrop : NoteLongDrop
         var startiming = timeProvider.AudioTime - timeStar;
         if (startiming <= 0f)
         {
-            var alpha = startiming * (speed / 3) + 1f;
-            alpha = alpha > 1f ? 1f : alpha;
+            var alpha = startiming * (speed / 3.9269f) + 1f;
+            //alpha *= 0.85f;
+            alpha = alpha > 0.6f ? 0.6f : alpha;
             alpha = alpha < 0f ? 0f : alpha;
             setSlideBarAlpha(alpha);
             return;
@@ -93,7 +94,7 @@ public class SlideDrop : NoteLongDrop
                 // 只有当它是一个起点Slide（而非Slide Group中的子部分）的时候，才会有开始的星星渐入动画
                 alpha = 1f - -timing / (time - timeStar);
                 alpha = alpha > 1f ? 1f : alpha;
-                alpha = alpha < 0.5f ? 0.5f : alpha;
+                alpha = alpha < 0f ? 0f : alpha;
             }
 
             spriteRenderer_star.color = new Color(1, 1, 1, alpha);
