@@ -53,6 +53,7 @@ public class NoteEffectManager : MonoBehaviour
     {
         var pos = position - 1;
         tapEffects[pos].SetActive(true);
+        tapAnimators[pos].speed = 0.9f;
         if (isBreak)
         {
             tapAnimators[pos].SetTrigger("break");
