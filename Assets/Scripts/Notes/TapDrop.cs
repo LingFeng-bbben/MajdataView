@@ -121,14 +121,16 @@ public class TapDrop : NoteDrop
             transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
         tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
 
+
+        if (destScale > 0.3f) tapLine.SetActive(true);
+
         if (distance < 1.225f)
         {
             transform.localScale = new Vector3(destScale, destScale);
 
             distance = 1.225f;
             var pos = getPositionFromDistance(distance);
-            transform.position = pos;
-            if (destScale > 0.3f) tapLine.SetActive(true);
+            transform.position = pos;            
         }
         else
         {

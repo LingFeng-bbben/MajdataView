@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class HoldDrop : NoteLongDrop
 {
@@ -130,6 +131,7 @@ public class HoldDrop : NoteLongDrop
             Destroy(tapLine);
             Destroy(holdEffect);
             Destroy(gameObject);
+            return;
         }
 
 
@@ -137,15 +139,15 @@ public class HoldDrop : NoteLongDrop
         tapLine.transform.rotation = transform.rotation;
         holdEffect.transform.position = getPositionFromDistance(4.8f);
 
+        if (destScale > 0.3f) tapLine.SetActive(true);
+
         if (distance < 1.225f)
         {
             transform.localScale = new Vector3(destScale, destScale);
             spriteRenderer.size = new Vector2(1.22f, 1.42f);
             distance = 1.225f;
             var pos = getPositionFromDistance(distance);
-            transform.position = pos;
-
-            if (destScale > 0.3f) tapLine.SetActive(true);
+            transform.position = pos;            
         }
         else
         {
@@ -153,7 +155,8 @@ public class HoldDrop : NoteLongDrop
             {
                 holdDistance = 1.225f;
                 distance = 4.8f;
-                holdEffect.SetActive(true);
+                //holdEffect.SetActive(true);
+                PlayHoldEffect();
                 startHoldShine();
             }
             else if (holdDistance < 1.225f && distance < 4.8f) // 头未到达 尾未出现
@@ -163,7 +166,8 @@ public class HoldDrop : NoteLongDrop
             else if (holdDistance >= 1.225f && distance >= 4.8f) // 头到达 尾出现
             {
                 distance = 4.8f;
-                holdEffect.SetActive(true);
+                //holdEffect.SetActive(true);
+                PlayHoldEffect();
                 startHoldShine();
 
                 holdEndRender.enabled = true;
@@ -190,12 +194,18 @@ public class HoldDrop : NoteLongDrop
 
     private void startHoldShine()
     {
-        if (!holdAnimStart)
-        {
+        GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().ResetEffect(startPosition);
+        if (!holdAnimStart && timeProvider.AudioTime - time > 0.1)
+        {            
             holdAnimStart = true;
             animator.runtimeAnimatorController = HoldShine;
             animator.enabled = true;
         }
+    }
+    void PlayHoldEffect()
+    {
+        if (timeProvider.AudioTime - time > 0.1) holdEffect.SetActive(true);
+        else holdEffect.SetActive(false); 
     }
 
     private Vector3 getPositionFromDistance(float distance)

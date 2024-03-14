@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class NoteEffectManager : MonoBehaviour
 {
@@ -53,6 +54,7 @@ public class NoteEffectManager : MonoBehaviour
     {
         var pos = position - 1;
         tapEffects[pos].SetActive(true);
+        tapAnimators[pos].speed = 0.9f;
         if (isBreak)
         {
             tapAnimators[pos].SetTrigger("break");
@@ -64,4 +66,5 @@ public class NoteEffectManager : MonoBehaviour
             judgeAnimators[pos].SetTrigger("perfect");
         }
     }
+    public void ResetEffect(int position) => tapEffects[position - 1].SetActive(false);
 }

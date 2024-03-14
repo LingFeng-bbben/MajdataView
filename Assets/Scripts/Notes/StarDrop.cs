@@ -156,6 +156,8 @@ public class StarDrop : NoteDrop
 
         tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
 
+        if (destScale > 0.3f && !isNoHead) tapLine.SetActive(true);
+
         if (distance < 1.225f)
         {
             transform.localScale = new Vector3(destScale, destScale);
@@ -163,7 +165,6 @@ public class StarDrop : NoteDrop
             distance = 1.225f;
             var pos = getPositionFromDistance(distance);
             transform.position = pos;
-            if (destScale > 0.3f && !isNoHead) tapLine.SetActive(true);
         }
         else
         {
