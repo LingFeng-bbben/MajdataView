@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class NoteEffectManager : MonoBehaviour
 {
@@ -65,4 +66,5 @@ public class NoteEffectManager : MonoBehaviour
             judgeAnimators[pos].SetTrigger("perfect");
         }
     }
+    public void ResetEffect(int position) => tapEffects[position - 1].SetActive(false);
 }
