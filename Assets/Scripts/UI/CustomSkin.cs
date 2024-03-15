@@ -25,9 +25,12 @@ public class CustomSkin : MonoBehaviour
     public Sprite Star_Ex_Double;
 
     public Sprite Hold;
+    public Sprite Hold_On;
     public Sprite Hold_Each;
+    public Sprite Hold_Each_On;
     public Sprite Hold_Ex;
     public Sprite Hold_Break;
+    public Sprite Hold_Break_On;
 
     public Sprite[] Just = new Sprite[6];
     public Sprite JudgeText_Normal;
@@ -80,10 +83,27 @@ public class CustomSkin : MonoBehaviour
         Star_Ex_Double = SpriteLoader.LoadSpriteFromFile(path + "/star_ex_double.png");
 
         var border = new Vector4(0, 58, 0, 58);
-        Hold = SpriteLoader.LoadSpriteFromFile(path + "/hold.png", border);
+        Hold = SpriteLoader.LoadSpriteFromFile(path + "/hold.png", border);        
         Hold_Each = SpriteLoader.LoadSpriteFromFile(path + "/hold_each.png", border);
+        Hold_Each_On = SpriteLoader.LoadSpriteFromFile(path + "/hold_each_on.png", border);
         Hold_Ex = SpriteLoader.LoadSpriteFromFile(path + "/hold_ex.png", border);
         Hold_Break = SpriteLoader.LoadSpriteFromFile(path + "/hold_break.png", border);
+        Hold_Break_On = SpriteLoader.LoadSpriteFromFile(path + "/hold_break_on.png", border);
+
+        if (File.Exists(Path.Combine(path, "hold_on.png")))
+            Hold_On = SpriteLoader.LoadSpriteFromFile(path + "/hold_on.png", border);
+        else
+            Hold_On = Hold;
+
+        if (File.Exists(Path.Combine(path, "hold_each_on.png")))
+            Hold_Each_On = SpriteLoader.LoadSpriteFromFile(path + "/hold_each_on.png", border);
+        else
+            Hold_Each_On = Hold_Each;
+
+        if (File.Exists(Path.Combine(path, "hold_break_on.png")))
+            Hold_Break_On = SpriteLoader.LoadSpriteFromFile(path + "/hold_break_on.png", border);
+        else
+            Hold_Break_On = Hold_Break;
 
         Just[0] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_r.png");
         Just[1] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_r.png");

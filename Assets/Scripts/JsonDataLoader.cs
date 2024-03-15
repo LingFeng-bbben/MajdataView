@@ -226,9 +226,12 @@ public class JsonDataLoader : MonoBehaviour
                         noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
 
                         NDCompo.tapSpr = customSkin.Hold;
+                        NDCompo.holdOnSpr = customSkin.Hold_On;
                         NDCompo.eachSpr = customSkin.Hold_Each;
+                        NDCompo.eachHoldOnSpr = customSkin.Hold_Each_On;
                         NDCompo.exSpr = customSkin.Hold_Ex;
                         NDCompo.breakSpr = customSkin.Hold_Break;
+                        NDCompo.breakHoldOnSpr = customSkin.Hold_Break_On;
 
                         NDCompo.HoldShine = HoldShine;
                         NDCompo.BreakShine = BreakShine;
