@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4117990948037947927}
   - component: {fileID: 2863808203673465815}
   m_Layer: 0
-  m_Name: Slide_01 (14)
+  m_Name: Slide_01 (34)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 570233134929949246}
   - component: {fileID: 1228544035203147277}
   m_Layer: 0
-  m_Name: Slide_01 (7)
+  m_Name: Slide_01 (27)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -483,7 +483,7 @@ GameObject:
   - component: {fileID: 2476777526430901302}
   - component: {fileID: 6867608962203593790}
   m_Layer: 0
-  m_Name: Slide_01
+  m_Name: Slide_01( 14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -567,7 +567,7 @@ GameObject:
   - component: {fileID: 7371587569673606443}
   - component: {fileID: 2723997731425920881}
   m_Layer: 0
-  m_Name: Slide_01 (12)
+  m_Name: Slide_01 (32)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -651,7 +651,7 @@ GameObject:
   - component: {fileID: 7307353924371245918}
   - component: {fileID: 919089619257851356}
   m_Layer: 0
-  m_Name: Slide_01 (13)
+  m_Name: Slide_01 (33)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -819,7 +819,7 @@ GameObject:
   - component: {fileID: 84252456783282694}
   - component: {fileID: 7975424730108805650}
   m_Layer: 0
-  m_Name: Slide_01 (6)
+  m_Name: Slide_01 (26)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -903,7 +903,7 @@ GameObject:
   - component: {fileID: 5680067131812204656}
   - component: {fileID: 6435433329925171174}
   m_Layer: 0
-  m_Name: Slide_01 (4)
+  m_Name: Slide_01 (24)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1071,7 +1071,7 @@ GameObject:
   - component: {fileID: 5949313834996413496}
   - component: {fileID: 1335051312398068643}
   m_Layer: 0
-  m_Name: Slide_01 (8)
+  m_Name: Slide_01 (28)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1155,7 +1155,7 @@ GameObject:
   - component: {fileID: 2345704201254355147}
   - component: {fileID: 3577165375119544147}
   m_Layer: 0
-  m_Name: Slide_01 (9)
+  m_Name: Slide_01 (29)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1239,7 +1239,7 @@ GameObject:
   - component: {fileID: 1671161122343679032}
   - component: {fileID: 8906143126118662362}
   m_Layer: 0
-  m_Name: Slide_01 (5)
+  m_Name: Slide_01 (25)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1323,7 +1323,7 @@ GameObject:
   - component: {fileID: 3083064546867368557}
   - component: {fileID: 2849042240035507726}
   m_Layer: 0
-  m_Name: Slide_01 (16)
+  m_Name: Slide_01 (36)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1489,6 +1489,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4831295135796987854}
+  - component: {fileID: -630157500183386633}
   m_Layer: 0
   m_Name: Star_L_2
   m_TagString: Untagged
@@ -1544,6 +1545,27 @@ Transform:
   - {fileID: 1477381887162016954}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &-630157500183386633
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4666287949468113778}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7d0ba6d7eeb05394a8fb602b73147814, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5034059960392452468
 GameObject:
   m_ObjectHideFlags: 0
@@ -1723,7 +1745,7 @@ GameObject:
   - component: {fileID: 9066007751056896860}
   - component: {fileID: 2091896813682901340}
   m_Layer: 0
-  m_Name: Slide_01 (1)
+  m_Name: Slide_01 (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1807,7 +1829,7 @@ GameObject:
   - component: {fileID: 2138816560620829642}
   - component: {fileID: 1032625850371230904}
   m_Layer: 0
-  m_Name: Slide_01 (11)
+  m_Name: Slide_01 (31)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1975,7 +1997,7 @@ GameObject:
   - component: {fileID: 7343235149206126295}
   - component: {fileID: 3123803794475648030}
   m_Layer: 0
-  m_Name: Slide_01 (15)
+  m_Name: Slide_01 (35)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2059,7 +2081,7 @@ GameObject:
   - component: {fileID: 5605300204368945679}
   - component: {fileID: 6317638598336675835}
   m_Layer: 0
-  m_Name: Slide_01 (3)
+  m_Name: Slide_01 (23)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2395,7 +2417,7 @@ GameObject:
   - component: {fileID: 6096702983980250540}
   - component: {fileID: 5782797044549954247}
   m_Layer: 0
-  m_Name: Slide_01 (17)
+  m_Name: Slide_01 (37)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2563,7 +2585,7 @@ GameObject:
   - component: {fileID: 4296710071721726082}
   - component: {fileID: 1311454562447233963}
   m_Layer: 0
-  m_Name: Slide_01 (2)
+  m_Name: Slide_01 (22)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2647,7 +2669,7 @@ GameObject:
   - component: {fileID: 6609615503486089012}
   - component: {fileID: 8820920651247675547}
   m_Layer: 0
-  m_Name: Slide_01 (10)
+  m_Name: Slide_01 (30)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
