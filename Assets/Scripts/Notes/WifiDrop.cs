@@ -15,6 +15,7 @@ public class WifiDrop : NoteLongDrop
     public Sprite breakStar;
 
     public RuntimeAnimatorController slideShine;
+    public RuntimeAnimatorController judgeBreakShine;
 
     public bool isJustR;
 
@@ -97,6 +98,8 @@ public class WifiDrop : NoteLongDrop
             slideOK.GetComponent<LoadJustSprite>().setL();
             slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
         }
+        if (isBreak)
+            slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
 
         slideOK.SetActive(false);
         slideOK.transform.SetParent(transform.parent);
@@ -230,7 +233,7 @@ public class WifiDrop : NoteLongDrop
     }
 
     private void OnEnable()
-    {
+    { 
     }
 
     private void setSlideBarAlpha(float alpha)

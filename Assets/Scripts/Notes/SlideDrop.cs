@@ -12,6 +12,7 @@ public class SlideDrop : NoteLongDrop
     public Sprite spriteEach;
     public Sprite spriteBreak;
     public RuntimeAnimatorController slideShine;
+    public RuntimeAnimatorController judgeBreakShine;
 
     public bool isMirror;
     public bool isJustR;
@@ -68,6 +69,8 @@ public class SlideDrop : NoteLongDrop
         fadeInAnimator = this.GetComponent<Animator>();
         fadeInAnimator.speed = 0.2f / interval; //淡入时机与正解帧间隔小于200ms时，加快淡入动画的播放速度; interval永不为0
         fadeInAnimator.SetTrigger("slide");
+
+        
     }
 
     // Update is called once per frame
@@ -190,7 +193,11 @@ public class SlideDrop : NoteLongDrop
 
     private void OnEnable()
     {
-        slideOK = transform.GetChild(transform.childCount - 1).gameObject; //slideok is the last one
+        slideOK = transform.GetChild(transform.childCount - 1).gameObject; //slideok is the last one        
+
+        if(isBreak)
+            slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
+
         if (isMirror)
         {
             transform.localScale = new Vector3(-1f, 1f, 1f);
