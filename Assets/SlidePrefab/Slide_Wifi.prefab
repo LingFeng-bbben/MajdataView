@@ -840,7 +840,7 @@ Transform:
   m_GameObject: {fileID: 6006662962266734483}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.666, y: 4.029, z: 0}
+  m_LocalPosition: {x: 1.578, y: 3.894, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -994,8 +994,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6000435141830527362}
   - component: {fileID: 4850745122976708631}
+  - component: {fileID: 8491945047529125324}
   m_Layer: 0
-  m_Name: Slide_Wifi(Clone)
+  m_Name: Slide_Wifi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1094,7 +1095,31 @@ MonoBehaviour:
   isGroupPartEnd: 0
   startPosition: 1
   sortIndex: 0
+  fadeInTime: 0
+  fullFadeInTime: 0
   areaStep: 
+  smoothSlideAnime: 0
+--- !u!95 &8491945047529125324
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6574093696964316734}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7d0ba6d7eeb05394a8fb602b73147814, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7964666901942964958
 GameObject:
   m_ObjectHideFlags: 0

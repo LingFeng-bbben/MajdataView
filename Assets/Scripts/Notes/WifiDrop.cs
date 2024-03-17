@@ -15,6 +15,7 @@ public class WifiDrop : NoteLongDrop
     public Sprite breakStar;
 
     public RuntimeAnimatorController slideShine;
+    public RuntimeAnimatorController judgeBreakShine;
 
     public bool isJustR;
 
@@ -38,6 +39,8 @@ public class WifiDrop : NoteLongDrop
 
     public List<int> areaStep = new List<int>();
     public bool smoothSlideAnime = false;
+
+    Animator fadeInAnimator = null;
 
     private readonly List<Animator> animators = new();
     private readonly List<SpriteRenderer> sbRender = new();
@@ -63,6 +66,10 @@ public class WifiDrop : NoteLongDrop
         // Slide完全淡入时机
         // 正常情况下应为负值；速度过高将忽略淡入
         fullFadeInTime = Math.Min(fadeInTime + 0.2f, 0);
+        var interval = fullFadeInTime - fadeInTime;
+        fadeInAnimator = this.GetComponent<Animator>();
+        fadeInAnimator.speed = 0.2f / interval; //淡入时机与正解帧间隔小于200ms时，加快淡入动画的播放速度; interval永不为0
+        fadeInAnimator.SetTrigger("wifi");
 
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         var notes = GameObject.Find("Notes").transform;
@@ -91,6 +98,8 @@ public class WifiDrop : NoteLongDrop
             slideOK.GetComponent<LoadJustSprite>().setL();
             slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
         }
+        if (isBreak)
+            slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
 
         slideOK.SetActive(false);
         slideOK.transform.SetParent(transform.parent);
@@ -131,23 +140,11 @@ public class WifiDrop : NoteLongDrop
         var startiming = timeProvider.AudioTime - timeStart;
         if (startiming <= 0f)
         {
-            if (fullFadeInTime == 0 || startiming >= fullFadeInTime)
-                setSlideBarAlpha(1);
-            if (startiming < fadeInTime)
-                setSlideBarAlpha(0);
-            else
-            {
-                var alpha = Math.Min((1 - ((startiming - fullFadeInTime) / -0.2f)), 1);
-                setSlideBarAlpha(alpha);
-            }
-            //var alpha = startiming * (speed / 3.9269f) + 1f;
-            //alpha *= 0.85f;
-            //alpha = alpha > 0.6f ? 0.6f : alpha;
-            //alpha = alpha < 0f ? 0f : alpha;
-            //setSlideBarAlpha(alpha);
+            if (!fadeInAnimator.enabled && startiming >= fadeInTime)
+                fadeInAnimator.enabled = true;
             return;
         }
-
+        fadeInAnimator.enabled = false;
         setSlideBarAlpha(1f);
 
         if (isBreak && !startShining)
@@ -236,7 +233,7 @@ public class WifiDrop : NoteLongDrop
     }
 
     private void OnEnable()
-    {
+    { 
     }
 
     private void setSlideBarAlpha(float alpha)

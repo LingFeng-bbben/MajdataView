@@ -13,9 +13,12 @@ public class HoldDrop : NoteLongDrop
     public bool isBreak;
 
     public Sprite tapSpr;
+    public Sprite holdOnSpr;
     public Sprite eachSpr;
+    public Sprite eachHoldOnSpr;
     public Sprite exSpr;
     public Sprite breakSpr;
+    public Sprite breakHoldOnSpr;
 
     public Sprite eachLine;
     public Sprite breakLine;
@@ -157,7 +160,6 @@ public class HoldDrop : NoteLongDrop
                 distance = 4.8f;
                 //holdEffect.SetActive(true);
                 PlayHoldEffect();
-                startHoldShine();
             }
             else if (holdDistance < 1.225f && distance < 4.8f) // 头未到达 尾未出现
             {
@@ -168,7 +170,6 @@ public class HoldDrop : NoteLongDrop
                 distance = 4.8f;
                 //holdEffect.SetActive(true);
                 PlayHoldEffect();
-                startHoldShine();
 
                 holdEndRender.enabled = true;
             }
@@ -192,20 +193,28 @@ public class HoldDrop : NoteLongDrop
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
 
-    private void startHoldShine()
+    void PlayHoldEffect()
     {
+        var endTime = time + LastFor;
         GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().ResetEffect(startPosition);
-        if (!holdAnimStart && timeProvider.AudioTime - time > 0.1)
+        holdEffect.SetActive(true);
+
+        if (LastFor <= 0.3)
+            return;
+        else if (!holdAnimStart && timeProvider.AudioTime - time > 0.1)//忽略开头6帧与结尾12帧
         {            
             holdAnimStart = true;
             animator.runtimeAnimatorController = HoldShine;
             animator.enabled = true;
+            var sprRenderer = this.GetComponent<SpriteRenderer>();
+            if (isBreak)
+                sprRenderer.sprite = breakHoldOnSpr;
+            else if (isEach)
+                sprRenderer.sprite = eachHoldOnSpr;
+            else
+                sprRenderer.sprite = holdOnSpr;
+
         }
-    }
-    void PlayHoldEffect()
-    {
-        if (timeProvider.AudioTime - time > 0.1) holdEffect.SetActive(true);
-        else holdEffect.SetActive(false); 
     }
 
     private Vector3 getPositionFromDistance(float distance)

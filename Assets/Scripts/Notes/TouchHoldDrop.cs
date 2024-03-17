@@ -39,7 +39,7 @@ public class TouchHoldDrop : NoteLongDrop
 
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
 
-        firework = GameObject.Find("Firework");
+        firework = GameObject.Find("FireworkEffect");
         fireworkEffect = firework.GetComponent<Animator>();
 
         for (var i = 0; i < 6; i++)
