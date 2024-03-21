@@ -37,6 +37,9 @@ public class SlideDrop : NoteLongDrop
 
     public float fullFadeInTime;
 
+    public float slideConst;
+    float arriveTime = -1;
+
     public List<int> areaStep = new List<int>();
     public bool smoothSlideAnime = false;
 
@@ -56,6 +59,8 @@ public class SlideDrop : NoteLongDrop
 
     private AudioTimeProvider timeProvider;
 
+    public int endPosition;
+
     private void Start()
     {
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();        
@@ -70,7 +75,13 @@ public class SlideDrop : NoteLongDrop
         fadeInAnimator.speed = 0.2f / interval; //淡入时机与正解帧间隔小于200ms时，加快淡入动画的播放速度; interval永不为0
         fadeInAnimator.SetTrigger("slide");
 
-        
+        slidePositions.Add(GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 1).position);
+        slideRotations.Add(Quaternion.Euler(
+            slideBars.Last().transform
+            .rotation
+            .eulerAngles + new Vector3(0f, 0f, 18f)));
+
+
     }
 
     // Update is called once per frame
@@ -129,35 +140,11 @@ public class SlideDrop : NoteLongDrop
             var process = (LastFor - timing) / LastFor;
             process = 1f - process;
             if (process > 1)
-            {
-                // TODO: FES星星最后一个判定区箭头的消失效果
-                foreach (GameObject obj in slideBars)
-                {
-                    obj.SetActive(false);
-                }
-
-                if (isGroupPartEnd)
-                {
-                    // 只有组内最后一个Slide完成 才会显示判定条并增加总数
-                    if (isBreak)
-                        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-                    else
-                        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
-                    slideOK.SetActive(true);
-                }
-                else
-                {
-                    // 如果不是组内最后一个 那么也要将判定条删掉
-                    Destroy(slideOK);
-                }
-
-                Destroy(star_slide);
-                Destroy(gameObject);
-            }
+                DestroySelf();
 
             //print(process);
             var pos = (slidePositions.Count - 1) * process;
-            var index = (int)pos;
+            var index = Math.Min((int)pos,slidePositions.Count);
 
             // Slide的箭头消失到哪里
             int slideAreaIndex;
@@ -166,11 +153,30 @@ public class SlideDrop : NoteLongDrop
                 slideAreaIndex = index + 1;
             } else
             {
-                slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+                try
+                {
+                    slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+                }
+                catch
+                {
+                    slideAreaIndex = areaStep.Last() ;
+                }
             }
-
+            
             try
             {
+                var lastIndex = (areaStep[areaStep.Count - 1] + areaStep[areaStep.Count - 2]) / 2;
+                if (isGroupPartEnd && !smoothSlideAnime && pos >= lastIndex)
+                {
+                    var waitTime = LastFor * slideConst / 1.3;
+                    if (arriveTime == -1)
+                        arriveTime = timeProvider.AudioTime;
+                    else if (timeProvider.AudioTime >= arriveTime +  waitTime)
+                        DestroySelf();
+                    else
+                        foreach (var bar in slideBars)
+                            bar.SetActive(false);
+                }
                 star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) +
                                                 slidePositions[index];
                 //star_slide.transform.rotation = slideRotations[index];
@@ -190,6 +196,32 @@ public class SlideDrop : NoteLongDrop
             }
         }
     }
+    void DestroySelf()
+    {
+        // TODO: FES星星最后一个判定区箭头的消失效果
+        foreach (GameObject obj in slideBars)
+        {
+            obj.SetActive(false);
+        }
+
+        if (isGroupPartEnd)
+        {
+            // 只有组内最后一个Slide完成 才会显示判定条并增加总数
+            if (isBreak)
+                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
+            else
+                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
+            slideOK.SetActive(true);
+        }
+        else
+        {
+            // 如果不是组内最后一个 那么也要将判定条删掉
+            Destroy(slideOK);
+        }
+
+        Destroy(star_slide);
+        Destroy(gameObject);
+    }    
 
     private void OnEnable()
     {
@@ -240,7 +272,7 @@ public class SlideDrop : NoteLongDrop
             slidePositions.Add(bars.transform.position);
             slideRotations.Add(Quaternion.Euler(bars.transform.rotation.eulerAngles + new Vector3(0f, 0f, 18f)));
         }
-
+        
         foreach (var gm in slideBars)
         {
             var sr = gm.GetComponent<SpriteRenderer>();

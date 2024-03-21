@@ -94,6 +94,53 @@ public class JsonDataLoader : MonoBehaviour
         {"L5", 40 },
     };
 
+    static Dictionary<string, float> SLIDE_AREA_CONST = new()
+    {
+        { "line3", 0.1919f},
+        { "line4", 0.1793f},
+        { "line5", 0.1629f},
+        { "line6", 0.1793f},
+        { "line7", 0.1919f},
+        { "circle1", 0.7892f},
+        { "circle2", 0.2326f},
+        { "circle3", 0.1550f},
+        { "circle4", 0.1163f},
+        { "circle5", 0.0930f},
+        { "circle6", 0.0775f},
+        { "circle7", 0.0664f},
+        { "circle8", 0.0490f},
+        { "v1", 0.1629f},
+        { "v2", 0.1629f},
+        { "v3", 0.1629f},
+        { "v4", 0.1629f},
+        { "v5", 0.1629f},
+        { "v6", 0.1629f},
+        { "v7", 0.1629f},
+        { "v8", 0.1629f},
+        { "ppqq1", 0.1014f},
+        { "ppqq2", 0.1204f},
+        { "ppqq3", 0.1434f},
+        { "ppqq4", 0.0697f},
+        { "ppqq5", 0.0867f},
+        { "ppqq6", 0.1026f},
+        { "ppqq7", 0.1266f},
+        { "ppqq8", 0.1413f},
+        { "pq1", 0.1021f},
+        { "pq2", 0.1144f},
+        { "pq3", 0.1247f},
+        { "pq4", 0.1436f},
+        { "pq5", 0.1627f},
+        { "pq6", 0.0752f},
+        { "pq7", 0.0984f},
+        { "pq8", 0.1126f},
+        { "s", 0.1054f},
+        { "wifi", 0.1829f},
+        { "L2", 0.0948f},
+        { "L3", 0.0711f},
+        { "L4", 0.0948f},
+        { "L5", 0.1186f},
+    };
+
     private static readonly Dictionary<string, List<int>> SLIDE_AREA_STEP_MAP = new Dictionary<string, List<int>>()
     {
         {"line3", new List<int>(){ 0, 2, 8, 13 } },
@@ -626,6 +673,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.judgeBreakShine = JudgeBreakShine;
         WifiCompo.slideShine = BreakShine;
         WifiCompo.areaStep = new List<int>(SLIDE_AREA_STEP_MAP["wifi"]);
+        WifiCompo.slideConst = SLIDE_AREA_CONST["wifi"];
         WifiCompo.smoothSlideAnime = smoothSlideAnime;
 
         Array.Copy(customSkin.Wifi, WifiCompo.normalSlide, 11);
@@ -662,7 +710,8 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.startPosition = note.startPosition;
         NDCompo.speed = noteSpeed * timing.HSpeed;
 
-        WifiCompo.isJustR = detectJustType(note.noteContent);
+        WifiCompo.isJustR = detectJustType(note.noteContent,out endPos);
+        WifiCompo.endPosition = endPos;
         WifiCompo.speed = noteSpeed * timing.HSpeed;
         WifiCompo.timeStart = (float)timing.time;
         WifiCompo.startPosition = note.startPosition;
@@ -720,6 +769,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.slideShine = BreakShine;
         SliCompo.judgeBreakShine = JudgeBreakShine;
         SliCompo.areaStep = new List<int>(SLIDE_AREA_STEP_MAP[slideShape]);
+        SliCompo.slideConst = SLIDE_AREA_CONST[slideShape]; 
         SliCompo.smoothSlideAnime = smoothSlideAnime;
 
         if (timing.noteList.Count > 1)
@@ -758,7 +808,8 @@ public class JsonDataLoader : MonoBehaviour
 
 
         SliCompo.isMirror = isMirror;
-        SliCompo.isJustR = detectJustType(note.noteContent);
+        SliCompo.isJustR = detectJustType(note.noteContent,out int endPos);
+        SliCompo.endPosition = endPos;
         if (slideIndex - 26 > 0 && slideIndex - 26 <= 8)
         {
             // known slide sprite issue
@@ -772,7 +823,6 @@ public class JsonDataLoader : MonoBehaviour
         {
             SliCompo.isSpecialFlip = isMirror;
         }
-
         SliCompo.speed = noteSpeed * timing.HSpeed;
         SliCompo.timeStar = (float)timing.time;
         SliCompo.startPosition = note.startPosition;
@@ -784,7 +834,7 @@ public class JsonDataLoader : MonoBehaviour
         slideLayer += 5;
     }
 
-    private bool detectJustType(string content)
+    private bool detectJustType(string content,out int endPos)
     {
         // > < ^ V w
         if (content.Contains('>'))
@@ -792,6 +842,7 @@ public class JsonDataLoader : MonoBehaviour
             var str = content.Substring(0, 3);
             var digits = str.Split('>');
             var startPos = int.Parse(digits[0]);
+            endPos = int.Parse(digits[1]);
             if (isUpperHalf(startPos))
                 return true;
             return false;
@@ -802,6 +853,7 @@ public class JsonDataLoader : MonoBehaviour
             var str = content.Substring(0, 3);
             var digits = str.Split('<');
             var startPos = int.Parse(digits[0]);
+            endPos = int.Parse(digits[1]);
             if (!isUpperHalf(startPos))
                 return true;
             return false;
@@ -812,20 +864,27 @@ public class JsonDataLoader : MonoBehaviour
             var str = content.Substring(0, 3);
             var digits = str.Split('^');
             var startPos = int.Parse(digits[0]);
-            var endPos = int.Parse(digits[1]);
+            endPos = int.Parse(digits[1]);
             endPos = endPos - startPos;
             endPos = endPos < 0 ? endPos + 8 : endPos;
             endPos = endPos > 8 ? endPos - 8 : endPos;
 
             if (endPos < 4)
+            {
+                endPos = int.Parse(digits[1]);
                 return true;
-            if (endPos > 4) return false;
+            }
+            if (endPos > 4) 
+            {
+                endPos = int.Parse(digits[1]);
+                return false;
+            }
         }
         else if (content.Contains('V'))
         {
             var str = content.Substring(0, 4);
             var digits = str.Split('V');
-            var endPos = int.Parse(digits[1][1].ToString());
+            endPos = int.Parse(digits[1][1].ToString());
 
             if (isRightHalf(endPos))
                 return true;
@@ -834,14 +893,14 @@ public class JsonDataLoader : MonoBehaviour
         else if (content.Contains('w'))
         {
             var str = content.Substring(0, 3);
-            var endPos = int.Parse(str.Substring(2, 1));
+            endPos = int.Parse(str.Substring(2, 1));
             if (isUpperHalf(endPos))
                 return true;
             return false;
         }
         else
         {
-            int endPos;
+            //int endPos;
             if (content.Contains("qq") || content.Contains("pp"))
                 endPos = int.Parse(content.Substring(3, 1));
             else
@@ -850,7 +909,6 @@ public class JsonDataLoader : MonoBehaviour
                 return true;
             return false;
         }
-
         return true;
     }
 

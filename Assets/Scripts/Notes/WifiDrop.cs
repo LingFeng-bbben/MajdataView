@@ -30,11 +30,12 @@ public class WifiDrop : NoteLongDrop
     public bool isGroupPartEnd;
 
     public int startPosition = 1;
-
+    public int endPosition;
     public int sortIndex;
 
     public float fadeInTime;
-
+    public float slideConst;
+    float arriveTime = -1;
     public float fullFadeInTime;
 
     public List<int> areaStep = new List<int>();
@@ -81,9 +82,14 @@ public class WifiDrop : NoteLongDrop
             else if (isBreak) spriteRenderer_star[i].sprite = breakStar;
             else spriteRenderer_star[i].sprite = normalStar;
             star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f * (8 + i + 2 * (startPosition - 1)));
-            SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
+            //SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
             star_slide[i].SetActive(false);
         }
+
+        SlidePositionEnd[0] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 2 < 0 ? 7 : endPosition - 2).position;
+        SlidePositionEnd[1] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 1).position;
+        SlidePositionEnd[2] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition >= 8 ? 0 : endPosition).position;
+
 
         transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
         slideBars.Clear();
@@ -188,27 +194,9 @@ public class WifiDrop : NoteLongDrop
             var process = (LastFor - timing) / LastFor;
             process = 1f - process;
             if (process > 1)
-            {
-                foreach (GameObject obj in slideBars)
-                {
-                    obj.SetActive(false);
-                }
+                DestroySelf();
 
-                if (isGroupPartEnd)
-                {
-                    if (isBreak)
-                        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-                    else
-                        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
-                    slideOK.SetActive(true);
-                }
-
-                for (var i = 0; i < star_slide.Length; i++)
-                    Destroy(star_slide[i]);
-                Destroy(gameObject);
-            }
-
-            var pos = (slideBars.Count - 1) * process;
+            var pos = (slideBars.Count) * process;
             // Slide的箭头消失到哪里
             int slideAreaIndex;
             if (smoothSlideAnime)
@@ -219,7 +207,18 @@ public class WifiDrop : NoteLongDrop
             {
                 slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
             }
-
+            var lastIndex = 9;
+            if (isGroupPartEnd && !smoothSlideAnime && pos >= lastIndex)
+            {
+                var waitTime = LastFor * slideConst / 1.3;
+                if (arriveTime == -1)
+                    arriveTime = timeProvider.AudioTime;
+                else if (timeProvider.AudioTime >= arriveTime + waitTime)
+                    DestroySelf();
+                else
+                    foreach (var bar in slideBars)
+                        bar.SetActive(false);
+            }
             for (var i = 0; i < star_slide.Length; i++)
             {
                 spriteRenderer_star[i].color = Color.white;
@@ -232,6 +231,26 @@ public class WifiDrop : NoteLongDrop
         }
     }
 
+    void DestroySelf()
+    {
+        foreach (GameObject obj in slideBars)
+        {
+            obj.SetActive(false);
+        }
+
+        if (isGroupPartEnd)
+        {
+            if (isBreak)
+                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
+            else
+                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
+            slideOK.SetActive(true);
+        }
+
+        for (var i = 0; i < star_slide.Length; i++)
+            Destroy(star_slide[i]);
+        Destroy(gameObject);
+    }
     private void OnEnable()
     { 
     }
