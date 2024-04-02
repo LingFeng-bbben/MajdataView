@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Unity.Mathematics;
+using UnityEngine;
 
 public class StarDrop : NoteDrop
 {
@@ -36,6 +38,8 @@ public class StarDrop : NoteDrop
     public Color exEffectEach;
     public Color exEffectBreak;
     private Animator animator;
+
+    public Material breakMaterial;
 
     private bool breakAnimStart;
     private SpriteRenderer exSpriteRender;
@@ -78,10 +82,11 @@ public class StarDrop : NoteDrop
                 lineSpriteRender.sprite = breakLine;
                 spriteRenderer.sprite = breakSpr_Double;
                 if (isEX) exSpriteRender.color = exEffectBreak;
-                var anim = gameObject.AddComponent<Animator>(); // break star闪烁
-                anim.runtimeAnimatorController = BreakShine;
-                anim.enabled = false;
-                animator = anim;
+                spriteRenderer.material = breakMaterial;
+                //var anim = gameObject.AddComponent<Animator>(); // break star闪烁
+                //anim.runtimeAnimatorController = BreakShine;
+                //anim.enabled = false;
+                //animator = anim;
             }
         }
         else
@@ -101,10 +106,11 @@ public class StarDrop : NoteDrop
                 lineSpriteRender.sprite = breakLine;
                 spriteRenderer.sprite = breakSpr;
                 if (isEX) exSpriteRender.color = exEffectBreak;
-                var anim = gameObject.AddComponent<Animator>(); // break star闪烁
-                anim.runtimeAnimatorController = BreakShine;
-                anim.enabled = false;
-                animator = anim;
+                spriteRenderer.material = breakMaterial;
+                //var anim = gameObject.AddComponent<Animator>(); // break star闪烁
+                //anim.runtimeAnimatorController = BreakShine;
+                //anim.enabled = false;
+                //animator = anim;
             }
         }
 
@@ -131,12 +137,18 @@ public class StarDrop : NoteDrop
             if (isEX) exSpriteRender.forceRenderingOff = false;
         }
 
-        if (isBreak && !breakAnimStart)
+        if(isBreak)
         {
-            breakAnimStart = true;
-            animator.enabled = true;
-            animator.Play("BreakShine", -1, 0.5f);
+            var extra = Math.Max(Mathf.Sin(timeProvider.GetFrame() * 0.17f) * 0.5f,0);
+            spriteRenderer.material.SetFloat("_Brightness",0.95f + extra);
         }
+
+        //if (isBreak && !breakAnimStart)
+        //{
+        //    breakAnimStart = true;
+        //    animator.enabled = true;
+        //    animator.Play("BreakShine", -1, 0.5f);
+        //}
 
         if (timing > 0)
         {

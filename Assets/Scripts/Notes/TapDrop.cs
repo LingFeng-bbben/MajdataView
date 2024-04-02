@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class TapDrop : NoteDrop
 {
@@ -28,6 +29,8 @@ public class TapDrop : NoteDrop
     public Color exEffectEach;
     public Color exEffectBreak;
     private Animator animator;
+
+    public Material breakMaterial;
 
     private bool breakAnimStart;
     private SpriteRenderer exSpriteRender;
@@ -74,10 +77,11 @@ public class TapDrop : NoteDrop
             spriteRenderer.sprite = breakSpr;
             lineSpriteRender.sprite = breakLine;
             if (isEX) exSpriteRender.color = exEffectBreak;
-            var anim = gameObject.AddComponent<Animator>(); // break tap闪烁
-            anim.runtimeAnimatorController = BreakShine;
-            anim.enabled = false;
-            animator = anim;
+            spriteRenderer.material = breakMaterial;
+            //var anim = gameObject.AddComponent<Animator>(); // break tap闪烁
+            //anim.runtimeAnimatorController = BreakShine;
+            //anim.enabled = false;
+            //animator = anim;
         }
 
         spriteRenderer.forceRenderingOff = true;
@@ -98,12 +102,19 @@ public class TapDrop : NoteDrop
 
         spriteRenderer.forceRenderingOff = false;
         if (isEX) exSpriteRender.forceRenderingOff = false;
-        if (isBreak && !breakAnimStart)
+
+        if (isBreak)
         {
-            breakAnimStart = true;
-            animator.enabled = true;
-            animator.Play("BreakShine", -1, 0.5f);
+            var extra = Math.Max(Mathf.Sin(timeProvider.GetFrame() * 0.17f) * 0.5f, 0);
+            spriteRenderer.material.SetFloat("_Brightness", 0.95f + extra);
         }
+
+        //if (isBreak && !breakAnimStart)
+        //{
+        //    breakAnimStart = true;
+        //    animator.enabled = true;
+        //    animator.Play("BreakShine", -1, 0.5f);
+        //}
 
         if (timing > 0)
         {

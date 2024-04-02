@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Assets.Scripts.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
-public class SlideDrop : NoteLongDrop
+public class SlideDrop : NoteLongDrop,IFlasher
 {
     // Start is called before the first frame update
     public GameObject star_slide;
@@ -42,6 +44,10 @@ public class SlideDrop : NoteLongDrop
 
     public List<int> areaStep = new List<int>();
     public bool smoothSlideAnime = false;
+
+    public Material breakMaterial;
+
+    bool canShine = false;
 
     Animator fadeInAnimator = null;
 
@@ -99,20 +105,21 @@ public class SlideDrop : NoteLongDrop
         fadeInAnimator.enabled = false;
         setSlideBarAlpha(1f);
 
-        if (isBreak && !startShining)
-        {
-            startShining = true;
-            foreach (var anim in animators)
-            {
-                anim.enabled = true;
-                anim.Play("BreakShine", -1, 0.9f);
-            }
-        }
+        //if (isBreak && !startShining)
+        //{
+        //    startShining = true;
+        //    foreach (var anim in animators)
+        //    {
+        //        anim.enabled = true;
+        //        anim.Play("BreakShine", -1, 0.9f);
+        //    }
+        //}
 
         star_slide.SetActive(true);
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
         {
+            canShine = true;
             float alpha;
             if (isGroupPart)
             {
@@ -133,7 +140,7 @@ public class SlideDrop : NoteLongDrop
         }
 
         if (timing > 0f)
-        {
+        {            
             spriteRenderer_star.color = Color.white;
             star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
@@ -221,8 +228,8 @@ public class SlideDrop : NoteLongDrop
 
         Destroy(star_slide);
         Destroy(gameObject);
-    }    
-
+    }
+    public bool CanShine() => canShine;
     private void OnEnable()
     {
         slideOK = transform.GetChild(transform.childCount - 1).gameObject; //slideok is the last one        
@@ -262,6 +269,16 @@ public class SlideDrop : NoteLongDrop
 
 
         spriteRenderer_star = star_slide.GetComponent<SpriteRenderer>();
+
+        if(isBreak)
+        {
+            spriteRenderer_star.material = breakMaterial;
+            spriteRenderer_star.material.SetFloat("_Brightness", 0.95f);
+            var controller = star_slide.AddComponent<BreakShineController>();
+            controller.enabled = true;
+            controller.parent = this;
+        }
+
         for (var i = 0; i < transform.childCount - 1; i++) slideBars.Add(transform.GetChild(i).gameObject);
 
         slideOK.SetActive(false);
@@ -282,10 +299,14 @@ public class SlideDrop : NoteLongDrop
             if (isBreak)
             {
                 sr.sprite = spriteBreak;
-                var anim = gm.AddComponent<Animator>();
-                anim.runtimeAnimatorController = slideShine;
-                anim.enabled = false;
-                animators.Add(anim);
+                sr.material = breakMaterial;
+                sr.material.SetFloat("_Brightness", 0.95f);
+                var controller = gm.AddComponent<BreakShineController>();
+                controller.parent = this;
+                controller.enabled = true;
+                //anim.runtimeAnimatorController = slideShine;
+                //anim.enabled = false;
+                //animators.Add(anim);
             }
             else if (isEach)
             {

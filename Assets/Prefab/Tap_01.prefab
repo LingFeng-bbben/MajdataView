@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   time: 0
-  sortOrder: 0
+  noteSortOrder: 0
   startPosition: 1
   speed: 1
   isEach: 0
@@ -201,3 +201,4 @@ MonoBehaviour:
   exEffectTap: {r: 1, g: 0.6745283, b: 0.8829237, a: 1}
   exEffectEach: {r: 1, g: 0.9943893, b: 0.4669811, a: 1}
   exEffectBreak: {r: 1, g: 0.99607843, b: 0.46666667, a: 1}
+  breakMaterial: {fileID: 2100000, guid: 6cea13e5ba8275446be27a38daed20c7, type: 2}

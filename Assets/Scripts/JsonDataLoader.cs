@@ -21,6 +21,7 @@ public class JsonDataLoader : MonoBehaviour
     public GameObject notes;
     public GameObject star_slidePrefab;
     public GameObject[] slidePrefab;
+    public Material breakMaterial;
     public RuntimeAnimatorController BreakShine;
     public RuntimeAnimatorController JudgeBreakShine;
     public RuntimeAnimatorController HoldShine;
@@ -671,6 +672,7 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.eachStar = customSkin.Star_Each;
         WifiCompo.breakStar = customSkin.Star_Break;
         WifiCompo.judgeBreakShine = JudgeBreakShine;
+        WifiCompo.breakMaterial = breakMaterial;
         WifiCompo.slideShine = BreakShine;
         WifiCompo.areaStep = new List<int>(SLIDE_AREA_STEP_MAP["wifi"]);
         WifiCompo.slideConst = SLIDE_AREA_CONST["wifi"];
@@ -767,6 +769,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.spriteEach = customSkin.Slide_Each;
         SliCompo.spriteBreak = customSkin.Slide_Break;
         SliCompo.slideShine = BreakShine;
+        SliCompo.breakMaterial = breakMaterial;
         SliCompo.judgeBreakShine = JudgeBreakShine;
         SliCompo.areaStep = new List<int>(SLIDE_AREA_STEP_MAP[slideShape]);
         SliCompo.slideConst = SLIDE_AREA_CONST[slideShape]; 

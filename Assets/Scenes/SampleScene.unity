@@ -1669,6 +1669,7 @@ MonoBehaviour:
   - {fileID: 8148946950682681393, guid: d050f65c3f52d524ab26963738702536, type: 3}
   - {fileID: 8389343569395675099, guid: 32868e5f4fa463f4c905e870406abea5, type: 3}
   - {fileID: 349982270078930302, guid: d0fd46e58bee17740a889818d94c8816, type: 3}
+  breakMaterial: {fileID: 2100000, guid: 6cea13e5ba8275446be27a38daed20c7, type: 2}
   BreakShine: {fileID: 9100000, guid: c28f56116f6dc34408d6f0f544f1e2cc, type: 2}
   JudgeBreakShine: {fileID: 9100000, guid: 68e114e3215572c4380cbd3b06c36ad0, type: 2}
   HoldShine: {fileID: 9100000, guid: 3fcb4587ef8c7f141969450782191592, type: 2}

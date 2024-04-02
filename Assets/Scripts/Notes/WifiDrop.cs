@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.Interfaces;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WifiDrop : NoteLongDrop
+public class WifiDrop : NoteLongDrop,IFlasher
 {
     // Start is called before the first frame update
     public GameObject star_slidePrefab;
@@ -37,6 +38,10 @@ public class WifiDrop : NoteLongDrop
     public float slideConst;
     float arriveTime = -1;
     public float fullFadeInTime;
+
+    public Material breakMaterial;
+
+    bool canShine = false;
 
     public List<int> areaStep = new List<int>();
     public bool smoothSlideAnime = false;
@@ -78,8 +83,9 @@ public class WifiDrop : NoteLongDrop
         {
             star_slide[i] = Instantiate(star_slidePrefab, notes);
             spriteRenderer_star[i] = star_slide[i].GetComponent<SpriteRenderer>();
-            if (isEach) spriteRenderer_star[i].sprite = eachStar;
-            else if (isBreak) spriteRenderer_star[i].sprite = breakStar;
+            
+            if (isBreak) spriteRenderer_star[i].sprite = breakStar;
+            else if (isEach) spriteRenderer_star[i].sprite = eachStar;
             else spriteRenderer_star[i].sprite = normalStar;
             star_slide[i].transform.rotation = Quaternion.Euler(0, 0, -22.5f * (8 + i + 2 * (startPosition - 1)));
             //SlidePositionEnd[i] = getPositionFromDistance(4.8f, i + 3 + startPosition);
@@ -107,6 +113,19 @@ public class WifiDrop : NoteLongDrop
         if (isBreak)
             slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
 
+        if (isBreak)
+        {
+            foreach(var star in star_slide)
+            {
+                var renderer = star.GetComponent<SpriteRenderer>();
+                renderer.material = breakMaterial;
+                renderer.material.SetFloat("_Brightness", 0.95f);
+                var controller = star.AddComponent<BreakShineController>();
+                controller.enabled = true;
+                controller.parent = this;
+            }
+        }
+
         slideOK.SetActive(false);
         slideOK.transform.SetParent(transform.parent);
         SlidePositionStart = getPositionFromDistance(4.8f);
@@ -118,10 +137,15 @@ public class WifiDrop : NoteLongDrop
             if (isBreak)
             {
                 sr.sprite = breakSlide[i];
-                var anim = slideBars[i].AddComponent<Animator>();
-                anim.runtimeAnimatorController = slideShine;
-                anim.enabled = false;
-                animators.Add(anim);
+                sr.material = breakMaterial;
+                sr.material.SetFloat("_Brightness", 0.95f);
+                var controller = slideBars[i].AddComponent<BreakShineController>();
+                controller.parent = this;
+                controller.enabled = true;
+                //var anim = slideBars[i].AddComponent<Animator>();
+                //anim.runtimeAnimatorController = slideShine;
+                //anim.enabled = false;
+                //animators.Add(anim);
             }
             else if (isEach)
             {
@@ -153,15 +177,15 @@ public class WifiDrop : NoteLongDrop
         fadeInAnimator.enabled = false;
         setSlideBarAlpha(1f);
 
-        if (isBreak && !startShining)
-        {
-            startShining = true;
-            foreach (var anim in animators)
-            {
-                anim.enabled = true;
-                anim.Play("BreakShine", -1, 0f);
-            }
-        }
+        //if (isBreak && !startShining)
+        //{
+        //    startShining = true;
+        //    foreach (var anim in animators)
+        //    {
+        //        anim.enabled = true;
+        //        anim.Play("BreakShine", -1, 0f);
+        //    }
+        //}
 
         foreach (var star in star_slide)
             star.SetActive(true);
@@ -169,6 +193,7 @@ public class WifiDrop : NoteLongDrop
         var timing = timeProvider.AudioTime - time;
         if (timing <= 0f)
         {
+            canShine = true;
             float alpha;
             if (isGroupPart)
             {
@@ -230,7 +255,7 @@ public class WifiDrop : NoteLongDrop
             for (var i = 0; i < slideAreaIndex; i++) slideBars[i].SetActive(false);
         }
     }
-
+    public bool CanShine() => canShine;
     void DestroySelf()
     {
         foreach (GameObject obj in slideBars)
