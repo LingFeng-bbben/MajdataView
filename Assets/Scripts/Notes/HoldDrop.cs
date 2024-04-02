@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class HoldDrop : NoteLongDrop
 {
@@ -36,6 +37,8 @@ public class HoldDrop : NoteLongDrop
     public Color exEffectEach;
     public Color exEffectBreak;
     private Animator animator;
+
+    public Material breakMaterial;
 
     private bool breakAnimStart;
     private SpriteRenderer exSpriteRender;
@@ -90,6 +93,7 @@ public class HoldDrop : NoteLongDrop
             lineSpriteRender.sprite = breakLine;
             holdEndRender.sprite = holdBreakEnd;
             if (isEX) exSpriteRender.color = exEffectBreak;
+            spriteRenderer.material = breakMaterial;
         }
 
         spriteRenderer.forceRenderingOff = true;
@@ -112,12 +116,12 @@ public class HoldDrop : NoteLongDrop
         spriteRenderer.forceRenderingOff = false;
         if (isEX) exSpriteRender.forceRenderingOff = false;
 
-        if (isBreak && !breakAnimStart)
-        {
-            breakAnimStart = true;
-            animator.runtimeAnimatorController = BreakShine;
-            animator.enabled = true; // break hold闪烁
-        }
+        //if (isBreak && !breakAnimStart)
+        //{
+        //    breakAnimStart = true;
+        //    animator.runtimeAnimatorController = BreakShine;
+        //    animator.enabled = true; // break hold闪烁
+        //}
 
         spriteRenderer.size = new Vector2(1.22f, 1.4f);
 
@@ -140,6 +144,13 @@ public class HoldDrop : NoteLongDrop
         transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
         tapLine.transform.rotation = transform.rotation;
         holdEffect.transform.position = getPositionFromDistance(4.8f);
+
+        if (isBreak && !holdAnimStart)
+        {
+            var extra = Math.Max(Mathf.Sin(timeProvider.GetFrame() * 0.17f) * 0.5f, 0);
+            spriteRenderer.material.SetFloat("_Brightness", 0.95f + extra);
+        }
+
 
         if (destScale > 0.3f) tapLine.SetActive(true);
 
