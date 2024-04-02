@@ -66,6 +66,7 @@ public class TouchHoldDrop : NoteLongDrop
 
         if (timing > LastFor)
         {
+            transform.Rotate(0, 180f, 90f);
             Instantiate(tapEffect, transform.position, transform.rotation);
             GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
             if (isFirework)

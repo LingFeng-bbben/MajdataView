@@ -37,7 +37,7 @@ public class JsonDataLoader : MonoBehaviour
 
     private ObjectCounter ObjectCounter;
 
-    private int slideLayer = -10000;
+    private int slideLayer = -1;
     private int noteSortOrder = 0;
 
     private static readonly Dictionary<SimaiNoteType, int> NOTE_LAYER_COUNT = new Dictionary<SimaiNoteType, int>()
@@ -720,7 +720,8 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.time = (float)note.slideStartTime;
         WifiCompo.LastFor = (float)note.slideTime;
         WifiCompo.sortIndex = slideLayer;
-        slideLayer += 5;
+        slideLayer -= SLIDE_AREA_STEP_MAP["wifi"].Last();
+        //slideLayer += 5;
     }
 
     private void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd)
@@ -833,8 +834,9 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.time = (float)note.slideStartTime;
         SliCompo.LastFor = (float)note.slideTime;
         //SliCompo.sortIndex = -7000 + (int)((lastNoteTime - timing.time) * -100) + sort * 5;
-        SliCompo.sortIndex = slideLayer++;
-        slideLayer += 5;
+        SliCompo.sortIndex = slideLayer;
+        slideLayer -= SLIDE_AREA_STEP_MAP[slideShape].Last();
+        //slideLayer += 5;
     }
 
     private bool detectJustType(string content,out int endPos)

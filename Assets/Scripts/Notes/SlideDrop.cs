@@ -294,10 +294,10 @@ public class SlideDrop : NoteLongDrop,IFlasher
         {
             var sr = gm.GetComponent<SpriteRenderer>();
             sr.color = new Color(1f, 1f, 1f, 0f);
-            sr.sortingOrder += sortIndex;
+            sr.sortingOrder = sortIndex--;
             sr.sortingLayerName = "Slide";
             if (isBreak)
-            {
+            {                
                 sr.sprite = spriteBreak;
                 sr.material = breakMaterial;
                 sr.material.SetFloat("_Brightness", 0.95f);
@@ -318,7 +318,6 @@ public class SlideDrop : NoteLongDrop,IFlasher
             }
         }
     }
-
     private void setSlideBarAlpha(float alpha)
     {
         foreach (var gm in slideBars) gm.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, alpha);

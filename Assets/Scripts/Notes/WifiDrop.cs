@@ -158,7 +158,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
 
             sbRender.Add(sr);
             sr.color = new Color(1f, 1f, 1f, 0f);
-            sr.sortingOrder += sortIndex;
+            sr.sortingOrder = sortIndex--;
             sr.sortingLayerName = "Slide";
         }
     }
