@@ -622,7 +622,7 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
-        for (var i = subSlide.Count - 1; i >= 0; i--)
+        for (var i = 0; i <= subSlide.Count - 1; i++)
             if (note.noteContent.Contains('w')) //wifi
                 InstantiateWifi(timing, subSlide[i], i != 0, i == subSlide.Count - 1);
             else
@@ -642,6 +642,8 @@ public class JsonDataLoader : MonoBehaviour
 
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
+
+        
 
         // note的图层顺序
         NDCompo.noteSortOrder = noteSortOrder;
