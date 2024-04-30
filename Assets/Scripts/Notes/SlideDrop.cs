@@ -2,9 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
+using static Sensor;
+using static UnityEditor.PlayerSettings;
 
+public enum JudgeType
+{
+    Perfect,
+    FastGreat,
+    FastGood,
+    LateGreat,
+    LateGood
+}
 public class SlideDrop : NoteLongDrop,IFlasher
 {
     // Start is called before the first frame update
@@ -46,6 +56,14 @@ public class SlideDrop : NoteLongDrop,IFlasher
     public bool smoothSlideAnime = false;
 
     public Material breakMaterial;
+    public string slideType;
+
+    public List<Sensor> judgeSensors = new();
+    public List<Sensor> triggerSensors = new();
+    public List<JudgeArea> judgeQueue = new();
+
+    public bool isFinished { get => judgeQueue.Count == 0; }
+    public GameObject parent;
 
     bool canShine = false;
 
@@ -67,6 +85,17 @@ public class SlideDrop : NoteLongDrop,IFlasher
 
     public int endPosition;
 
+    Guid? id = null;
+    List<GameObject> sensors = new();
+    SensorManager sManager;
+
+    bool parentFinished = false;
+    bool isRegistered = false;
+    bool isJudged = false;
+    bool isDestroyed = false;
+    bool canCheck = false;
+    List<Sensor> registerSensors = new();
+
     private void Start()
     {
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();        
@@ -87,12 +116,134 @@ public class SlideDrop : NoteLongDrop,IFlasher
             .rotation
             .eulerAngles + new Vector3(0f, 0f, 18f)));
 
+        var count = GameObject.Find("Sensors").transform.childCount;
+        var sManagerObj = GameObject.Find("Sensors");
+        for (int i = 0; i < count;i++)
+            sensors.Add(sManagerObj.transform.GetChild(i).gameObject);
+        sManager = sManagerObj.GetComponent<SensorManager>();
 
+        GetSensors(sensors.Select(x => x.GetComponent<RectTransform>())
+                                        .ToArray());
+
+        var _slideIndex = areaStep.Skip(1).ToArray();
+        if (_slideIndex.Length != judgeSensors.Count)
+            _slideIndex = null;
+        for(int i =0; i < judgeSensors.Count;i++)
+        {
+            var sensor = judgeSensors[i];
+            int index = 0;
+            if (_slideIndex is null)
+                index = (slideBars.Count / judgeSensors.Count) * (i + 1);
+            else
+                index = _slideIndex[i];
+            judgeQueue.Add(new JudgeArea(
+                new Dictionary<Sensor.SensorType, bool> 
+                { 
+                    {sensor.Type, i == judgeSensors.Count - 1 } 
+                }, index));
+        }
+        if(slideType is "line3" or "line7")// 1-3
+        {
+            judgeQueue[1].CanSkip = false;
+            judgeQueue[1].AddArea(judgeSensors[1].Type + 8);
+            registerSensors.Add(sManager.GetSensor(judgeSensors[1].Type + 8));
+        }
+        else if(slideType == "circle3")// 1^3
+            judgeQueue[1].CanSkip = false;
+        else if (slideType[0] == 'L')// 1^3
+        {
+            judgeQueue[1].CanSkip = false;
+            judgeQueue[1].AddArea(judgeSensors[1].Type + 8);
+            registerSensors.Add(sManager.GetSensor(judgeSensors[1].Type + 8));
+            if (slideType == "L5")
+            { 
+                judgeQueue[3].CanSkip = false;
+                judgeQueue[3].AddArea(judgeSensors[3].Type + 8);
+                registerSensors.Add(sManager.GetSensor(judgeSensors[3].Type + 8));
+            }
+        }
+        registerSensors.AddRange(judgeSensors);
+        Register();
     }
+    void GetSensors(RectTransform[] sensors)
+    {
+        Sensor lastSensor = null;
+        foreach (var bar in slideBars)
+        {
+            var pos = bar.transform.position;
+            
+            foreach (var s in sensors)
+            {
+                var sensor = s.GetComponent<Sensor>();
+                if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+                    continue;
 
+                var rCenter = s.position;
+                var rWidth = s.rect.width * s.lossyScale.x;
+                var rHeight = s.rect.height * s.lossyScale.y;
+
+                var radius = Math.Max(rWidth, rHeight) / 2;
+
+                if ((pos - rCenter).sqrMagnitude <= radius * radius)
+                {
+                    if(lastSensor is null)
+                    {
+                        judgeSensors.Add(sensor);
+                        lastSensor = sensor;
+                        break;
+                    }
+                    else
+                    {
+                        if(sensor.Group is Sensor.SensorGroup.C && lastSensor.Group != Sensor.SensorGroup.C)
+                            judgeSensors.Add(sensor);
+                        else if(sensor.Group is not Sensor.SensorGroup.C && lastSensor.Type != sensor.Type)
+                            judgeSensors.Add(sensor);
+                        lastSensor = sensor;
+                        break;
+                    }
+                }
+            }
+        }
+        
+    }
+    private void FixedUpdate()
+    {
+        if (id is null)
+            id = Guid.NewGuid();
+        var startiming = timeProvider.AudioTime - timeStar;
+        var timing = timeProvider.AudioTime - time;
+
+        if (startiming <= 0f)
+        {
+            if (isGroupPart && parentFinished)
+                canCheck = true;
+            else if (startiming >= -0.040f && !isRegistered && !isGroupPart)
+                canCheck = true;
+        }
+        else if (timing <= 0f)
+        {
+            if (isGroupPart && parentFinished)
+                canCheck = true;
+            else
+                canCheck = true;
+
+            if (judgeQueue.Count == 0)
+                Judge();
+        }
+        else if (timing > 0f)
+        {
+            canCheck = true;
+            if (judgeQueue.Count == 0)
+                Judge();
+            Running();
+        }
+    }
     // Update is called once per frame
     private void Update()
     {
+        
+        if (parent is not null && !parentFinished)
+            parentFinished = parent.GetComponent<SlideDrop>().isFinished;
         // Slide淡入期间，不透明度从0到0.55耗时200ms
         var startiming = timeProvider.AudioTime - timeStar;
         if (startiming <= 0f)
@@ -100,6 +251,14 @@ public class SlideDrop : NoteLongDrop,IFlasher
             if (!fadeInAnimator.enabled && startiming >= fadeInTime)
                 fadeInAnimator.enabled = true;
             
+            //if(isGroupPart && parentFinished)
+            //{
+            //    if(!isRegistered)
+            //        Register();
+            //}
+            //else if(startiming >= -0.040f && !isRegistered && !isGroupPart)
+            //    Register();
+
             return;
         }
         fadeInAnimator.enabled = false;
@@ -131,6 +290,8 @@ public class SlideDrop : NoteLongDrop,IFlasher
                 alpha = 1f - -timing / (time - timeStar);
                 alpha = alpha > 1f ? 1f : alpha;
                 alpha = alpha < 0f ? 0f : alpha;
+                //Check();
+                
             }
 
             spriteRenderer_star.color = new Color(1, 1, 1, alpha);
@@ -140,7 +301,9 @@ public class SlideDrop : NoteLongDrop,IFlasher
         }
 
         if (timing > 0f)
-        {            
+        {
+            
+            //Check();
             spriteRenderer_star.color = Color.white;
             star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
@@ -173,17 +336,20 @@ public class SlideDrop : NoteLongDrop,IFlasher
             try
             {
                 var lastIndex = (areaStep[areaStep.Count - 1] + areaStep[areaStep.Count - 2]) / 2;
-                if (isGroupPartEnd && !smoothSlideAnime && pos >= lastIndex)
-                {
-                    var waitTime = LastFor * slideConst / 1.3;
-                    if (arriveTime == -1)
-                        arriveTime = timeProvider.AudioTime;
-                    else if (timeProvider.AudioTime >= arriveTime +  waitTime)
-                        DestroySelf();
-                    else
-                        foreach (var bar in slideBars)
-                            bar.SetActive(false);
-                }
+                //if (isGroupPartEnd && !smoothSlideAnime && pos >= lastIndex)
+                //{
+                //    var waitTime = LastFor * slideConst / 1.3;
+                //    if (arriveTime == -1)
+                //        arriveTime = timeProvider.AudioTime;
+                //    else if (timeProvider.AudioTime >= arriveTime + waitTime)
+                //        DestroySelf();
+                //    else
+                //        foreach (var bar in slideBars) ;
+                //            //bar.SetActive(false);
+                //}
+                if(!isGroupPartEnd && !smoothSlideAnime && pos >= lastIndex)
+                    DestroySelf();
+
                 star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) +
                                                 slidePositions[index];
                 //star_slide.transform.rotation = slideRotations[index];
@@ -196,15 +362,172 @@ public class SlideDrop : NoteLongDrop,IFlasher
                             slideRotations[index + 1].eulerAngles.z, delta)
                     )
                 );
-                for (var i = 0; i < slideAreaIndex; i++) slideBars[i].SetActive(false);
+                //for (var i = 0; i < slideAreaIndex; i++) slideBars[i].SetActive(false);
             }
             catch
             {
             }
         }
     }
+    void Register()
+    {
+        isRegistered = true;
+        //registerSensors.ForEach(x => x.onSensorStatusChanged += Check);
+        judgeQueue.ForEach(x => x.Register(Check));
+    }
+    void Check(Sensor s, SensorStatus oStatus, SensorStatus nStatus)
+    {
+        if (isFinished || !canCheck)
+            return;
+        try
+        {
+            if (judgeQueue.Count == 0)
+                return;
+
+            var first = judgeQueue.First();
+            JudgeArea second = null;
+
+            if (judgeQueue.Count >= 2)
+                second = judgeQueue[1];
+            var fType = first.GetSensorTypes();
+            foreach (var t in fType)
+            {
+                if (s.Type == t)
+                    first.Judge(t, nStatus);
+            }
+
+            if (second is not null && first.CanSkip)
+            {
+                var sType = second.GetSensorTypes();
+                foreach (var t in sType)
+                {
+                    if (s.Type == t)
+                        second.Judge(t, nStatus);
+                }
+
+                if (second.IsFinished)
+                {
+                    var index = second.SlideIndex;
+                    for (int i = 0; i < index; i++)
+                        slideBars[i].SetActive(false);
+                    judgeQueue = judgeQueue.Skip(2).ToList();
+                    second.UnRegister(Check);
+                    first.UnRegister(Check);
+                    return;
+                }
+                else if (second.On)
+                {
+                    var index = first.SlideIndex;
+                    for (int i = 0; i < index; i++)
+                        slideBars[i].SetActive(false);
+                    judgeQueue = judgeQueue.Skip(1).ToList();
+                    first.UnRegister(Check);
+                    return;
+                }
+            }
+
+            if (first.IsFinished)
+            {
+                var index = first.SlideIndex;
+                for (int i = 0; i < index; i++)
+                    slideBars[i].SetActive(false);
+                judgeQueue = judgeQueue.Skip(1).ToList();
+                first.UnRegister(Check);
+                return;
+            }
+        }
+        catch(Exception e)
+        {
+            print(e);
+        }
+    }
+    void Running()
+    {
+        var starRadius = 0.763736616f;
+        var starPos = star_slide.transform.position;
+        var oldList = new List<Sensor>(triggerSensors);
+        triggerSensors.Clear();
+        foreach (var s in sensors.Select(x => x.GetComponent<RectTransform>()))
+        {
+            var sensor = s.GetComponent<Sensor>();
+            if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+                continue;
+
+            var rCenter = s.position;
+            var rWidth = s.rect.width * s.lossyScale.x;
+            var rHeight = s.rect.height * s.lossyScale.y;
+
+            var radius = Math.Max(rWidth, rHeight) / 2;
+
+            if ((starPos - rCenter).sqrMagnitude <= (radius * radius + starRadius * starRadius))
+                triggerSensors.Add(sensor);
+        }
+        var untriggerSensors = oldList.Where(x => !triggerSensors.Contains(x));
+
+        foreach (var s in untriggerSensors)
+            sManager.SetSensorOff(s.Type, (Guid)id);
+        foreach (var s in triggerSensors)
+            sManager.SetSensorOn(s.Type, (Guid)id);
+    }
+    void Judge()
+    {
+        if (!isGroupPartEnd)
+            return;
+        var waitTime = LastFor * slideConst / 0.8;
+        if (!isJudged)
+        {
+            arriveTime = timeProvider.AudioTime;
+            var triggerTime = timeProvider.AudioTime;
+            var pTime = LastFor / areaStep.Last();
+            var judgeTime = time + pTime * areaStep[areaStep.Count - 2];// 正解帧
+            var stayTime = (time + LastFor) - judgeTime; // 停留时间
+
+            const float totalInterval = 1.2f; // 秒
+            const float nPInterval = 0.4666667f; // Perfect基础区间
+
+            float extInterval = stayTime / 4;           // Perfect额外区间
+            float pInterval = MathF.Min(nPInterval + extInterval, totalInterval);// Perfect总区间
+            var ext = pInterval - nPInterval;
+            float grInterval = MathF.Max(0.4f - ext, 0) + pInterval;        // Great总区间
+            ext = Math.Max(ext - 0.4f, 0);
+            float gdInterval = MathF.Max(0.3333334f - ext, 0) + grInterval; // Good总区间
+
+            var diff = judgeTime - triggerTime; // 大于0为Fast，小于为Late
+            bool isFast = false;
+            JudgeType? judge = null;
+
+            if (diff > 0)
+                isFast = true;
+
+            var p = pInterval / 2;
+            var gr = grInterval / 2;
+            var gd = gdInterval / 2;
+            diff = MathF.Abs(diff);
+            if (diff >= gr)
+                judge = isFast ? JudgeType.FastGood : JudgeType.LateGood;
+            else if (diff >= p)
+                judge = isFast ? JudgeType.FastGreat : JudgeType.LateGreat;
+            else
+                judge = JudgeType.Perfect;
+
+            switch (judge)
+            {
+                case JudgeType.FastGreat:
+                    slideOK.GetComponent<LoadJustSprite>().setFastGr();
+                    break;
+                case JudgeType.FastGood:
+                    slideOK.GetComponent<LoadJustSprite>().setFastGd();
+                    break;
+            }
+            isJudged = true;
+        }
+        else if (timeProvider.AudioTime >= arriveTime + waitTime)
+            DestroySelf();
+    }
     void DestroySelf()
     {
+        if (isDestroyed)
+            return;
         // TODO: FES星星最后一个判定区箭头的消失效果
         foreach (GameObject obj in slideBars)
         {
@@ -225,13 +548,16 @@ public class SlideDrop : NoteLongDrop,IFlasher
             // 如果不是组内最后一个 那么也要将判定条删掉
             Destroy(slideOK);
         }
-
+        sManager.SetSensorOff(judgeSensors.Last().Type, (Guid)id);
+        registerSensors.ForEach(s => s.onSensorStatusChanged -= Check);
         Destroy(star_slide);
         Destroy(gameObject);
+        isDestroyed = true;
     }
     public bool CanShine() => canShine;
     private void OnEnable()
     {
+        Register();
         slideOK = transform.GetChild(transform.childCount - 1).gameObject; //slideok is the last one        
 
         if(isBreak)

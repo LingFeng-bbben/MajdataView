@@ -118,10 +118,18 @@ public class TapDrop : NoteDrop
 
         if (timing > 0)
         {
+            var sensor = GameObject.Find("Sensors")
+                                   .transform.GetChild(startPosition - 1)
+                                   .GetComponent<Sensor>();
+            var manager = GameObject.Find("Sensors")
+                                    .GetComponent<SensorManager>();
+            var id = Guid.NewGuid();
+            manager.SetSensorOn(sensor.Type, id);
             GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
             if (isBreak) ObjectCounter.breakCount++;
             else ObjectCounter.tapCount++;
 
+            manager.SetSensorOff(sensor.Type, id);
             Destroy(tapLine);
             Destroy(gameObject);
         }

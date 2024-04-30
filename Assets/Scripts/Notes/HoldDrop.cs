@@ -50,6 +50,10 @@ public class HoldDrop : NoteLongDrop
 
     private AudioTimeProvider timeProvider;
 
+    Guid? id = null;
+    Sensor sensor;
+    SensorManager sManager;
+
     private void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -99,6 +103,12 @@ public class HoldDrop : NoteLongDrop
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;
         holdEndRender.enabled = false;
+
+        sensor = GameObject.Find("Sensors")
+                                   .transform.GetChild(startPosition - 1)
+                                   .GetComponent<Sensor>();
+        sManager = GameObject.Find("Sensors")
+                                .GetComponent<SensorManager>();
     }
 
     // Update is called once per frame
@@ -129,11 +139,17 @@ public class HoldDrop : NoteLongDrop
         var holdDistance = holdTime * speed + 4.8f;
         if (holdTime > 0)
         {
+            if (id == null)
+            {
+                id = Guid.NewGuid();
+                sManager.SetSensorOn(sensor.Type, (Guid)id);
+            }
             GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
             if (isBreak)
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
             else
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
+            sManager.SetSensorOff(sensor.Type, (Guid)id);
             Destroy(tapLine);
             Destroy(holdEffect);
             Destroy(gameObject);
@@ -205,6 +221,10 @@ public class HoldDrop : NoteLongDrop
 
     void PlayHoldEffect()
     {
+        if(id is null)
+            id = Guid.NewGuid();
+        else if(id is not null)
+            sManager.SetSensorOn(sensor.Type, (Guid)id);
         var endTime = time + LastFor;
         GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().ResetEffect(startPosition);
         holdEffect.SetActive(true);

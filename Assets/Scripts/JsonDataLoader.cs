@@ -622,14 +622,15 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
+        GameObject parent = null;
         for (var i = 0; i <= subSlide.Count - 1; i++)
             if (note.noteContent.Contains('w')) //wifi
-                InstantiateWifi(timing, subSlide[i], i != 0, i == subSlide.Count - 1);
+                parent = InstantiateWifi(timing, subSlide[i], i != 0, i == subSlide.Count - 1, parent);
             else
-                InstantiateStar(timing, subSlide[i], i != 0, i == subSlide.Count - 1);
+                parent = InstantiateStar(timing, subSlide[i], i != 0, i == subSlide.Count - 1, parent);
     }
 
-    private void InstantiateWifi(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd)
+    private GameObject InstantiateWifi(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd, GameObject parent)
     {
         var str = note.noteContent.Substring(0, 3);
         var digits = str.Split('w');
@@ -724,9 +725,11 @@ public class JsonDataLoader : MonoBehaviour
         WifiCompo.sortIndex = slideLayer;
         slideLayer -= SLIDE_AREA_STEP_MAP["wifi"].Last();
         //slideLayer += 5;
+
+        return slideWifi;
     }
 
-    private void InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd)
+    private GameObject InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd,GameObject parent)
     {
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
@@ -768,6 +771,8 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.slide = slide;
         var SliCompo = slide.AddComponent<SlideDrop>();
 
+        SliCompo.parent = parent;
+        SliCompo.slideType = slideShape;
         SliCompo.spriteNormal = customSkin.Slide;
         SliCompo.spriteEach = customSkin.Slide_Each;
         SliCompo.spriteBreak = customSkin.Slide_Break;
@@ -839,6 +844,7 @@ public class JsonDataLoader : MonoBehaviour
         SliCompo.sortIndex = slideLayer;
         slideLayer -= SLIDE_AREA_STEP_MAP[slideShape].Last();
         //slideLayer += 5;
+        return slide;
     }
 
     private bool detectJustType(string content,out int endPos)
