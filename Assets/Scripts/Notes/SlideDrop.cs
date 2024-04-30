@@ -217,7 +217,7 @@ public class SlideDrop : NoteLongDrop,IFlasher
         {
             if (isGroupPart && parentFinished)
                 canCheck = true;
-            else if (startiming >= -0.040f && !isRegistered && !isGroupPart)
+            else if (startiming >= -0.040f && !isGroupPart)
                 canCheck = true;
         }
         else if (timing <= 0f)
