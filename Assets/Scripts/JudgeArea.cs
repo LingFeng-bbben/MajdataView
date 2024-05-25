@@ -31,6 +31,41 @@ public class Area
         else
             On = true;
     }
+    public void Reset()
+    {
+        On = false;
+        Off = false;
+    }
+}
+public class JudgeAreaGroup
+{
+    List<JudgeArea> areas = new();
+    public bool IsFinished
+    {
+        get => areas.All(x => x.IsFinished);
+    }
+    public bool On
+    {
+        get
+        {
+            return areas.All(a => a.On);
+        }
+    }
+    public int SlideIndex { get; set; }
+
+    public JudgeAreaGroup(List<JudgeArea> areas, int slideIndex)
+    {
+        this.areas = areas;
+        SlideIndex = slideIndex;
+        foreach (JudgeArea area in areas)
+            area.Reset();
+    }
+    public void Judge(SensorType type, SensorStatus status)
+    {
+        foreach (var area in areas)
+            area.Judge(type, status);
+    }
+    public SensorType[] GetSensorTypes() => areas.SelectMany(x => x.GetSensorTypes()).ToArray();
 }
 public class JudgeArea
 {
@@ -52,20 +87,8 @@ public class JudgeArea
                 return areas.Any(x => x.IsFinished);
         }
     }
-    public int SlideIndex;
+    public int SlideIndex { get; set; }
     List<Area> areas = new();
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public Area[] GetAreas() => areas.ToArray();
     public SensorType[] GetSensorTypes() => areas.Select(x => x.Type).ToArray();
     public JudgeArea(Dictionary<SensorType,bool> types, int slideIndex)
@@ -84,6 +107,10 @@ public class JudgeArea
             });
         }
         SlideIndex = slideIndex;
+    }
+    public void SetIsLast()
+    {
+        areas.ForEach(x => x.IsLast = true);
     }
     public void Judge(SensorType type ,SensorStatus status)
     {
@@ -104,5 +131,10 @@ public class JudgeArea
             Type = type,
             IsLast = isLast
         });
+    }
+    public void Reset()
+    {
+        foreach(var area in areas)
+            area.Reset();
     }
 }

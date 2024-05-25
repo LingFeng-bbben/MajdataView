@@ -50,9 +50,9 @@ public class HoldDrop : NoteLongDrop
 
     private AudioTimeProvider timeProvider;
 
-    Guid? id = null;
+    Guid guid = Guid.NewGuid();
     Sensor sensor;
-    SensorManager sManager;
+    SensorManager manager;
 
     private void Start()
     {
@@ -107,7 +107,7 @@ public class HoldDrop : NoteLongDrop
         sensor = GameObject.Find("Sensors")
                                    .transform.GetChild(startPosition - 1)
                                    .GetComponent<Sensor>();
-        sManager = GameObject.Find("Sensors")
+        manager = GameObject.Find("Sensors")
                                 .GetComponent<SensorManager>();
     }
 
@@ -139,20 +139,13 @@ public class HoldDrop : NoteLongDrop
         var holdDistance = holdTime * speed + 4.8f;
         if (holdTime > 0)
         {
-            if (id == null)
+            manager.SetSensorOn(sensor.Type, guid);
+            if (timing > 0.02)
             {
-                id = Guid.NewGuid();
-                sManager.SetSensorOn(sensor.Type, (Guid)id);
+                Destroy(tapLine);
+                Destroy(holdEffect);
+                Destroy(gameObject);
             }
-            GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
-            if (isBreak)
-                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-            else
-                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
-            sManager.SetSensorOff(sensor.Type, (Guid)id);
-            Destroy(tapLine);
-            Destroy(holdEffect);
-            Destroy(gameObject);
             return;
         }
 
@@ -218,13 +211,18 @@ public class HoldDrop : NoteLongDrop
         exSpriteRender.size = spriteRenderer.size;
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
-
+    private void OnDestroy()
+    {
+        GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
+        if (isBreak)
+            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
+        else
+            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
+        manager.SetSensorOff(sensor.Type, guid);
+    }
     void PlayHoldEffect()
     {
-        if(id is null)
-            id = Guid.NewGuid();
-        else if(id is not null)
-            sManager.SetSensorOn(sensor.Type, (Guid)id);
+        manager.SetSensorOn(sensor.Type, guid);
         var endTime = time + LastFor;
         GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().ResetEffect(startPosition);
         holdEffect.SetActive(true);

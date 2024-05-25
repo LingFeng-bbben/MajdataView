@@ -34,7 +34,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
     public bool isGroupPartEnd;
 
     // public float time;
-    public float timeStar;
+    public float timeStart;
 
     // public float LastFor = 1f;
     public float speed;
@@ -160,6 +160,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
                 registerSensors.Add(sManager.GetSensor(judgeSensors[3].Type + 8));
             }
         }
+        judgeQueue.LastOrDefault().SetIsLast();
         registerSensors.AddRange(judgeSensors);
         _judgeQueue = new(judgeQueue);
     }
@@ -197,7 +198,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
     }
     private void FixedUpdate()
     {
-        var startiming = timeProvider.AudioTime - timeStar;
+        var startiming = timeProvider.AudioTime - timeStart;
         var timing = timeProvider.AudioTime - time;
 
         // 未启动
@@ -216,13 +217,19 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
                 canCheck = true;
 
             if (judgeQueue.Count == 0)
-                Judge();
+            {
+                HideBar(areaStep.LastOrDefault());
+                Judge(); 
+            }
         }
         else if (timing > 0f) // 到达终点
         {
             canCheck = true;
             if (judgeQueue.Count == 0)
+            {
+                HideBar(areaStep.LastOrDefault());
                 Judge();
+            }
             Running();
         }
     }
@@ -235,7 +242,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
         else if (parent == null && !parentFinished)
             parentFinished = true;
         // Slide淡入期间，不透明度从0到0.55耗时200ms
-        var startiming = timeProvider.AudioTime - timeStar;
+        var startiming = timeProvider.AudioTime - timeStart;
         if (startiming <= 0f)
         {
             if (!fadeInAnimator.enabled && startiming >= fadeInTime)
@@ -258,7 +265,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             else
             {
                 // 只有当它是一个起点Slide（而非Slide Group中的子部分）的时候，才会有开始的星星渐入动画
-                alpha = 1f - -timing / (time - timeStar);
+                alpha = 1f - -timing / (time - timeStart);
                 alpha = alpha > 1f ? 1f : alpha;
                 alpha = alpha < 0f ? 0f : alpha;                
             }
@@ -312,8 +319,6 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
     }
     public void Check()
     {
-        var manager = GameObject.Find("Sensors")
-                                    .GetComponent<SensorManager>();
         if (isFinished || !canCheck)
             return;
         try
@@ -329,7 +334,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             var fType = first.GetSensorTypes();
             foreach (var t in fType)
             {
-                var sensor = manager.GetSensor(t);
+                var sensor = sManager.GetSensor(t);
                 first.Judge(t, sensor.Status);
             }
 
@@ -338,7 +343,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
                 var sType = second.GetSensorTypes();
                 foreach (var t in sType)
                 {
-                    var sensor = manager.GetSensor(t);
+                    var sensor = sManager.GetSensor(t);
                     second.Judge(t, sensor.Status);
                 }
 
@@ -406,24 +411,24 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
     {
         if (!isGroupPartEnd)
             return;
-        var waitTime = LastFor * slideConst / 0.8;
+        var timing = timeProvider.AudioTime - time;
+        var starTiming = timeStart + (time - timeStart) * 0.667;
+        var pTime = LastFor / areaStep.Last();
+        var judgeTime = time + pTime * (areaStep.LastOrDefault() - 3.5f);// 正解帧
+        var stayTime = (time + LastFor) - judgeTime; // 停留时间
         if (!isJudged)
         {
             arriveTime = timeProvider.AudioTime;
-            var triggerTime = timeProvider.AudioTime;
-            var pTime = LastFor / areaStep.Last();
-            var judgeTime = time + pTime * areaStep[areaStep.Count - 2];// 正解帧
-            var stayTime = (time + LastFor) - judgeTime; // 停留时间
+            var triggerTime = timeProvider.AudioTime;           
 
             const float totalInterval = 1.2f; // 秒
             const float nPInterval = 0.4666667f; // Perfect基础区间
 
-            float extInterval = stayTime / 4;           // Perfect额外区间
+            float extInterval = MathF.Min(stayTime / 4, 0.733333f);           // Perfect额外区间
             float pInterval = MathF.Min(nPInterval + extInterval, totalInterval);// Perfect总区间
-            var ext = pInterval - nPInterval;
-            float grInterval = MathF.Max(0.4f - ext, 0) + pInterval;        // Great总区间
-            ext = Math.Max(ext - 0.4f, 0);
-            float gdInterval = MathF.Max(0.3333334f - ext, 0) + grInterval; // Good总区间
+            var ext = MathF.Max(extInterval - 0.4f,0);
+            float grInterval = MathF.Max(0.4f - extInterval, 0);        // Great总区间
+            float gdInterval = MathF.Max(0.3333334f - ext, 0); // Good总区间
 
             var diff = judgeTime - triggerTime; // 大于0为Fast，小于为Late
             bool isFast = false;
@@ -436,12 +441,23 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             var gr = grInterval / 2;
             var gd = gdInterval / 2;
             diff = MathF.Abs(diff);
-            if (diff >= gr)
-                judge = isFast ? JudgeType.FastGood : JudgeType.LateGood;
-            else if (diff >= p)
-                judge = isFast ? JudgeType.FastGreat : JudgeType.LateGreat;
+
+            if( gr == 0 )
+            {
+                if(diff >= p)
+                    judge = isFast ? JudgeType.FastGood : JudgeType.LateGood;
+                else
+                    judge = JudgeType.Perfect;
+            }
             else
-                judge = JudgeType.Perfect;
+            {
+                if (diff >= gr + p || diff >= totalInterval / 2)
+                    judge = isFast ? JudgeType.FastGood : JudgeType.LateGood;
+                else if (diff >= p)
+                    judge = isFast ? JudgeType.FastGreat : JudgeType.LateGreat;
+                else
+                    judge = JudgeType.Perfect;
+            }            
 
             switch (judge)
             {
@@ -454,7 +470,9 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             }
             isJudged = true;
         }
-        else if (timeProvider.AudioTime >= arriveTime + waitTime)
+        else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)
+            DestroySelf();
+        else if(arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.667)
             DestroySelf();
     }
     void DestroySelf()

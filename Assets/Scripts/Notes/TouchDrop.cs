@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using static Sensor;
 
 public class TouchDrop : NoteDrop
 {
@@ -42,6 +44,10 @@ public class TouchDrop : NoteDrop
 
     private float wholeDuration;
 
+    Guid guid = Guid.NewGuid();
+    SensorManager manager;
+    Sensor sensor;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -82,8 +88,30 @@ public class TouchDrop : NoteDrop
         transform.position = GetAreaPos(startPosition, areaPosition);
         justEffect.SetActive(false);
         SetfanColor(new Color(1f, 1f, 1f, 0f));
+        sensor = GameObject.Find("Sensors")
+                                   .transform.GetChild((int)GetSensor())
+                                   .GetComponent<Sensor>();
+        manager = GameObject.Find("Sensors")
+                                .GetComponent<SensorManager>();
     }
-
+    SensorType GetSensor()
+    {
+        switch(areaPosition)
+        {
+            case 'A':
+                return (SensorType)(startPosition - 1);
+            case 'B':
+                return (SensorType)(startPosition + 7);
+            case 'C':
+                return SensorType.C;
+            case 'D':
+                return (SensorType)(startPosition + 16);
+            case 'E':
+                return (SensorType)(startPosition + 24);
+            default:
+                return SensorType.A1;
+        }
+    }
     // Update is called once per frame
     private void Update()
     {
@@ -94,21 +122,14 @@ public class TouchDrop : NoteDrop
         var pow = -Mathf.Exp(8 * (timing * 0.4f / moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
-        if (timing > 0.05f)
+        if (timing >= 0)
         {
-            multTouchHandler.cancelTouch(this);
-            Instantiate(tapEffect, transform.position, transform.rotation);
-            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().touchCount++;
-            if (isFirework)
-            {
-                fireworkEffect.SetTrigger("Fire");
-                firework.transform.position = transform.position;
-            }
-
-            Destroy(gameObject);
+            manager.SetSensorOn(sensor.Type, guid);
+            if (timing > 0.02)
+                Destroy(gameObject);
         }
 
-        if (timing > 0f) justEffect.SetActive(true);
+        if (timing > -0.02f) justEffect.SetActive(true);
 
         if (-timing <= wholeDuration && -timing > moveDuration)
         {
@@ -138,7 +159,18 @@ public class TouchDrop : NoteDrop
             fans[i].transform.localPosition = pos;
         }
     }
-
+    private void OnDestroy()
+    {
+        multTouchHandler.cancelTouch(this);
+        Instantiate(tapEffect, transform.position, transform.rotation);
+        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().touchCount++;
+        if (isFirework)
+        {
+            fireworkEffect.SetTrigger("Fire");
+            firework.transform.position = transform.position;
+        }
+        manager.SetSensorOff(sensor.Type, guid);
+    }
     public void setLayer(int newLayer)
     {
         layer = newLayer;

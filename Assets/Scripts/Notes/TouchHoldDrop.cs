@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class TouchHoldDrop : NoteLongDrop
 {
@@ -25,6 +26,10 @@ public class TouchHoldDrop : NoteLongDrop
     private AudioTimeProvider timeProvider;
 
     private float wholeDuration;
+
+    Guid guid = Guid.NewGuid();
+    SensorManager manager;
+    Sensor sensor;
 
     // Start is called before the first frame update
     private void Start()
@@ -54,6 +59,12 @@ public class TouchHoldDrop : NoteLongDrop
 
         SetfanColor(new Color(1f, 1f, 1f, 0f));
         mask.enabled = false;
+
+        sensor = GameObject.Find("Sensors")
+                                   .transform.GetChild(16)
+                                   .GetComponent<Sensor>();
+        manager = GameObject.Find("Sensors")
+                                .GetComponent<SensorManager>();
     }
 
     // Update is called once per frame
@@ -64,19 +75,15 @@ public class TouchHoldDrop : NoteLongDrop
         var pow = -Mathf.Exp(8 * (timing * 0.4f / moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
-        if (timing > LastFor)
+        if (timing >= LastFor)
         {
-            transform.Rotate(0, 180f, 90f);
-            Instantiate(tapEffect, transform.position, transform.rotation);
-            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
-            if (isFirework)
-            {
-                fireworkEffect.SetTrigger("Fire");
-                firework.transform.position = transform.position;
-            }
+            manager.SetSensorOn(sensor.Type, guid);
 
-            Destroy(holdEffect);
-            Destroy(gameObject);
+            if (timing > LastFor + 0.02)
+            {
+                Destroy(holdEffect);
+                Destroy(gameObject);
+            }            
         }
 
         if (-timing <= wholeDuration && -timing > moveDuration)
@@ -94,14 +101,29 @@ public class TouchHoldDrop : NoteLongDrop
         }
 
         if (float.IsNaN(distance)) distance = 0f;
-        if (distance == 0f) holdEffect.SetActive(true);
+        if (distance == 0f)
+        {
+            manager.SetSensorOn(sensor.Type, guid);
+            holdEffect.SetActive(true);
+        }
         for (var i = 0; i < 4; i++)
         {
             var pos = (0.226f + distance) * GetAngle(i);
             fans[i].transform.position = pos;
         }
     }
-
+    private void OnDestroy()
+    {
+        transform.Rotate(0, 180f, 90f);
+        Instantiate(tapEffect, transform.position, transform.rotation);
+        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
+        if (isFirework)
+        {
+            fireworkEffect.SetTrigger("Fire");
+            firework.transform.position = transform.position;
+        }
+        manager.SetSensorOff(sensor.Type, guid);
+    }
     private Vector3 GetAngle(int index)
     {
         var angle = Mathf.PI / 4 + index * (Mathf.PI / 2);

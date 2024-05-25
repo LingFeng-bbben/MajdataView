@@ -1,7 +1,11 @@
 ﻿using Assets.Scripts.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using static Sensor;
 
 public class WifiDrop : NoteLongDrop,IFlasher
 {
@@ -60,9 +64,22 @@ public class WifiDrop : NoteLongDrop,IFlasher
 
     private Vector3 SlidePositionStart;
 
-    private bool startShining;
+    private bool isDestroying = false;
 
     private AudioTimeProvider timeProvider;
+
+    bool isFinished { get => _judgeQueues.All(x => x.Count == 0); }
+    public GameObject parent;
+    bool parentFinished = false;
+    bool canCheck = false;
+    bool isJudged = false;
+    Dictionary<GameObject, Guid> guids = new();
+    SensorManager sManager;
+    List<GameObject> sensors = new();
+    //public List<JudgeAreaGroup> _judgeQueues = new();
+    public List<List<JudgeArea>> _judgeQueues = new();
+    public List<List<JudgeArea>> judgeQueues = new();
+    public Dictionary<GameObject, List<Sensor>> triggerSensors = new();
 
     private void Start()
     {
@@ -92,9 +109,9 @@ public class WifiDrop : NoteLongDrop,IFlasher
             star_slide[i].SetActive(false);
         }
 
-        SlidePositionEnd[0] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 2 < 0 ? 7 : endPosition - 2).position;
-        SlidePositionEnd[1] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 1).position;
-        SlidePositionEnd[2] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition >= 8 ? 0 : endPosition).position;
+        SlidePositionEnd[0] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 2 < 0 ? 7 : endPosition - 2).position;// R
+        SlidePositionEnd[1] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 1).position;// Center
+        SlidePositionEnd[2] = GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition >= 8 ? 0 : endPosition).position; // L
 
 
         transform.rotation = Quaternion.Euler(0f, 0f, -45f * (startPosition - 1));
@@ -142,10 +159,6 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 var controller = slideBars[i].AddComponent<BreakShineController>();
                 controller.parent = this;
                 controller.enabled = true;
-                //var anim = slideBars[i].AddComponent<Animator>();
-                //anim.runtimeAnimatorController = slideShine;
-                //anim.enabled = false;
-                //animators.Add(anim);
             }
             else if (isEach)
             {
@@ -161,11 +174,273 @@ public class WifiDrop : NoteLongDrop,IFlasher
             sr.sortingOrder = sortIndex--;
             sr.sortingLayerName = "Slide";
         }
-    }
+        var sManagerObj = GameObject.Find("Sensors");
+        sManager = sManagerObj.GetComponent<SensorManager>();
 
+        
+        var count = GameObject.Find("Sensors").transform.childCount;
+        
+        for (int i = 0; i < count; i++)
+            sensors.Add(sManagerObj.transform.GetChild(i).gameObject);
+        triggerSensors.Clear();
+        guids.Clear();
+        foreach (var star in star_slide)
+        {
+            triggerSensors.Add(star, new());
+            guids.Add(star, Guid.NewGuid());
+        }
+        _judgeQueues = new (judgeQueues);
+        foreach(var queue in _judgeQueues)
+        {
+            foreach (var area in queue)
+                area.Reset();
+        }
+        //for(int i =0; i< 4; i++)
+        //{
+            //_judgeQueues.Add(new JudgeAreaGroup(new() { judgeQueues[0][i], judgeQueues[1][i], judgeQueues[2][i] }, judgeQueues[0][i].SlideIndex));
+        //}
+        //foreach(var sensor in sensors)
+        //{
+        //    var s = sensor.GetComponent<Sensor>();
+        //    if (s != null)
+        //        s.OnSensorStatusChange += Check;
+        //}
+    }
+    private void FixedUpdate()
+    {
+        var startiming = timeProvider.AudioTime - timeStart;
+        var timing = timeProvider.AudioTime - time;
+
+        if (parent != null && !parentFinished)
+            parentFinished = parent.GetComponent<SlideDrop>().isFinished;
+        else if (parent == null && !parentFinished)
+            parentFinished = true;
+        // 未启动
+        if (startiming <= 0f)
+        {
+            if (isGroupPart)
+                canCheck = parentFinished;
+            else if (startiming >= -0.040f)
+                canCheck = !isGroupPart;
+        }
+        else if (timing <= 0f) // 已启动
+        {
+            if (isGroupPart)
+                canCheck = parentFinished;
+            else
+                canCheck = true;
+
+            if (isFinished)
+            {
+                HideBar(areaStep.LastOrDefault());
+                //Judge();
+            }
+        }
+        else if (timing > 0f) // 到达终点
+        {
+            canCheck = true;
+            if (isFinished)
+            {
+                HideBar(areaStep.LastOrDefault());
+                //Judge();
+            }
+            Running();
+        }
+        if (!isFinished)
+        {
+            var queue1 = _judgeQueues[0];
+            var queue2 = _judgeQueues[1];
+            var queue3 = _judgeQueues[2];
+            var _ = new List<int>();
+            _.AddRange(queue1.Select(x => x.SlideIndex));
+            _.AddRange(queue2.Select(x => x.SlideIndex));
+            _.AddRange(queue3.Select(x => x.SlideIndex));
+            var min = _.Min();
+            var index = areaStep[areaStep.FindIndex(x => x == min) - 1];
+            HideBar(index);
+        }
+        else
+        {
+            HideBar(areaStep.Last());
+            Judge();
+        }
+        //print($"index: {index}");
+    }
+    void CheckAll()
+    {
+        if (isFinished || !canCheck)
+            return;
+        for(int i = 0; i < 3; i++)
+        {
+            var queue = _judgeQueues[i];
+            Check(ref queue);
+            _judgeQueues[i] = queue;
+        }
+
+    }
+    public void Check(ref List<JudgeArea> judgeQueue)
+    {
+        try
+        {
+            if (judgeQueue.Count == 0)
+                return;
+
+            var first = judgeQueue.First();
+            JudgeArea second = null;
+
+            if (judgeQueue.Count >= 2)
+                second = judgeQueue[1];
+            var fType = first.GetSensorTypes();
+            foreach (var t in fType)
+            {
+                var sensor = sManager.GetSensor(t);
+                first.Judge(t, sensor.Status);
+            }
+
+            if (second is not null)
+            {
+                var sType = second.GetSensorTypes();
+                foreach (var t in sType)
+                {
+                    var sensor = sManager.GetSensor(t);
+                    second.Judge(t, sensor.Status);
+                }
+
+                if (second.IsFinished)
+                {
+                    //HideBar(first.SlideIndex);
+                    judgeQueue = judgeQueue.Skip(2).ToList();
+                    return;
+                }
+                else if (second.On)
+                {
+                    //HideBar(first.SlideIndex);
+                    judgeQueue = judgeQueue.Skip(1).ToList();
+                    return;
+                }
+            }
+
+            if (first.IsFinished)
+            {
+                //HideBar(first.SlideIndex);
+                judgeQueue = judgeQueue.Skip(1).ToList();
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            print(e);
+        }
+    }
+    void Judge()
+    {
+        if (!isGroupPartEnd)
+            return;
+        var timing = timeProvider.AudioTime - time;
+        var starTiming = timeStart + (time - timeStart) * 0.667;
+        var pTime = LastFor / areaStep.Last();
+        var judgeTime = time + pTime * (areaStep.LastOrDefault() - 3.5f);// 正解帧
+        var stayTime = (time + LastFor) - judgeTime; // 停留时间
+        if (!isJudged)
+        {
+            arriveTime = timeProvider.AudioTime;
+            var triggerTime = timeProvider.AudioTime;
+
+            const float totalInterval = 1.2f; // 秒
+            const float nPInterval = 0.4666667f; // Perfect基础区间
+
+            float extInterval = MathF.Min(stayTime / 4, 0.733333f);           // Perfect额外区间
+            float pInterval = MathF.Min(nPInterval + extInterval, totalInterval);// Perfect总区间
+            var ext = MathF.Max(extInterval - 0.4f, 0);
+            float grInterval = MathF.Max(0.4f - extInterval, 0);        // Great总区间
+            float gdInterval = MathF.Max(0.3333334f - ext, 0); // Good总区间
+
+            var diff = judgeTime - triggerTime; // 大于0为Fast，小于为Late
+            bool isFast = false;
+            JudgeType? judge = null;
+
+            if (diff > 0)
+                isFast = true;
+
+            var p = pInterval / 2;
+            var gr = grInterval / 2;
+            var gd = gdInterval / 2;
+            diff = MathF.Abs(diff);
+
+            if (gr == 0)
+            {
+                if (diff >= p)
+                    judge = isFast ? JudgeType.FastGood : JudgeType.LateGood;
+                else
+                    judge = JudgeType.Perfect;
+            }
+            else
+            {
+                if (diff >= gr + p || diff >= totalInterval / 2)
+                    judge = isFast ? JudgeType.FastGood : JudgeType.LateGood;
+                else if (diff >= p)
+                    judge = isFast ? JudgeType.FastGreat : JudgeType.LateGreat;
+                else
+                    judge = JudgeType.Perfect;
+            }
+
+            switch (judge)
+            {
+                case JudgeType.FastGreat:
+                    slideOK.GetComponent<LoadJustSprite>().setFastGr();
+                    break;
+                case JudgeType.FastGood:
+                    slideOK.GetComponent<LoadJustSprite>().setFastGd();
+                    break;
+            }
+            isJudged = true;
+        }
+        else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)
+            DestroySelf();
+        else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.667)
+            DestroySelf();
+    }
+    void HideBar(int endIndex)
+    {
+        endIndex = Math.Min(endIndex, slideBars.Count - 1);
+        for (int i = 0; i <= endIndex; i++)
+            slideBars[i].SetActive(false);
+    }
+    void Running()
+    {
+        foreach(var star in star_slide)
+        {
+            var starRadius = 0.763736616f;
+            var starPos = star.transform.position;
+            var oldList = new List<Sensor>(triggerSensors[star]);
+            triggerSensors[star].Clear();
+            foreach (var s in sensors.Select(x => x.GetComponent<RectTransform>()))
+            {
+                var sensor = s.GetComponent<Sensor>();
+                if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+                    continue;
+
+                var rCenter = s.position;
+                var rWidth = s.rect.width * s.lossyScale.x;
+                var rHeight = s.rect.height * s.lossyScale.y;
+
+                var radius = Math.Max(rWidth, rHeight) / 2;
+
+                if ((starPos - rCenter).sqrMagnitude <= (radius * radius + starRadius * starRadius))
+                    triggerSensors[star].Add(sensor);
+            }
+            var untriggerSensors = oldList.Where(x => !triggerSensors[star].Contains(x));
+
+            foreach (var s in untriggerSensors)
+                sManager.SetSensorOff(s.Type, guids[star]);
+            foreach (var s in triggerSensors[star])
+                sManager.SetSensorOn(s.Type, guids[star]);
+        }
+    }
     // Update is called once per frame
     private void Update()
     {
+        CheckAll();
         // Wifi Slide淡入期间，不透明度从0到1耗时200ms
         var startiming = timeProvider.AudioTime - timeStart;
         if (startiming <= 0f)
@@ -176,16 +451,6 @@ public class WifiDrop : NoteLongDrop,IFlasher
         }
         fadeInAnimator.enabled = false;
         setSlideBarAlpha(1f);
-
-        //if (isBreak && !startShining)
-        //{
-        //    startShining = true;
-        //    foreach (var anim in animators)
-        //    {
-        //        anim.enabled = true;
-        //        anim.Play("BreakShine", -1, 0f);
-        //    }
-        //}
 
         foreach (var star in star_slide)
             star.SetActive(true);
@@ -216,34 +481,12 @@ public class WifiDrop : NoteLongDrop,IFlasher
 
         if (timing > 0f)
         {
+            Running();
             var process = (LastFor - timing) / LastFor;
             process = 1f - process;
             if (process > 1)
                 DestroySelf();
 
-            var pos = (slideBars.Count) * process;
-            // Slide的箭头消失到哪里
-            int slideAreaIndex;
-            if (smoothSlideAnime)
-            {
-                slideAreaIndex = (int)pos + 1;
-            }
-            else
-            {
-                slideAreaIndex = areaStep[(int)(process * (areaStep.Count - 1))];
-            }
-            var lastIndex = 9;
-            if (isGroupPartEnd && !smoothSlideAnime && pos >= lastIndex)
-            {
-                var waitTime = LastFor * slideConst / 1.3;
-                if (arriveTime == -1)
-                    arriveTime = timeProvider.AudioTime;
-                else if (timeProvider.AudioTime >= arriveTime + waitTime)
-                    DestroySelf();
-                else
-                    foreach (var bar in slideBars)
-                        bar.SetActive(false);
-            }
             for (var i = 0; i < star_slide.Length; i++)
             {
                 spriteRenderer_star[i].color = Color.white;
@@ -251,9 +494,8 @@ public class WifiDrop : NoteLongDrop,IFlasher
                     (SlidePositionEnd[i] - SlidePositionStart) * process + SlidePositionStart; //TODO add some runhua
                 star_slide[i].transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             }
-
-            for (var i = 0; i < slideAreaIndex; i++) slideBars[i].SetActive(false);
         }
+        CheckAll();
     }
     public bool CanShine() => canShine;
     void DestroySelf()
@@ -263,6 +505,17 @@ public class WifiDrop : NoteLongDrop,IFlasher
             obj.SetActive(false);
         }
 
+        for (var i = 0; i < star_slide.Length; i++)
+            Destroy(star_slide[i]);
+        Destroy(gameObject);
+    }
+    private void OnEnable()
+    { 
+    }
+    void OnDestroy()
+    {
+        if (isDestroying)
+            return;
         if (isGroupPartEnd)
         {
             if (isBreak)
@@ -271,13 +524,19 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
             slideOK.SetActive(true);
         }
+        foreach (var sensor in sensors)
+        {
+            var s = sensor.GetComponent<Sensor>();
+            if (s != null)
+            { 
+                //s.OnSensorStatusChange -= Check; 
+                foreach(var id in guids.Values)
+                    s.SetOff(id);
+            }
+            
+        }
 
-        for (var i = 0; i < star_slide.Length; i++)
-            Destroy(star_slide[i]);
-        Destroy(gameObject);
-    }
-    private void OnEnable()
-    { 
+        isDestroying = true;
     }
 
     private void setSlideBarAlpha(float alpha)

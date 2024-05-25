@@ -73,6 +73,7 @@ public class Sensor : MonoBehaviour
         }
     }
 
+    public event Action<SensorType, SensorStatus, SensorStatus> OnSensorStatusChange;//oStatus nStatus
     public List<Guid> tasks = new();
     public void SetOn(Guid id)
     {
@@ -82,10 +83,15 @@ public class Sensor : MonoBehaviour
         var nStatus = SensorStatus.On;
 
         Status = nStatus;
+        
         if(!tasks.Contains(id))
             tasks.Add(id);
         if (oStatus != nStatus)
+        {
+            if (OnSensorStatusChange != null)
+                OnSensorStatusChange(Type, oStatus, nStatus);
             print($"Sensor:{Type} On");
+        }
     }
     public void SetOff(Guid id) 
     {
@@ -96,6 +102,9 @@ public class Sensor : MonoBehaviour
         tasks.Remove(id);
         if(tasks.Count == 0)
         {
+            var oStatus = Status;
+            if (OnSensorStatusChange != null)
+                OnSensorStatusChange(Type, oStatus, nStatus);
             Status = nStatus;
             print($"Sensor:{Type} Off");
         }
