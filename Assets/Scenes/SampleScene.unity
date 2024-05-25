@@ -260,7 +260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 23
+  Type: 22
 --- !u!1 &109390680
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,65 +320,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Status: 1
   Type: 11
---- !u!1 &139649261
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 139649262}
-  - component: {fileID: 139649264}
-  - component: {fileID: 139649265}
-  m_Layer: 0
-  m_Name: C1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &139649262
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 139649261}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.33545, y: 0.33545, z: 0.33545}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2033854460}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 18.629, y: -0.063446}
-  m_SizeDelta: {x: 130, y: 245.5}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &139649264
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 139649261}
-  m_CullTransparentMesh: 0
---- !u!114 &139649265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 139649261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Status: 1
-  Type: 16
 --- !u!1 &168172102
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,7 +758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 27
+  Type: 26
 --- !u!1 &285617436
 GameObject:
   m_ObjectHideFlags: 0
@@ -2162,7 +2103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 18
+  Type: 17
 --- !u!1 &437313979
 GameObject:
   m_ObjectHideFlags: 0
@@ -3810,7 +3751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 25
+  Type: 24
 --- !u!1 &706356589
 GameObject:
   m_ObjectHideFlags: 0
@@ -4020,7 +3961,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 30
+  Type: 29
 --- !u!1 &781543823
 GameObject:
   m_ObjectHideFlags: 0
@@ -4158,7 +4099,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 22
+  Type: 21
 --- !u!1 &824291542
 GameObject:
   m_ObjectHideFlags: 0
@@ -5770,7 +5711,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 32
+  Type: 31
 --- !u!1 &1279671792
 GameObject:
   m_ObjectHideFlags: 0
@@ -5947,7 +5888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 29
+  Type: 28
 --- !u!1 &1308235128
 GameObject:
   m_ObjectHideFlags: 0
@@ -7317,7 +7258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 31
+  Type: 30
 --- !u!1 &1549459908
 GameObject:
   m_ObjectHideFlags: 0
@@ -7768,7 +7709,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 24
+  Type: 23
 --- !u!1 &1604023387
 GameObject:
   m_ObjectHideFlags: 0
@@ -7827,7 +7768,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 26
+  Type: 25
 --- !u!1 &1627284968
 GameObject:
   m_ObjectHideFlags: 0
@@ -8031,7 +7972,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 19
+  Type: 18
 --- !u!1 &1656143587
 GameObject:
   m_ObjectHideFlags: 0
@@ -8090,7 +8031,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 20
+  Type: 19
 --- !u!1001 &1673765535
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8621,7 +8562,7 @@ GameObject:
   - component: {fileID: 1834841697}
   - component: {fileID: 1834841698}
   m_Layer: 0
-  m_Name: C2
+  m_Name: C
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8643,8 +8584,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -18.629, y: -0.063451}
-  m_SizeDelta: {x: 130, y: 245.5}
+  m_AnchoredPosition: {x: -0, y: -0.063451}
+  m_SizeDelta: {x: 241.06, y: 245.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1834841697
 CanvasRenderer:
@@ -8667,7 +8608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 17
+  Type: 16
 --- !u!1 &1846285903
 GameObject:
   m_ObjectHideFlags: 0
@@ -9113,7 +9054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 33
+  Type: 32
 --- !u!1001 &1953456371
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9409,7 +9350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 21
+  Type: 20
 --- !u!1 &2010816216
 GameObject:
   m_ObjectHideFlags: 0
@@ -9771,7 +9712,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Status: 1
-  Type: 28
+  Type: 27
 --- !u!1 &2033854459
 GameObject:
   m_ObjectHideFlags: 0
@@ -9818,7 +9759,6 @@ RectTransform:
   - {fileID: 1898518026}
   - {fileID: 1008195033}
   - {fileID: 1743847546}
-  - {fileID: 139649262}
   - {fileID: 1834841695}
   - {fileID: 417355883}
   - {fileID: 1639636700}

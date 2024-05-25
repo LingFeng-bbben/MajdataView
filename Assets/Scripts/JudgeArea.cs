@@ -55,20 +55,6 @@ public class JudgeArea
     public int SlideIndex;
     List<Area> areas = new();
 
-    public void Register(Action<Sensor, SensorStatus, SensorStatus> d)
-    {
-        foreach(var a in areas)
-            GameObject.Find("Sensors")
-                      .GetComponent<SensorManager>()
-                      .GetSensor(a.Type).onSensorStatusChanged += d;
-    }
-    public void UnRegister(Action<Sensor, SensorStatus, SensorStatus> d)
-    {
-        foreach (var a in areas)
-            GameObject.Find("Sensors")
-                      .GetComponent<SensorManager>()
-                      .GetSensor(a.Type).onSensorStatusChanged -= d;
-    }
     // Start is called before the first frame update
     void Start()
     {

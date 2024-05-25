@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Sensor : MonoBehaviour
 {
-    public event Action<Sensor, SensorStatus, SensorStatus> onSensorStatusChanged;
     public enum SensorStatus
     {
         On,
@@ -29,8 +27,7 @@ public class Sensor : MonoBehaviour
         B6,
         B7,
         B8,
-        C1,
-        C2,
+        C,
         D1,
         D2,
         D3,
@@ -67,24 +64,24 @@ public class Sensor : MonoBehaviour
                 return SensorGroup.A;
             else if (i <= 15)
                 return SensorGroup.B;
-            else if (i <= 17)
+            else if (i <= 16)
                 return SensorGroup.C;
-            else if (i <= 25)
+            else if (i <= 24)
                 return SensorGroup.D;
             else
                 return SensorGroup.E;
         }
     }
 
-    List<Guid> tasks = new();
+    public List<Guid> tasks = new();
     public void SetOn(Guid id)
     {
+        if (tasks.Contains(id))
+            return;
         var oStatus = Status;
         var nStatus = SensorStatus.On;
 
         Status = nStatus;
-        if (onSensorStatusChanged is not null)
-            onSensorStatusChanged(this, oStatus, nStatus);
         if(!tasks.Contains(id))
             tasks.Add(id);
         if (oStatus != nStatus)
@@ -92,15 +89,14 @@ public class Sensor : MonoBehaviour
     }
     public void SetOff(Guid id) 
     {
-        var oStatus = Status;
+        if (!tasks.Contains(id))
+            return;
         var nStatus = SensorStatus.Off;
 
         tasks.Remove(id);
         if(tasks.Count == 0)
         {
             Status = nStatus;
-            if (onSensorStatusChanged is not null)
-                onSensorStatusChanged(this, oStatus, nStatus);
             print($"Sensor:{Type} Off");
         }
     }

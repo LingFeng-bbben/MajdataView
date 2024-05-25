@@ -625,9 +625,17 @@ public class JsonDataLoader : MonoBehaviour
         GameObject parent = null;
         for (var i = 0; i <= subSlide.Count - 1; i++)
             if (note.noteContent.Contains('w')) //wifi
-                parent = InstantiateWifi(timing, subSlide[i], i != 0, i == subSlide.Count - 1, parent);
+                parent = InstantiateWifi(timing, 
+                                         subSlide[i],
+                                         subSlide.Count != 1, 
+                                         i == subSlide.Count - 1, 
+                                         parent);
             else
-                parent = InstantiateStar(timing, subSlide[i], i != 0, i == subSlide.Count - 1, parent);
+                parent = InstantiateStar(timing, 
+                                         subSlide[i],
+                                         subSlide.Count != 1, 
+                                         i == subSlide.Count - 1, 
+                                         parent);
     }
 
     private GameObject InstantiateWifi(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd, GameObject parent)

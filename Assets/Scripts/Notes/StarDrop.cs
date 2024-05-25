@@ -51,6 +51,10 @@ public class StarDrop : NoteDrop
 
     private AudioTimeProvider timeProvider;
 
+    public Guid guid = Guid.NewGuid();
+    SensorManager manager;
+    Sensor sensor;
+
     private void Start()
     {
         var notes = GameObject.Find("Notes").transform;
@@ -116,6 +120,15 @@ public class StarDrop : NoteDrop
 
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;
+
+        if(!isNoHead)
+        {
+            sensor = GameObject.Find("Sensors")
+                                   .transform.GetChild(startPosition - 1)
+                                   .GetComponent<Sensor>();
+            manager = GameObject.Find("Sensors")
+                                    .GetComponent<SensorManager>();
+        }
     }
 
     // Update is called once per frame
@@ -152,24 +165,22 @@ public class StarDrop : NoteDrop
 
         if (timing > 0)
         {
-
             if (!isNoHead)
             {
-                var sensor = GameObject.Find("Sensors")
-                                   .transform.GetChild(startPosition - 1)
-                                   .GetComponent<Sensor>();
-                var manager = GameObject.Find("Sensors")
-                                        .GetComponent<SensorManager>();
-                var id = Guid.NewGuid();
-                manager.SetSensorOn(sensor.Type, id);
-                GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
-                if (isBreak) ObjectCounter.breakCount++;
-                else ObjectCounter.tapCount++;
-                manager.SetSensorOff(sensor.Type, id);
+                manager.SetSensorOn(sensor.Type, guid);
+                if (timing > 0.02)
+                {
+                    Destroy(tapLine);
+                    Destroy(gameObject);
+                }
             }
-
-            Destroy(tapLine);
-            Destroy(gameObject);
+            else
+            {
+                Destroy(tapLine);
+                Destroy(gameObject);
+            }
+            
+            
         }
 
         if (timeProvider.isStart)
@@ -199,7 +210,16 @@ public class StarDrop : NoteDrop
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
-
+    private void OnDestroy()
+    {
+        if(!isNoHead)
+        {
+            GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
+            if (isBreak) ObjectCounter.breakCount++;
+            else ObjectCounter.tapCount++;
+            manager.SetSensorOff(sensor.Type, guid);
+        }
+    }
     private Vector3 getPositionFromDistance(float distance)
     {
         return new Vector3(

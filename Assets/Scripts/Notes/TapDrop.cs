@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Interfaces;
+using System;
 using UnityEngine;
 
 public class TapDrop : NoteDrop
@@ -41,6 +42,10 @@ public class TapDrop : NoteDrop
     private SpriteRenderer spriteRenderer;
 
     private AudioTimeProvider timeProvider;
+
+    Guid guid = Guid.NewGuid();
+    SensorManager manager;
+    Sensor sensor;
 
     private int GetSortOrder()
     {
@@ -86,6 +91,11 @@ public class TapDrop : NoteDrop
 
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;
+        sensor = GameObject.Find("Sensors")
+                                   .transform.GetChild(startPosition - 1)
+                                   .GetComponent<Sensor>();
+        manager = GameObject.Find("Sensors")
+                                .GetComponent<SensorManager>();
     }
 
     // Update is called once per frame
@@ -109,29 +119,16 @@ public class TapDrop : NoteDrop
             spriteRenderer.material.SetFloat("_Brightness", 0.95f + extra);
         }
 
-        //if (isBreak && !breakAnimStart)
-        //{
-        //    breakAnimStart = true;
-        //    animator.enabled = true;
-        //    animator.Play("BreakShine", -1, 0.5f);
-        //}
-
         if (timing > 0)
-        {
-            var sensor = GameObject.Find("Sensors")
-                                   .transform.GetChild(startPosition - 1)
-                                   .GetComponent<Sensor>();
-            var manager = GameObject.Find("Sensors")
-                                    .GetComponent<SensorManager>();
-            var id = Guid.NewGuid();
-            manager.SetSensorOn(sensor.Type, id);
-            GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
-            if (isBreak) ObjectCounter.breakCount++;
-            else ObjectCounter.tapCount++;
-
-            manager.SetSensorOff(sensor.Type, id);
-            Destroy(tapLine);
-            Destroy(gameObject);
+        {            
+            manager.SetSensorOn(sensor.Type, guid);
+            
+            if(timing > 0.02)
+            {
+                
+                Destroy(tapLine);
+                Destroy(gameObject);
+            }
         }
 
         if (isFakeStarRotate)
@@ -162,7 +159,13 @@ public class TapDrop : NoteDrop
         tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
         //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
     }
-
+    private void OnDestroy()
+    {
+        GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
+        if (isBreak) ObjectCounter.breakCount++;
+        else ObjectCounter.tapCount++;
+        manager.SetSensorOff(sensor.Type, guid);
+    }
     private Vector3 getPositionFromDistance(float distance)
     {
         return new Vector3(
