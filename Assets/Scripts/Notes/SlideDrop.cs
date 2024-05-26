@@ -232,6 +232,60 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             }
             Running();
         }
+
+        if (timing > 0f)
+        {
+
+            spriteRenderer_star.color = Color.white;
+            star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+
+            var process = (LastFor - timing) / LastFor;
+            process = MathF.Min(1f - process, 1f);
+            //if (process > 1)
+            //    DestroySelf();
+
+            //print(process);
+            var pos = (slidePositions.Count - 1) * process;
+            var index = Math.Min((int)pos, slidePositions.Count);
+
+            try
+            {
+                if (index == slidePositions.Count - 1)
+                {
+                    star_slide.transform.position = slidePositions[index];
+                    var _delta = Mathf.DeltaAngle(slideRotations[index].eulerAngles.z, slideRotations[index - 1].eulerAngles.z);
+                    _delta = Mathf.Abs(_delta);
+                    applyStarRotation(
+                    Quaternion.Euler(0f, 0f,
+                        Mathf.MoveTowardsAngle(slideRotations[index - 1].eulerAngles.z,
+                            slideRotations[index].eulerAngles.z, _delta)
+                        )
+                    );
+                    if (isGroupPart)
+                        DestroySelf();
+                }
+                else
+                {
+                    var nextPos = slidePositions[index + 1];
+                    var nowPos = slidePositions[index];
+
+                    star_slide.transform.position = (nextPos - nowPos) * (pos - index) + nowPos;
+                    var delta = Mathf.DeltaAngle(slideRotations[index + 1].eulerAngles.z,
+                        slideRotations[index].eulerAngles.z) * (pos - index);
+                    delta = Mathf.Abs(delta);
+                    applyStarRotation(
+                        Quaternion.Euler(0f, 0f,
+                            Mathf.MoveTowardsAngle(slideRotations[index].eulerAngles.z,
+                                slideRotations[index + 1].eulerAngles.z, delta)
+                        )
+                    );
+                }
+                Running();
+            }
+            catch (Exception e)
+            {
+            }
+        }
     }
     // Update is called once per frame
     private void Update()
@@ -276,45 +330,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             applyStarRotation(slideRotations[0]);
         }
 
-        if (timing > 0f)
-        {
-            
-            spriteRenderer_star.color = Color.white;
-            star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-
-            var process = (LastFor - timing) / LastFor;
-            process = 1f - process;
-            //if (process > 1)
-            //    DestroySelf();
-
-            //print(process);
-            var pos = (slidePositions.Count - 1) * process;
-            var index = Math.Min((int)pos,slidePositions.Count);
-            
-            try
-            {
-                var lastIndex = (areaStep[areaStep.Count - 1] + areaStep[areaStep.Count - 2]) / 2;
-                //if(!isGroupPartEnd && !smoothSlideAnime && pos >= lastIndex)
-                //    DestroySelf();
-
-                star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) +
-                                                slidePositions[index];
-                //star_slide.transform.rotation = slideRotations[index];
-                var delta = Mathf.DeltaAngle(slideRotations[index + 1].eulerAngles.z,
-                    slideRotations[index].eulerAngles.z) * (pos - index);
-                delta = Mathf.Abs(delta);
-                applyStarRotation(
-                    Quaternion.Euler(0f, 0f,
-                        Mathf.MoveTowardsAngle(slideRotations[index].eulerAngles.z,
-                            slideRotations[index + 1].eulerAngles.z, delta)
-                    )
-                );
-                //for (var i = 0; i < slideAreaIndex; i++) slideBars[i].SetActive(false);
-            }
-            catch
-            {
-            }
-        }
+        
         Check();
     }
     public void Check()
