@@ -108,11 +108,11 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
         fadeInAnimator.speed = 0.2f / interval; //淡入时机与正解帧间隔小于200ms时，加快淡入动画的播放速度; interval永不为0
         fadeInAnimator.SetTrigger("slide");
 
-        slidePositions.Add(GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 1).position);
-        slideRotations.Add(Quaternion.Euler(
-            slideBars.Last().transform
-            .rotation
-            .eulerAngles + new Vector3(0f, 0f, 18f)));
+        //slidePositions.Add(GameObject.Find("NoteEffects").transform.GetChild(0).GetChild(endPosition - 1).position);
+        //slideRotations.Add(Quaternion.Euler(
+        //    slideBars.Last().transform
+        //    .rotation
+        //    .eulerAngles + new Vector3(0f, 0f, 18f)));
 
         var count = GameObject.Find("Sensors").transform.childCount;
         var sManagerObj = GameObject.Find("Sensors");
@@ -284,8 +284,8 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
 
             var process = (LastFor - timing) / LastFor;
             process = 1f - process;
-            if (process > 1)
-                DestroySelf();
+            //if (process > 1)
+            //    DestroySelf();
 
             //print(process);
             var pos = (slidePositions.Count - 1) * process;
@@ -467,12 +467,20 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
                 case JudgeType.FastGood:
                     slideOK.GetComponent<LoadJustSprite>().setFastGd();
                     break;
+                case JudgeType.LateGood:
+                    slideOK.GetComponent<LoadJustSprite>().setLateGd();
+                    break;
+                case JudgeType.LateGreat:
+                    slideOK.GetComponent<LoadJustSprite>().setLateGr();
+                    break;
+                    
             }
+            print($"diff : {MathF.Round(diff * 1000,2)} ms");
             isJudged = true;
         }
         else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)
             DestroySelf();
-        else if(arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.667)
+        else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.667)
             DestroySelf();
     }
     void DestroySelf()

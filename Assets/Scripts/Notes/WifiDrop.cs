@@ -392,7 +392,14 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 case JudgeType.FastGood:
                     slideOK.GetComponent<LoadJustSprite>().setFastGd();
                     break;
+                case JudgeType.LateGood:
+                    slideOK.GetComponent<LoadJustSprite>().setLateGd();
+                    break;
+                case JudgeType.LateGreat:
+                    slideOK.GetComponent<LoadJustSprite>().setLateGr();
+                    break;
             }
+            print($"diff : {diff} ms");
             isJudged = true;
         }
         else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)

@@ -382,7 +382,7 @@ public class JsonDataLoader : MonoBehaviour
         {"pq6", new List<int>(){ 0, 3, 8, 11, 15, 18, 21, 25, 28, 31, 35, 38, 42 } },
         {"pq7", new List<int>(){ 0, 3, 8, 12, 15, 18, 22, 25, 28, 32, 35, 39 } },
         {"pq8", new List<int>(){ 0, 3, 8, 11, 14, 17, 21, 24, 27, 30, 36 } },
-        {"s", new List<int>(){ 0, 3, 8, 11, 17, 21, 24, 30 } },
+        {"s", new List<int>(){ 0, 3, 8, 11, 17, 21, 24, 32 } },
         {"wifi", new List<int>(){ 0, 2, 4, 7, 11 } },
         {"L2", new List<int>(){ 0, 2, 7, 15, 21, 26, 32 } },
         {"L3", new List<int>(){ 0, 2, 8, 17, 20, 26, 29, 34 } },
