@@ -32,7 +32,7 @@ public class CustomSkin : MonoBehaviour
     public Sprite Hold_Break;
     public Sprite Hold_Break_On;
 
-    public Sprite[] Just = new Sprite[30];
+    public Sprite[] Just = new Sprite[36];
     public Sprite JudgeText_Normal;
     public Sprite JudgeText_Break;
 
@@ -139,6 +139,13 @@ public class CustomSkin : MonoBehaviour
         Just[27] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_l_late_gd.png");
         Just[28] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_l_late_gd.png");
         Just[29] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_d_late_gd.png");
+
+        Just[30] = SpriteLoader.LoadSpriteFromFile(path + "/miss_curv_r.png");
+        Just[31] = SpriteLoader.LoadSpriteFromFile(path + "/miss_str_r.png");
+        Just[32] = SpriteLoader.LoadSpriteFromFile(path + "/miss_wifi_u.png");
+        Just[33] = SpriteLoader.LoadSpriteFromFile(path + "/miss_curv_l.png");
+        Just[34] = SpriteLoader.LoadSpriteFromFile(path + "/miss_str_l.png");
+        Just[35] = SpriteLoader.LoadSpriteFromFile(path + "/miss_wifi_d.png");
 
         JudgeText_Normal = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_normal.png");
         JudgeText_Break = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_break.png");

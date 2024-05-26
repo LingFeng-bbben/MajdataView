@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public enum JudgeType
 {
@@ -200,7 +201,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
     {
         var startiming = timeProvider.AudioTime - timeStart;
         var timing = timeProvider.AudioTime - time;
-
+        var forceJudgeTiming = time + LastFor + 0.6;
         // 未启动
         if (startiming <= 0f)
         {
@@ -209,7 +210,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             else if (startiming >= -0.040f)
                 canCheck = !isGroupPart;
         }
-        else if (timing <= 0f) // 已启动
+        else if (timing <= 0f) // 准备启动
         {
             if (isGroupPart)
                 canCheck = parentFinished;
@@ -222,7 +223,7 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
                 Judge(); 
             }
         }
-        else if (timing > 0f) // 到达终点
+        else if (timing > 0f) // 已启动
         {
             canCheck = true;
             if (judgeQueue.Count == 0)
@@ -230,62 +231,13 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
                 HideBar(areaStep.LastOrDefault());
                 Judge();
             }
+            else if(timeProvider.AudioTime - forceJudgeTiming >=0)
+                TooLateJudge();
+
+
             Running();
         }
-
-        if (timing > 0f)
-        {
-
-            spriteRenderer_star.color = Color.white;
-            star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-
-            var process = (LastFor - timing) / LastFor;
-            process = MathF.Min(1f - process, 1f);
-            //if (process > 1)
-            //    DestroySelf();
-
-            //print(process);
-            var pos = (slidePositions.Count - 1) * process;
-            var index = Math.Min((int)pos, slidePositions.Count);
-
-            try
-            {
-                if (index == slidePositions.Count - 1)
-                {
-                    star_slide.transform.position = slidePositions[index];
-                    var _delta = Mathf.DeltaAngle(slideRotations[index].eulerAngles.z, slideRotations[index - 1].eulerAngles.z);
-                    _delta = Mathf.Abs(_delta);
-                    applyStarRotation(
-                    Quaternion.Euler(0f, 0f,
-                        Mathf.MoveTowardsAngle(slideRotations[index - 1].eulerAngles.z,
-                            slideRotations[index].eulerAngles.z, _delta)
-                        )
-                    );
-                    if (isGroupPart)
-                        DestroySelf();
-                }
-                else
-                {
-                    var nextPos = slidePositions[index + 1];
-                    var nowPos = slidePositions[index];
-
-                    star_slide.transform.position = (nextPos - nowPos) * (pos - index) + nowPos;
-                    var delta = Mathf.DeltaAngle(slideRotations[index + 1].eulerAngles.z,
-                        slideRotations[index].eulerAngles.z) * (pos - index);
-                    delta = Mathf.Abs(delta);
-                    applyStarRotation(
-                        Quaternion.Euler(0f, 0f,
-                            Mathf.MoveTowardsAngle(slideRotations[index].eulerAngles.z,
-                                slideRotations[index + 1].eulerAngles.z, delta)
-                        )
-                    );
-                }
-                Running();
-            }
-            catch (Exception e)
-            {
-            }
-        }
+        
     }
     // Update is called once per frame
     private void Update()
@@ -329,8 +281,64 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             star_slide.transform.position = slidePositions[0];
             applyStarRotation(slideRotations[0]);
         }
+        else
+        {
+            var process = (LastFor - timing) / LastFor;
+            process = MathF.Min(1f - process, 1f);
+            var pos = (slidePositions.Count - 1) * process;
+            var index = Math.Min((int)pos, slidePositions.Count);
+            try
+            {
+                if (index == slidePositions.Count - 1)
+                {
+                    spriteRenderer_star.color = Color.white;
+                    star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
-        
+                    star_slide.transform.position = slidePositions[index];
+                    //var _delta = Mathf.DeltaAngle(slideRotations[index].eulerAngles.z, slideRotations[index - 1].eulerAngles.z);
+                    //_delta = Mathf.Abs(_delta);
+                    //applyStarRotation(
+                    //Quaternion.Euler(0f, 0f,
+                    //    Mathf.MoveTowardsAngle(slideRotations[index - 1].eulerAngles.z,
+                    //        slideRotations[index].eulerAngles.z, _delta)
+                    //    )
+                    //);
+                    if (isGroupPart)
+                        DestroySelf();
+                }
+                else
+                {
+                    spriteRenderer_star.color = Color.white;
+                    star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+
+                    //if (process > 1)
+                    //   DestroySelf();
+
+                    try
+                    {
+                        star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) +
+                                                        slidePositions[index];
+                        var delta = Mathf.DeltaAngle(slideRotations[index + 1].eulerAngles.z,
+                            slideRotations[index].eulerAngles.z) * (pos - index);
+                        delta = Mathf.Abs(delta);
+                        applyStarRotation(
+                            Quaternion.Euler(0f, 0f,
+                                Mathf.MoveTowardsAngle(slideRotations[index].eulerAngles.z,
+                                    slideRotations[index + 1].eulerAngles.z, delta)
+                            )
+                        );
+                    }
+                    catch
+                    {
+                    }
+                }
+                Running();
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
         Check();
     }
     public void Check()
@@ -498,6 +506,14 @@ public class SlideDrop : NoteLongDrop,IFlasher, INote
             DestroySelf();
         else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.667)
             DestroySelf();
+    }
+    void TooLateJudge()
+    {
+        if (judgeQueue.Count == 1)
+            slideOK.GetComponent<LoadJustSprite>().setLateGd();
+        else
+            slideOK.GetComponent<LoadJustSprite>().setMiss();
+        DestroySelf();
     }
     void DestroySelf()
     {
