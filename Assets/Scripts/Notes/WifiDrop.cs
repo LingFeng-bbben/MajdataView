@@ -1,11 +1,11 @@
 ﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.Notes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using static Sensor;
+using static NoteEffectManager;
 
 public class WifiDrop : NoteLongDrop,IFlasher
 {
@@ -24,17 +24,11 @@ public class WifiDrop : NoteLongDrop,IFlasher
 
     public bool isJustR;
 
-    // public float time;
     public float timeStart;
-
-    // public float LastFor = 1f;
-    public float speed;
-    public bool isEach;
     public bool isBreak;
     public bool isGroupPart;
     public bool isGroupPartEnd;
 
-    public int startPosition = 1;
     public int endPosition;
     public int sortIndex;
 
@@ -66,13 +60,10 @@ public class WifiDrop : NoteLongDrop,IFlasher
 
     private bool isDestroying = false;
 
-    private AudioTimeProvider timeProvider;
-
+    public ConnSlideInfo ConnectInfo { get; set; }
     bool isFinished { get => _judgeQueues.All(x => x.Count == 0); }
     public GameObject parent;
-    bool parentFinished = false;
     bool canCheck = false;
-    bool isJudged = false;
     Dictionary<GameObject, Guid> guids = new();
     SensorManager sManager;
     List<GameObject> sensors = new();
@@ -208,63 +199,63 @@ public class WifiDrop : NoteLongDrop,IFlasher
     }
     private void FixedUpdate()
     {
-        var startiming = timeProvider.AudioTime - timeStart;
+        /// time      是Slide启动的时间点
+        /// timeStart 是Slide完全显示但未启动
+        /// LastFor   是Slide的时值
         var timing = timeProvider.AudioTime - time;
+        var startTiming = timeProvider.AudioTime - timeStart;
+        var forceJudgeTiming = time + LastFor + 0.6;
 
-        if (parent != null && !parentFinished)
-            parentFinished = parent.GetComponent<SlideDrop>().isFinished;
-        else if (parent == null && !parentFinished)
-            parentFinished = true;
-        // 未启动
-        if (startiming <= 0f)
+        if (ConnectInfo.IsGroupPart)
         {
-            if (isGroupPart)
-                canCheck = parentFinished;
-            else if (startiming >= -0.040f)
-                canCheck = !isGroupPart;
-        }
-        else if (timing <= 0f) // 已启动
-        {
-            if (isGroupPart)
-                canCheck = parentFinished;
-            else
+            if (ConnectInfo.IsGroupPartHead && startTiming >= -0.040f)
                 canCheck = true;
-
-            if (isFinished)
-            {
-                HideBar(areaStep.LastOrDefault());
-                //Judge();
-            }
+            else if (!ConnectInfo.IsGroupPartHead)
+                canCheck = ConnectInfo.ParentFinished;
         }
-        else if (timing > 0f) // 到达终点
-        {
+        else if (startTiming >= -0.050f)
             canCheck = true;
-            if (isFinished)
+
+        if (timing > 0)
+            Running();        
+
+        if (ConnectInfo.IsConnSlide)
+        {
+            if (ConnectInfo.IsGroupPartEnd && isFinished)
             {
                 HideBar(areaStep.LastOrDefault());
-                //Judge();
+                Judge();
             }
-            Running();
+            else if (ConnectInfo.IsGroupPartEnd && timeProvider.AudioTime - forceJudgeTiming >= 0)
+                TooLateJudge();
         }
-        if (!isFinished)
+        else if (isFinished)
         {
-            var queue1 = _judgeQueues[0];
-            var queue2 = _judgeQueues[1];
-            var queue3 = _judgeQueues[2];
-            var _ = new List<int>();
-            _.AddRange(queue1.Select(x => x.SlideIndex));
-            _.AddRange(queue2.Select(x => x.SlideIndex));
-            _.AddRange(queue3.Select(x => x.SlideIndex));
-            var min = _.Min();
-            var index = areaStep[areaStep.FindIndex(x => x == min) - 1];
-            HideBar(index);
-        }
-        else
-        {
-            HideBar(areaStep.Last());
+            HideBar(areaStep.LastOrDefault());
             Judge();
         }
-        //print($"index: {index}");
+        else if (timeProvider.AudioTime - forceJudgeTiming >= 0)
+            TooLateJudge();
+    }
+    int GetLastIndex()
+    {
+        var queue1 = _judgeQueues[0];
+        var queue2 = _judgeQueues[1];
+        var queue3 = _judgeQueues[2];
+        var _ = new List<int>();
+        _.AddRange(queue1.Select(x => x.SlideIndex));
+        _.AddRange(queue2.Select(x => x.SlideIndex));
+        _.AddRange(queue3.Select(x => x.SlideIndex));
+        var min = _.Min();
+        return areaStep[areaStep.FindIndex(x => x == min) - 1];
+    }
+    void TooLateJudge()
+    {
+        if (_judgeQueues.Count == 1)
+            slideOK.GetComponent<LoadJustSprite>().setLateGd();
+        else
+            slideOK.GetComponent<LoadJustSprite>().setMiss();
+        DestroySelf();
     }
     void CheckAll()
     {
@@ -297,7 +288,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 first.Judge(t, sensor.Status);
             }
 
-            if (second is not null)
+            if (second is not null && (first.CanSkip || first.On))
             {
                 var sType = second.GetSensorTypes();
                 foreach (var t in sType)
@@ -326,11 +317,14 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 judgeQueue = judgeQueue.Skip(1).ToList();
                 return;
             }
+            if (!isFinished)
+                HideBar(GetLastIndex());
         }
         catch (Exception e)
         {
             print(e);
         }
+
     }
     void Judge()
     {
@@ -392,7 +386,14 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 case JudgeType.FastGood:
                     slideOK.GetComponent<LoadJustSprite>().setFastGd();
                     break;
+                case JudgeType.LateGood:
+                    slideOK.GetComponent<LoadJustSprite>().setLateGd();
+                    break;
+                case JudgeType.LateGreat:
+                    slideOK.GetComponent<LoadJustSprite>().setLateGr();
+                    break;
             }
+            print($"diff : {diff} ms");
             isJudged = true;
         }
         else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)
@@ -408,6 +409,8 @@ public class WifiDrop : NoteLongDrop,IFlasher
     }
     void Running()
     {
+        if (!GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+            return;
         foreach(var star in star_slide)
         {
             var starRadius = 0.763736616f;
@@ -441,6 +444,12 @@ public class WifiDrop : NoteLongDrop,IFlasher
     private void Update()
     {
         CheckAll();
+        if (star_slide.Any(x => x == null))
+        {
+            if (isFinished)
+                DestroySelf();
+            return;
+        }
         // Wifi Slide淡入期间，不透明度从0到1耗时200ms
         var startiming = timeProvider.AudioTime - timeStart;
         if (startiming <= 0f)
@@ -460,10 +469,8 @@ public class WifiDrop : NoteLongDrop,IFlasher
         {
             canShine = true;
             float alpha;
-            if (isGroupPart)
-            {
+            if (ConnectInfo.IsConnSlide && !ConnectInfo.IsGroupPartHead)
                 alpha = 0;
-            }
             else
             {
                 alpha = 1f - -timing / (time - timeStart);
@@ -478,46 +485,70 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 star_slide[i].transform.position = SlidePositionStart;
             }
         }
-
-        if (timing > 0f)
+        else
         {
-            Running();
+            
             var process = (LastFor - timing) / LastFor;
             process = 1f - process;
-            if (process > 1)
-                DestroySelf();
-
-            for (var i = 0; i < star_slide.Length; i++)
+            if (process >= 1)
             {
-                spriteRenderer_star[i].color = Color.white;
-                star_slide[i].transform.position =
-                    (SlidePositionEnd[i] - SlidePositionStart) * process + SlidePositionStart; //TODO add some runhua
-                star_slide[i].transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                for (var i = 0; i < star_slide.Length; i++)
+                {
+                    spriteRenderer_star[i].color = Color.white;
+                    star_slide[i].transform.position = SlidePositionEnd[i];
+                    star_slide[i].transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                }
+                if (isFinished)
+                    DestroySelf();
+                else if (ConnectInfo.IsConnSlide && !ConnectInfo.IsGroupPartEnd)
+                    DestroySelf(true);
             }
+            else
+            {
+                for (var i = 0; i < star_slide.Length; i++)
+                {
+                    spriteRenderer_star[i].color = Color.white;
+                    star_slide[i].transform.position =
+                        (SlidePositionEnd[i] - SlidePositionStart) * process + SlidePositionStart; //TODO add some runhua
+                    star_slide[i].transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                }
+            }
+            Running();
         }
+        
         CheckAll();
     }
     public bool CanShine() => canShine;
-    void DestroySelf()
+    void DestroySelf(bool onlyStar = false)
     {
-        foreach (GameObject obj in slideBars)
+        if (onlyStar)
         {
-            obj.SetActive(false);
+            foreach (var obj in star_slide)
+                Destroy(obj);
         }
+        else
+        {
+            if (ConnectInfo.Parent != null)
+                Destroy(ConnectInfo.Parent);
 
-        for (var i = 0; i < star_slide.Length; i++)
-            Destroy(star_slide[i]);
-        Destroy(gameObject);
-    }
-    private void OnEnable()
-    { 
+            foreach (GameObject obj in slideBars)
+                obj.SetActive(false);
+
+            for (var i = 0; i < star_slide.Length; i++)
+                Destroy(star_slide[i]);
+            Destroy(gameObject);
+        }
     }
     void OnDestroy()
     {
         if (isDestroying)
             return;
-        if (isGroupPartEnd)
+        if (ConnectInfo.Parent != null)
+            Destroy(ConnectInfo.Parent);
+
+        if (ConnectInfo.IsGroupPartEnd)
         {
+            // 只有组内最后一个Slide完成 才会显示判定条并增加总数
             if (isBreak)
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
             else
@@ -529,7 +560,6 @@ public class WifiDrop : NoteLongDrop,IFlasher
             var s = sensor.GetComponent<Sensor>();
             if (s != null)
             { 
-                //s.OnSensorStatusChange -= Check; 
                 foreach(var id in guids.Values)
                     s.SetOff(id);
             }
@@ -547,19 +577,5 @@ public class WifiDrop : NoteLongDrop,IFlasher
             oldColor.a = alpha;
             sr.color = oldColor;
         }
-    }
-
-    private Vector3 getPositionFromDistance(float distance)
-    {
-        return new Vector3(
-            distance * Mathf.Cos((startPosition * -2f + 5f) * 0.125f * Mathf.PI),
-            distance * Mathf.Sin((startPosition * -2f + 5f) * 0.125f * Mathf.PI));
-    }
-
-    private Vector3 getPositionFromDistance(float distance, int position)
-    {
-        return new Vector3(
-            distance * Mathf.Cos((position * -2f + 5f) * 0.125f * Mathf.PI),
-            distance * Mathf.Sin((position * -2f + 5f) * 0.125f * Mathf.PI));
     }
 }

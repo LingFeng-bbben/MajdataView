@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Sensor : MonoBehaviour
 {
+    public bool IsJudging = false;
     public enum SensorStatus
     {
         On,
@@ -89,7 +90,10 @@ public class Sensor : MonoBehaviour
         if (oStatus != nStatus)
         {
             if (OnSensorStatusChange != null)
+            {
                 OnSensorStatusChange(Type, oStatus, nStatus);
+                IsJudging = false;
+            }
             print($"Sensor:{Type} On");
         }
     }

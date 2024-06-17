@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
+using Assets.Scripts.Notes;
 
 public class JsonDataLoader : MonoBehaviour
 {
@@ -382,7 +383,7 @@ public class JsonDataLoader : MonoBehaviour
         {"pq6", new List<int>(){ 0, 3, 8, 11, 15, 18, 21, 25, 28, 31, 35, 38, 42 } },
         {"pq7", new List<int>(){ 0, 3, 8, 12, 15, 18, 22, 25, 28, 32, 35, 39 } },
         {"pq8", new List<int>(){ 0, 3, 8, 11, 14, 17, 21, 24, 27, 30, 36 } },
-        {"s", new List<int>(){ 0, 3, 8, 11, 17, 21, 24, 30 } },
+        {"s", new List<int>(){ 0, 3, 8, 11, 17, 21, 24, 32 } },
         {"wifi", new List<int>(){ 0, 2, 4, 7, 11 } },
         {"L2", new List<int>(){ 0, 2, 7, 15, 21, 26, 32 } },
         {"L3", new List<int>(){ 0, 2, 8, 17, 20, 26, 29, 34 } },
@@ -441,7 +442,7 @@ public class JsonDataLoader : MonoBehaviour
 
                         if (note.isForceStar)
                         {
-                            NDCompo.normalSpr = customSkin.Star;
+                            NDCompo.tapSpr = customSkin.Star;
                             NDCompo.eachSpr = customSkin.Star_Each;
                             NDCompo.breakSpr = customSkin.Star_Break;
                             NDCompo.exSpr = customSkin.Star_Ex;
@@ -451,7 +452,7 @@ public class JsonDataLoader : MonoBehaviour
                         else
                         {
                             //自定义note样式
-                            NDCompo.normalSpr = customSkin.Tap;
+                            NDCompo.tapSpr = customSkin.Tap;
                             NDCompo.breakSpr = customSkin.Tap_Break;
                             NDCompo.eachSpr = customSkin.Tap_Each;
                             NDCompo.exSpr = customSkin.Tap_Ex;
@@ -478,6 +479,7 @@ public class JsonDataLoader : MonoBehaviour
 
                         NDCompo.tapSpr = customSkin.Hold;
                         NDCompo.holdOnSpr = customSkin.Hold_On;
+                        NDCompo.holdOffSpr = customSkin.Hold_Off;
                         NDCompo.eachSpr = customSkin.Hold_Each;
                         NDCompo.eachHoldOnSpr = customSkin.Hold_Each_On;
                         NDCompo.exSpr = customSkin.Hold_Ex;
@@ -827,20 +829,22 @@ public class JsonDataLoader : MonoBehaviour
         GameObject parent = null;
         for (var i = 0; i <= subSlide.Count - 1; i++)
             if (note.noteContent.Contains('w')) //wifi
-                parent = InstantiateWifi(timing, 
+                parent = InstantiateWifi(timing,
                                          subSlide[i],
-                                         subSlide.Count != 1, 
-                                         i == subSlide.Count - 1, 
+                                         subSlide.Count != 1,
+                                         i == 0,
+                                         i == subSlide.Count - 1,
                                          parent);
             else
-                parent = InstantiateStar(timing, 
+                parent = InstantiateStar(timing,
                                          subSlide[i],
-                                         subSlide.Count != 1, 
-                                         i == subSlide.Count - 1, 
-                                         parent);
+                                         subSlide.Count != 1,
+                                         i == 0,
+                                         i == subSlide.Count - 1,
+                                         parent) ;
     }
 
-    private GameObject InstantiateWifi(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd, GameObject parent)
+    private GameObject InstantiateWifi(SimaiTimingPoint timing, SimaiNote note, bool isConn, bool isGroupHead, bool isGroupEnd, GameObject parent)
     {
         var str = note.noteContent.Substring(0, 3);
         var digits = str.Split('w');
@@ -917,9 +921,14 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
+        WifiCompo.ConnectInfo = new ConnSlideInfo()
+        {
+            IsGroupPart = isConn,
+            IsGroupPartHead = isGroupHead,
+            IsGroupPartEnd = isGroupEnd,
+            Parent = parent
+        };
         WifiCompo.isBreak = note.isSlideBreak;
-        WifiCompo.isGroupPart = isGroupPart;
-        WifiCompo.isGroupPartEnd = isGroupPartEnd;
 
         NDCompo.isNoHead = note.isSlideNoHead;
         NDCompo.time = (float)timing.time;
@@ -940,7 +949,7 @@ public class JsonDataLoader : MonoBehaviour
         return slideWifi;
     }
 
-    private GameObject InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isGroupPart, bool isGroupPartEnd,GameObject parent)
+    private GameObject InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isConn, bool isGroupHead,bool isGroupEnd, GameObject parent)
     {
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
@@ -982,7 +991,6 @@ public class JsonDataLoader : MonoBehaviour
         NDCompo.slide = slide;
         var SliCompo = slide.AddComponent<SlideDrop>();
 
-        SliCompo.parent = parent;
         SliCompo.slideType = slideShape;
         SliCompo.spriteNormal = customSkin.Slide;
         SliCompo.spriteEach = customSkin.Slide_Each;
@@ -1018,9 +1026,14 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
+        SliCompo.ConnectInfo = new ConnSlideInfo()
+        {
+            IsGroupPart = isConn,
+            IsGroupPartHead = isGroupHead,
+            IsGroupPartEnd = isGroupEnd,
+            Parent = parent
+        };
         SliCompo.isBreak = note.isSlideBreak;
-        SliCompo.isGroupPart = isGroupPart;
-        SliCompo.isGroupPartEnd = isGroupPartEnd;
         if (note.isSlideBreak) slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star_Break;
 
         NDCompo.isNoHead = note.isSlideNoHead;

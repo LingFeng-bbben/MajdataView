@@ -52,6 +52,11 @@ public class LoadJustSprite : MonoBehaviour
         judgeOffset = 24;
         refreshSprite();
     }
+    public void setMiss()
+    {
+        judgeOffset = 30;
+        refreshSprite();
+    }
     private void refreshSprite()
     {
         gameObject.GetComponent<SpriteRenderer>().sprite = GameObject.Find("Outline").GetComponent<CustomSkin>()

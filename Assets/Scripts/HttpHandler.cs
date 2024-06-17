@@ -51,6 +51,7 @@ public class HttpHandler : MonoBehaviour
 
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
+            GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
         }
 
         if (data.control == EditorControlMethod.OpStart)
@@ -67,6 +68,7 @@ public class HttpHandler : MonoBehaviour
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
             bgManager.PlaySongDetail();
+            GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
         }
 
         if (data.control == EditorControlMethod.Record)
@@ -89,6 +91,7 @@ public class HttpHandler : MonoBehaviour
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
             bgManager.PlaySongDetail();
             GameObject.Find("CanvasButtons").SetActive(false);
+            GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
         }
 
         if (data.control == EditorControlMethod.Pause)
@@ -109,7 +112,7 @@ public class HttpHandler : MonoBehaviour
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
             bgManager.ContinueVideo(data.audioSpeed);
         }
-
+        
         request = "";
     }
 
