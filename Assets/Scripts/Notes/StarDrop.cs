@@ -101,15 +101,7 @@ public class StarDrop : TapBase
         if (timeProvider.isStart)
             transform.Rotate(0f, 0f, -180f * Time.deltaTime * songSpeed / rotateSpeed);
         if (timing > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-        {
             manager.SetSensorOn(sensor.Type, guid);
-
-            if (timing > 0.02)
-            {
-                Destroy(tapLine);
-                Destroy(gameObject);
-            }
-        }
     }
     protected override void OnDestroy()
     {

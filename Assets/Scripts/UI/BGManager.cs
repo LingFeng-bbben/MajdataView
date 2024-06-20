@@ -106,7 +106,7 @@ public class BGManager : MonoBehaviour
         yield return sprite = SpriteLoader.LoadSpriteFromFile(path);
         rawImage.texture = sprite.texture;
         spriteRender.sprite = sprite;
-        var scale = 1080f / sprite.texture.width;
+        var scale = 1140f / sprite.texture.width;
         gameObject.transform.localScale = new Vector3(scale, scale, scale);
     }
 
