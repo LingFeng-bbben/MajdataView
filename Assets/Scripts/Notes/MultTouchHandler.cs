@@ -49,8 +49,11 @@ public class MultTouchHandler : MonoBehaviour
     public void cancelTouch(TouchDrop obj)
     {
         var areaIndex = getAreaIndex(obj.areaPosition, obj.startPosition);
-        touchSlots[areaIndex].RemoveAt(0);
+        var touchSlot = touchSlots[areaIndex];
 
-        foreach (var each in touchSlots[areaIndex]) each.layerDown();
+        if (touchSlot.Count != 0)
+            touchSlot.RemoveAt(0);
+
+        foreach (var each in touchSlot) each.layerDown();
     }
 }

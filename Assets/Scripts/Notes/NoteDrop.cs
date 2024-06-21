@@ -20,6 +20,14 @@ public class NoteDrop : MonoBehaviour
     protected bool isJudged = false;
     protected JudgeType judgeResult;
 
+    /// <summary>
+    /// 获取当前时刻距离正解帧的时间长度
+    /// </summary>
+    /// <returns>
+    /// 当前时刻在正解帧后方，结果为正数
+    /// <para>当前时刻在正解帧前方，结果为负数</para>
+    /// </returns>
+    protected float GetJudgeTiming() => timeProvider.AudioTime - time;
     protected Vector3 getPositionFromDistance(float distance)
     {
         return new Vector3(
@@ -35,6 +43,16 @@ public class NoteLongDrop : NoteDrop
 
     protected Stopwatch userHold = new();
     protected float judgeDiff = -1;
+
+    protected bool isAutoTrigger = false;
+
+    /// <summary>
+    /// 返回Hold的剩余长度
+    /// </summary>
+    /// <returns>
+    /// Hold剩余长度
+    /// </returns>
+    protected float GetRemainingTime() => MathF.Max(LastFor - GetJudgeTiming(),0);
 
 
     protected virtual void PlayHoldEffect()

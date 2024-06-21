@@ -494,6 +494,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
                     
             }
             print($"diff : {MathF.Round(diff * 1000,2)} ms");
+            judgeResult = judge ?? JudgeType.Miss;
             isJudged = true;
         }
         else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)
@@ -543,6 +544,8 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
             else
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
+            if (isBreak && judgeResult == JudgeType.Perfect)
+                slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
             slideOK.SetActive(true);
         }
         else
@@ -559,9 +562,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
     {
         slideOK = transform.GetChild(transform.childCount - 1).gameObject; //slideok is the last one        
 
-        if(isBreak)
-            slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
-
+        
         if (isMirror)
         {
             transform.localScale = new Vector3(-1f, 1f, 1f);

@@ -107,32 +107,20 @@ public class HoldDrop : NoteLongDrop
     }
     private void FixedUpdate()
     {
-        var timing = timeProvider.AudioTime - time;
-        var holdTime = timing - LastFor;
-        if (!isJudged && timing > 0.15f)
-        {
-            judgeDiff = 150;
-            judgeResult = JudgeType.Miss;
-            sensor.OnSensorStatusChange -= Check;
-            inputManager.OnSensorStatusChange -= Check;
-            isJudged = true;
-            GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
-        }
+        var autoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
 
-        if(holdTime > 0 && LastFor != 0 ||
-           (LastFor == 0 && isJudged))
+        if (GetRemainingTime() == 0 && isJudged)
         {
             userHold.Stop();
             Destroy(tapLine);
             Destroy(holdEffect);
             Destroy(gameObject);
         }
-
-        if(isJudged)
+        else if (isJudged)
         {
             if (sensor.Status == SensorStatus.On)
                 PlayHoldEffect();
-            if (timing < 0.1f || holdTime > -0.2f)
+            if (GetJudgeTiming() < 0.1f || (GetRemainingTime() < 0.2f && GetRemainingTime() != 0 ))
                 return;
             if(sensor.Status == SensorStatus.On)
             {
@@ -146,7 +134,32 @@ public class HoldDrop : NoteLongDrop
                 StopHoldEffect();
             }
         }
+        else if (GetJudgeTiming() > 0.15f)
+        {
+            judgeDiff = 150;
+            judgeResult = JudgeType.Miss;
+            sensor.OnSensorStatusChange -= Check;
+            inputManager.OnSensorStatusChange -= Check;
+            isJudged = true;
+            GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
+        }
 
+        if(autoPlay)
+        {
+            if(GetJudgeTiming() > 0 && !isJudged ||
+                isJudged && GetRemainingTime() > 0)
+            {
+                manager.SetSensorOn(sensor.Type, guid);
+                isAutoTrigger = true;
+            }
+            else if(GetRemainingTime() == 0)
+                manager.SetSensorOff(sensor.Type, guid);
+        }
+        else if(isAutoTrigger)
+        {
+            manager.SetSensorOff(sensor.Type, guid);
+            isAutoTrigger = false;
+        }
     }
     void Check(SensorType s, SensorStatus oStatus, SensorStatus nStatus)
     {
@@ -212,7 +225,10 @@ public class HoldDrop : NoteLongDrop
             result = 14 - result;
         if (result != JudgeType.Miss && isEX)
             result = JudgeType.Perfect;
-        judgeDiff = isFast ? -diff : diff;
+        if (isFast)
+            judgeDiff = 0;
+        else
+            judgeDiff = diff;
         if (!userHold.IsRunning)
             userHold.Start();
         PlayHoldEffect();
@@ -238,10 +254,9 @@ public class HoldDrop : NoteLongDrop
 
         var holdTime = timing - LastFor;
         var holdDistance = holdTime * speed + 4.8f;
-        if (holdTime >= 0)
+        if (holdTime >= 0 || 
+            holdTime >= 0 && LastFor <= 0.15f)
         {
-            if(GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-                manager.SetSensorOn(sensor.Type, guid);
             return;
         }
 
@@ -250,8 +265,9 @@ public class HoldDrop : NoteLongDrop
         tapLine.transform.rotation = transform.rotation;
         holdEffect.transform.position = getPositionFromDistance(4.8f);
 
-        if (isBreak && !holdAnimStart && 
-            (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay || sensor.Status == SensorStatus.On))
+        if (isBreak &&
+            !holdAnimStart && 
+            !isJudged)
         {
             var extra = Math.Max(Mathf.Sin(timeProvider.GetFrame() * 0.17f) * 0.5f, 0);
             spriteRenderer.material.SetFloat("_Brightness", 0.95f + extra);
@@ -274,8 +290,6 @@ public class HoldDrop : NoteLongDrop
             {
                 holdDistance = 1.225f;
                 distance = 4.8f;
-                if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-                    PlayHoldEffect();
             }
             else if (holdDistance < 1.225f && distance < 4.8f) // 头未到达 尾未出现
             {
@@ -284,8 +298,6 @@ public class HoldDrop : NoteLongDrop
             else if (holdDistance >= 1.225f && distance >= 4.8f) // 头到达 尾出现
             {
                 distance = 4.8f;
-                if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-                    PlayHoldEffect();
 
                 holdEndRender.enabled = true;
             }
@@ -309,15 +321,12 @@ public class HoldDrop : NoteLongDrop
     }
     private void OnDestroy()
     {
-        var diff = judgeDiff - 300;
-        if (judgeDiff > 0)
-            diff = MathF.Max(judgeDiff,100) + 200;
-        var realityHT = LastFor - 0.3f;
-        var percent = MathF.Min(1, ((userHold.ElapsedMilliseconds - diff) / 1000f) / realityHT);
+        var realityHT = LastFor - 0.3f - (judgeDiff / 1000f);
+        var percent = MathF.Min(1, (userHold.ElapsedMilliseconds  / 1000f) / realityHT);
         JudgeType result = judgeResult;
         if(realityHT > 0)
         {
-            if (percent == 1)
+            if (percent >= 0.95f)
             {
                 if(judgeResult == JudgeType.Miss)
                     result = JudgeType.LateGood;
@@ -355,6 +364,7 @@ public class HoldDrop : NoteLongDrop
         var effectManager = GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>();
         effectManager.PlayEffect(startPosition, isBreak, result);
         effectManager.PlayFastLate(startPosition, result);
+        print($"Hold: {MathF.Round(percent * 100,2)}%\nTotal Len : {MathF.Round(realityHT * 1000,2)}ms");
         if (isBreak)
             GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
         else

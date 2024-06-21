@@ -116,7 +116,10 @@ public class TouchHoldDrop : NoteLongDrop
             result = JudgeType.LateGood;
         else
             result = JudgeType.Miss;
-        judgeDiff = isFast ? -diff : diff;
+        if (isFast)
+            judgeDiff = 0;
+        else
+            judgeDiff = diff;
         if (!userHold.IsRunning)
             userHold.Start();
         judgeResult = result;
@@ -125,30 +128,22 @@ public class TouchHoldDrop : NoteLongDrop
     }
     private void FixedUpdate()
     {
+        var autoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
+
         var timing = timeProvider.AudioTime - time;
         var holdTime = timing - LastFor;
-        if (!isJudged && timing > 0.316667f)
-        {
-            judgeDiff = 316.667f;
-            judgeResult = JudgeType.Miss;
-            sensor.OnSensorStatusChange -= Check;
-            isJudged = true;
-            GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[SensorType.C]++;
-        }
 
-        if (holdTime > 0 && LastFor != 0 ||
-           (LastFor == 0 && isJudged))
+        if (GetRemainingTime() == 0 && isJudged)
         {
             userHold.Stop();
             Destroy(holdEffect);
             Destroy(gameObject);
         }
-
-        if (isJudged)
+        else if (isJudged)
         {
-            if(sensor.Status == SensorStatus.On)
+            if (sensor.Status == SensorStatus.On)
                 PlayHoldEffect();
-            if (timing < 0.25f || holdTime > -0.2f)
+            if (GetJudgeTiming() < 0.25f || (GetRemainingTime() < 0.2f && GetRemainingTime() != 0))
                 return;
             if (sensor.Status == SensorStatus.On)
             {
@@ -161,6 +156,31 @@ public class TouchHoldDrop : NoteLongDrop
                     userHold.Stop();
                 StopHoldEffect();
             }
+        }
+        else if (GetJudgeTiming() > 0.316667f)
+        {
+            judgeDiff = 316.667f;
+            judgeResult = JudgeType.Miss;
+            sensor.OnSensorStatusChange -= Check;
+            isJudged = true;
+            GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[SensorType.C]++;
+        }
+
+        if (autoPlay)
+        {
+            if (GetJudgeTiming() > 0 && !isJudged ||
+                isJudged && GetRemainingTime() > 0)
+            {
+                manager.SetSensorOn(sensor.Type, guid);
+                isAutoTrigger = true;
+            }
+            else if (GetRemainingTime() == 0)
+                manager.SetSensorOff(sensor.Type, guid);
+        }
+        else if (isAutoTrigger)
+        {
+            manager.SetSensorOff(sensor.Type, guid);
+            isAutoTrigger = false;
         }
 
     }
@@ -200,15 +220,12 @@ public class TouchHoldDrop : NoteLongDrop
     }
     private void OnDestroy()
     {
-        var diff = judgeDiff - 450;
-        if (judgeDiff > 0)
-            diff = MathF.Max(judgeDiff, 250) + 200;
-        var realityHT = LastFor - 0.45f;
-        var percent = MathF.Min(1, ((userHold.ElapsedMilliseconds - diff) / 1000f) / realityHT);
+        var realityHT = LastFor - 0.45f - (judgeDiff / 1000f);
+        var percent = MathF.Min(1, (userHold.ElapsedMilliseconds / 1000f) / realityHT);
         JudgeType result = judgeResult;
         if (realityHT > 0)
         {
-            if (percent == 1)
+            if (percent >= 0.95f)
                 result = judgeResult;
             else if (percent >= 0.67f)
             {
@@ -238,6 +255,7 @@ public class TouchHoldDrop : NoteLongDrop
         }
         
         GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
+        print($"TouchHold: {MathF.Round(percent * 100, 2)}%\nTotal Len : {MathF.Round(realityHT * 1000, 2)}ms");
         if (!isJudged)
             GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[SensorType.C]++;
         if (isFirework && result != JudgeType.Miss)
