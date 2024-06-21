@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using static NoteEffectManager;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
+using static UnityEditor.PlayerSettings;
 
 public class SlideDrop : NoteLongDrop, IFlasher
 {
@@ -94,8 +96,6 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
         // Connection Slide Handle
 
-
-
         if(SubSlides.Count != 0)
         {
             foreach(var obj in SubSlides)
@@ -109,8 +109,6 @@ public class SlideDrop : NoteLongDrop, IFlasher
             
         }
 
-
-        
         var sManagerObj = GameObject.Find("Sensors");
         var count = sManagerObj.transform.childCount;
         for (int i = 0; i < count;i++)
@@ -282,52 +280,8 @@ public class SlideDrop : NoteLongDrop, IFlasher
         }
         else
         {
-            var process = (LastFor - timing) / LastFor;
-            process = MathF.Min(1f - process, 1f);
-            var pos = (slidePositions.Count - 1) * process;
-            var index = Math.Min((int)pos, slidePositions.Count);
-            try
-            {
-                if (index == slidePositions.Count - 1)
-                {
-                    spriteRenderer_star.color = Color.white;
-                    star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-
-                    star_slide.transform.position = slidePositions[index];
-                    
-                    if (ConnectInfo.IsConnSlide && !ConnectInfo.IsGroupPartEnd)
-                        DestroySelf(true);
-                    else if (isFinished && isJudged)
-                        DestroySelf();
-                }
-                else
-                {
-                    spriteRenderer_star.color = Color.white;
-                    star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-
-                    try
-                    {
-                        star_slide.transform.position = (slidePositions[index + 1] - slidePositions[index]) * (pos - index) +
-                                                        slidePositions[index];
-                        var delta = Mathf.DeltaAngle(slideRotations[index + 1].eulerAngles.z,
-                            slideRotations[index].eulerAngles.z) * (pos - index);
-                        delta = Mathf.Abs(delta);
-                        applyStarRotation(
-                            Quaternion.Euler(0f, 0f,
-                                Mathf.MoveTowardsAngle(slideRotations[index].eulerAngles.z,
-                                    slideRotations[index + 1].eulerAngles.z, delta)
-                            )
-                        );
-                    }
-                    catch
-                    {
-                    }
-                }
-                Running();
-            }
-            catch
-            {
-            }
+            UpdateStar();
+            Running();
         }
 
         Check();
@@ -557,6 +511,45 @@ public class SlideDrop : NoteLongDrop, IFlasher
             sManager.SetSensorOff(t, guid);
         isDestroying = true;
     }
+    void UpdateStar()
+    {
+        spriteRenderer_star.color = Color.white;
+        star_slide.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+
+        var process = MathF.Min((LastFor - GetRemainingTime()) / LastFor,1);
+        var indexProcess = (slidePositions.Count - 1) * process;
+        var index = (int)indexProcess;
+        var pos = indexProcess - index;
+
+        if(process == 1)
+        {
+            star_slide.transform.position = slidePositions.LastOrDefault();
+            applyStarRotation(slideRotations.LastOrDefault());
+            if (ConnectInfo.IsConnSlide && !ConnectInfo.IsGroupPartEnd)
+                DestroySelf(true);
+            else if (isFinished && isJudged)
+                DestroySelf();
+        }
+        else
+        {
+            var a = slidePositions[index + 1];
+            var b = slidePositions[index];
+            var ba = a - b;
+            var newPos = ba * pos + b;
+
+            star_slide.transform.position = newPos;
+            if (index < slideRotations.Count - 1)
+            {
+                var _a = slideRotations[index + 1].eulerAngles.z;
+                var _b = slideRotations[index].eulerAngles.z;
+                var dAngle = Mathf.DeltaAngle(_b, _a) * pos;
+                dAngle = Mathf.Abs(dAngle);
+                var newRotation = Quaternion.Euler(0f, 0f,
+                                Mathf.MoveTowardsAngle(_b, _a, dAngle));
+                applyStarRotation(newRotation);
+            }
+        } 
+    }
     
     private void OnEnable()
     {
@@ -592,8 +585,6 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 slideOK.transform.position += new Vector3(Mathf.Sin(angel) * 0.27f, Mathf.Cos(angel) * -0.27f);
             }
         }
-
-
         spriteRenderer_star = star_slide.GetComponent<SpriteRenderer>();
 
         if(isBreak)
@@ -615,7 +606,13 @@ public class SlideDrop : NoteLongDrop, IFlasher
             slidePositions.Add(bars.transform.position);
             slideRotations.Add(Quaternion.Euler(bars.transform.rotation.eulerAngles + new Vector3(0f, 0f, 18f)));
         }
-        
+        var endPos = getPositionFromDistance(4.8f, endPosition);
+        var x = slidePositions.LastOrDefault() - Vector3.zero;
+        var y = endPos - Vector3.zero;
+        var angle = Mathf.Acos(Vector3.Dot(x,y) / (x.magnitude * y.magnitude)) * Mathf.Rad2Deg;
+        var q = slideRotations.LastOrDefault() * Quaternion.Euler(0, 0, -angle);
+        slidePositions.Add(endPos);
+        slideRotations.Add(q);
         foreach (var gm in slideBars)
         {
             var sr = gm.GetComponent<SpriteRenderer>();

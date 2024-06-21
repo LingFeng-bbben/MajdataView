@@ -28,11 +28,12 @@ public class NoteDrop : MonoBehaviour
     /// <para>当前时刻在正解帧前方，结果为负数</para>
     /// </returns>
     protected float GetJudgeTiming() => timeProvider.AudioTime - time;
-    protected Vector3 getPositionFromDistance(float distance)
+    protected Vector3 getPositionFromDistance(float distance) => getPositionFromDistance(distance, startPosition);
+    protected Vector3 getPositionFromDistance(float distance,int position)
     {
         return new Vector3(
-            distance * Mathf.Cos((startPosition * -2f + 5f) * 0.125f * Mathf.PI),
-            distance * Mathf.Sin((startPosition * -2f + 5f) * 0.125f * Mathf.PI));
+            distance * Mathf.Cos((position * -2f + 5f) * 0.125f * Mathf.PI),
+            distance * Mathf.Sin((position * -2f + 5f) * 0.125f * Mathf.PI));
     }
 }
 
