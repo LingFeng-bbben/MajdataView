@@ -58,9 +58,10 @@ namespace Assets.Scripts.Notes
         }
         protected void FixedUpdate()
         {
-            if (!isJudged && timeProvider.AudioTime - time > 0.15f)
+            if (!isJudged && GetJudgeTiming() > 0.15f)
             {
                 judgeResult = JudgeType.Miss;
+                isJudged = true;
                 Destroy(tapLine);
                 Destroy(gameObject);
             }

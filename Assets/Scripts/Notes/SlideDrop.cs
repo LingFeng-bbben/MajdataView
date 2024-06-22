@@ -3,11 +3,8 @@ using Assets.Scripts.Notes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using static NoteEffectManager;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
-using static UnityEditor.PlayerSettings;
 
 public class SlideDrop : NoteLongDrop, IFlasher
 {
@@ -54,6 +51,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
     public ConnSlideInfo ConnectInfo { get; set; }
     public bool isFinished { get => judgeQueue.Count == 0; }
+    public bool isPendingFinish { get => judgeQueue.Count == 1; }
     bool canShine = false;
 
     Animator fadeInAnimator = null;
@@ -78,6 +76,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
     bool canCheck = false;
     List<Sensor> registerSensors = new();
+    float judgeTiming;
 
     private void Start()
     {
@@ -96,18 +95,18 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
         // Connection Slide Handle
 
-        if(SubSlides.Count != 0)
-        {
-            foreach(var obj in SubSlides)
-            {
-                var slide = obj.GetComponent<SlideDrop>();
-                var slideBars = slide.GetSlideBars();
-                foreach (var bar in slideBars)
-                    bar.transform.SetParent(transform);
-                Destroy(obj);
-            }
+        //if(SubSlides.Count != 0)
+        //{
+        //    foreach(var obj in SubSlides)
+        //    {
+        //        var slide = obj.GetComponent<SlideDrop>();
+        //        var slideBars = slide.GetSlideBars();
+        //        foreach (var bar in slideBars)
+        //            bar.transform.SetParent(transform);
+        //        Destroy(obj);
+        //    }
             
-        }
+        //}
 
         var sManagerObj = GameObject.Find("Sensors");
         var count = sManagerObj.transform.childCount;
@@ -121,7 +120,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         var _slideIndex = areaStep.Skip(1).ToArray();
         if (_slideIndex.Length != judgeSensors.Count)
             _slideIndex = null;
-        for(int i =0; i < judgeSensors.Count;i++)
+        for(int i = 0; i < judgeSensors.Count;i++)
         {
             var sensor = judgeSensors[i];
             int index = 0;
@@ -160,6 +159,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         _judgeQueue = new(judgeQueue);
 
         parent = ConnectInfo.Parent;
+        judgeTiming = time + LastFor * CalJudgeTiming();
     }
 
     void GetSensors(RectTransform[] sensors)
@@ -386,8 +386,8 @@ public class SlideDrop : NoteLongDrop, IFlasher
         var timing = timeProvider.AudioTime - time;
         var starTiming = timeStart + (time - timeStart) * 0.667;
         var pTime = LastFor / areaStep.Last();
-        var judgeTime = time + pTime * (areaStep.LastOrDefault() - 3.5f);// 正解帧
-        var stayTime = (time + LastFor) - judgeTime; // 停留时间
+        //var judgeTiming = time + pTime * (areaStep.LastOrDefault() - 3.5f);// 正解帧
+        var stayTime = (time + LastFor) - judgeTiming; // 停留时间
         if (!isJudged)
         {
             arriveTime = timeProvider.AudioTime;
@@ -402,7 +402,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             float grInterval = MathF.Max(0.4f - extInterval, 0);        // Great总区间
             float gdInterval = MathF.Max(0.3333334f - ext, 0); // Good总区间
 
-            var diff = judgeTime - triggerTime; // 大于0为Fast，小于为Late
+            var diff = judgeTiming - triggerTime; // 大于0为Fast，小于为Late
             bool isFast = false;
             JudgeType? judge = null;
 
@@ -456,12 +456,38 @@ public class SlideDrop : NoteLongDrop, IFlasher
         else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.667)
             DestroySelf();
     }
+    float CalJudgeTiming()
+    {
+        var s = judgeSensors.LastOrDefault().gameObject.transform.GetComponent<RectTransform>();
+        var starRadius = 0.763736616f;
+        var rCenter = s.position;
+        var rWidth = s.rect.width * s.lossyScale.x;
+        var rHeight = s.rect.height * s.lossyScale.y;
+
+        var radius = Math.Max(rWidth, rHeight) / 2;
+        for (float process = 0.8f; process < 1;process += 0.0001f)
+        {
+            var indexProcess = (slidePositions.Count - 1) * process;
+            var index = (int)indexProcess;
+            var pos = indexProcess - index;
+
+            var a = slidePositions[index + 1];
+            var b = slidePositions[index];
+            var ba = a - b;
+            var newPos = ba * pos + b;
+
+            if ((newPos - rCenter).sqrMagnitude <= (radius * radius + starRadius * starRadius))
+                return process;
+        }
+        return 0.9f;
+    }
     void TooLateJudge()
     {
         if (judgeQueue.Count == 1)
             slideOK.GetComponent<LoadJustSprite>().setLateGd();
         else
             slideOK.GetComponent<LoadJustSprite>().setMiss();
+        isJudged = true;
         DestroySelf();
     }
     void DestroySelf(bool onlyStar = false)
@@ -640,6 +666,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 sr.sprite = spriteNormal;
             }
         }
+        
     }
     private void setSlideBarAlpha(float alpha)
     {

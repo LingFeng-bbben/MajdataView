@@ -108,9 +108,10 @@ public class TouchDrop : TouchBase
     }
     private void FixedUpdate()
     {
-        if (!isJudged && timeProvider.AudioTime - time > 0.316667f)
+        if (!isJudged && GetJudgeTiming() > 0.316667f)
         {
             judgeResult = JudgeType.Miss;
+            isJudged = true;
             Destroy(gameObject);
         }
         else if (isJudged)
@@ -119,9 +120,9 @@ public class TouchDrop : TouchBase
     void Judge()
     {
 
-        const int JUDGE_GOOD_AREA = 250;
-        const int JUDGE_GREAT_AREA = 216;
-        const int JUDGE_PERFECT_AREA = 183;
+        const float JUDGE_GOOD_AREA = 316.667f;
+        const int JUDGE_GREAT_AREA = 250;
+        const int JUDGE_PERFECT_AREA = 200;
 
         const float JUDGE_SEG_PERFECT = 150f;
 
@@ -212,14 +213,24 @@ public class TouchDrop : TouchBase
     void PlayJudgeEffect()
     {
         var obj = Instantiate(judgeEffect, Vector3.zero,transform.rotation);
+        var _obj = Instantiate(judgeEffect, Vector3.zero, transform.rotation);
         var judgeObj = obj.transform.GetChild(0);
-        var d = transform.position.magnitude;
-        if (d != 0)
-            judgeObj.transform.position = transform.position * (MathF.Max(0, d - 0.46f) / d);
+        var flObj = _obj.transform.GetChild(0);
+
+        if (sensor.Group != SensorGroup.C)
+        {
+            judgeObj.transform.position = GetPosition(-0.46f);
+            flObj.transform.position = GetPosition(-0.92f);
+        }
         else
-            judgeObj.transform.position = transform.position;
+        {
+            judgeObj.transform.position = new Vector3(0, -0.6f, 0);
+            flObj.transform.position = new Vector3(0, -1.08f, 0);
+        }
         judgeObj.GetChild(0).transform.rotation = GetRoation();
+        flObj.GetChild(0).transform.rotation = GetRoation();
         var anim = obj.GetComponent<Animator>();
+        var flAnim = _obj.GetComponent<Animator>();
         switch(judgeResult)
         {
             case JudgeType.LateGood:
@@ -251,7 +262,23 @@ public class TouchDrop : TouchBase
         }
         if(judgeResult != JudgeType.Miss)
             Instantiate(tapEffect, transform.position, transform.rotation);
+
+        GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayFastLate(_obj,flAnim,judgeResult);
+
         anim.SetTrigger("touch");
+    }
+    /// <summary>
+    /// 获取当前坐标指定距离的坐标
+    /// <para>方向：原点</para>
+    /// </summary>
+    /// <param name="magnitude"></param>
+    /// <param name="distance"></param>
+    /// <returns></returns>
+    Vector3 GetPosition(float distance)
+    {
+        var d = transform.position.magnitude;
+        var ratio = MathF.Max(0, d + distance) / d;
+        return transform.position * ratio;
     }
     public void setLayer(int newLayer)
     {

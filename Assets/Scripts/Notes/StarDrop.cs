@@ -79,10 +79,10 @@ public class StarDrop : TapBase
     protected override void Update()
     {
         var songSpeed = timeProvider.CurrentSpeed;
-        var timing = timeProvider.AudioTime - time;
-        var distance = timing * speed + 4.8f;
+        var judgeTiming = GetJudgeTiming();
+        var distance = judgeTiming * speed + 4.8f;
 
-        if (timing > 0 && isNoHead)
+        if (judgeTiming > 0 && isNoHead)
         {
             Destroy(tapLine);
             Destroy(gameObject);
@@ -100,7 +100,7 @@ public class StarDrop : TapBase
             if (!slide.activeSelf) slide.SetActive(true);
         if (timeProvider.isStart)
             transform.Rotate(0f, 0f, -180f * Time.deltaTime * songSpeed / rotateSpeed);
-        if (timing > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+        if (judgeTiming > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
             manager.SetSensorOn(sensor.Type, guid);
     }
     protected override void OnDestroy()

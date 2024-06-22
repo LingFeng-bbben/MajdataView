@@ -121,7 +121,10 @@ public class NoteEffectManager : MonoBehaviour
                     tapAnimators[pos].SetTrigger("bGreat");
                 }
                 else
+                {
                     greatEffects[pos].SetActive(true);
+                    greatEffects[pos].gameObject.GetComponent<Animator>().SetTrigger("great");
+                }
                 break;
             case JudgeType.LatePerfect2:
             case JudgeType.FastPerfect2:
@@ -156,6 +159,11 @@ public class NoteEffectManager : MonoBehaviour
         else
             judgeAnimators[pos].SetTrigger("perfect");
     }
+    /// <summary>
+    /// Tap，Hold，Star
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="judge"></param>
     public void PlayFastLate(int position,JudgeType judge)
     {
         var customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
@@ -168,10 +176,34 @@ public class NoteEffectManager : MonoBehaviour
         fastLateEffects[pos].SetActive(true);
         bool isFast = (int)judge > 7;
         if(isFast)
-            fastLateEffects[pos].transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite = customSkin.FastText;
+             fastLateEffects[pos].transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite = customSkin.FastText;
         else
             fastLateEffects[pos].transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite = customSkin.LateText;
         fastLateAnims[pos].SetTrigger("perfect");
+
+    }
+    /// <summary>
+    /// Touch，TouchHold
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="anim"></param>
+    /// <param name="judge"></param>
+    public void PlayFastLate(GameObject obj,Animator anim, JudgeType judge)
+    {
+        var customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
+        if ((int)judge is (0 or 7))
+        {
+            obj.SetActive(false);
+            Destroy(obj);
+            return;
+        }
+        obj.SetActive(true);
+        bool isFast = (int)judge > 7;
+        if (isFast)
+            obj.transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite = customSkin.FastText;
+        else
+            obj.transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite = customSkin.LateText;
+        anim.SetTrigger("touch");
 
     }
     public void ResetEffect(int position)

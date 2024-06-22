@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Claims;
 using UnityEngine;
 using UnityEngine.U2D;
 using static NoteEffectManager;
@@ -91,9 +92,9 @@ public class TouchHoldDrop : NoteLongDrop
     void Judge()
     {
 
-        const int JUDGE_GOOD_AREA = 250;
-        const int JUDGE_GREAT_AREA = 216;
-        const int JUDGE_PERFECT_AREA = 183;
+        const float JUDGE_GOOD_AREA = 316.667f;
+        const int JUDGE_GREAT_AREA = 250;
+        const int JUDGE_PERFECT_AREA = 200;
 
         const float JUDGE_SEG_PERFECT = 150f;
 
@@ -275,12 +276,18 @@ public class TouchHoldDrop : NoteLongDrop
     void PlayJudgeEffect(JudgeType judgeResult)
     {
         var obj = Instantiate(judgeEffect, Vector3.zero, transform.rotation);
+        var _obj = Instantiate(judgeEffect, Vector3.zero, transform.rotation);
         var judgeObj = obj.transform.GetChild(0);
-        judgeObj.transform.position = transform.position;
+        var flObj = _obj.transform.GetChild(0);
+
+        judgeObj.transform.position = new Vector3(0, -0.6f, 0);
+        flObj.transform.position = new Vector3(0, -1.08f, 0);
+        flObj.GetChild(0).transform.rotation = Quaternion.Euler(Vector3.zero);
         judgeObj.GetChild(0).transform.rotation = Quaternion.Euler(Vector3.zero);
         var anim = obj.GetComponent<Animator>();
 
         var effects = GameObject.Find("NoteEffects");
+        var flAnim = _obj.GetComponent<Animator>();
         GameObject effect;
         switch (judgeResult)
         {
@@ -320,6 +327,8 @@ public class TouchHoldDrop : NoteLongDrop
             default:
                 break;
         }
+        //judgeEffect.transform.position = new Vector3(0, -0.6f, 0);
+        GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayFastLate(_obj, flAnim, judgeResult);
         anim.SetTrigger("touch");
     }
     protected override void StopHoldEffect()

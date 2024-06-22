@@ -255,6 +255,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
             slideOK.GetComponent<LoadJustSprite>().setLateGd();
         else
             slideOK.GetComponent<LoadJustSprite>().setMiss();
+        isJudged = true;
         DestroySelf();
     }
     void CheckAll()
