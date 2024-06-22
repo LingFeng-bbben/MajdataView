@@ -192,6 +192,8 @@ namespace Assets.Scripts.Notes
         }
         protected virtual void OnDestroy()
         {
+            if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+                return;
             var effectManager = GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>();
             effectManager.PlayEffect(startPosition, isBreak, judgeResult);
             effectManager.PlayFastLate(startPosition, judgeResult);

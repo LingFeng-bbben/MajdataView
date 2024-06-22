@@ -112,6 +112,10 @@ public class JudgeArea
     {
         areas.ForEach(x => x.IsLast = true);
     }
+    public void SetNonLast()
+    {
+        areas.ForEach(x => x.IsLast = false);
+    }
     public void Judge(SensorType type ,SensorStatus status)
     {
         var areaList = areas.Where(x => x.Type == type);

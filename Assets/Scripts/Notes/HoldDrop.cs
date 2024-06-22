@@ -321,6 +321,8 @@ public class HoldDrop : NoteLongDrop
     }
     private void OnDestroy()
     {
+        if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+            return;
         var realityHT = LastFor - 0.3f - (judgeDiff / 1000f);
         var percent = MathF.Min(1, (userHold.ElapsedMilliseconds  / 1000f) / realityHT);
         JudgeType result = judgeResult;

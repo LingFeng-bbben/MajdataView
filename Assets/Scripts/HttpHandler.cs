@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class HttpHandler : MonoBehaviour
 {
+    public bool IsReloding { get; set; } = false;
     private readonly HttpListener http = new();
     private Task listen;
     private string request = "";
@@ -27,6 +28,7 @@ public class HttpHandler : MonoBehaviour
     private void Update()
     {
         if (request == "") return;
+        IsReloding = false;
         var data = JsonConvert.DeserializeObject<EditRequestjson>(request);
 
         var loader = GameObject.Find("DataLoader").GetComponent<JsonDataLoader>();
@@ -104,6 +106,7 @@ public class HttpHandler : MonoBehaviour
         {
             screenRecorder.StopRecording();
             timeProvider.ResetStartTime();
+            IsReloding = true;
             SceneManager.LoadScene(1);
         }
 

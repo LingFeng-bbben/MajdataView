@@ -198,6 +198,8 @@ public class TouchDrop : TouchBase
     }
     private void OnDestroy()
     {
+        if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+            return;
         multTouchHandler.cancelTouch(this);
         PlayJudgeEffect();
         GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().touchCount++;

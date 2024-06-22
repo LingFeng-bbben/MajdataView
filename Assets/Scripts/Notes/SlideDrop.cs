@@ -3,6 +3,7 @@ using Assets.Scripts.Notes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Serialization;
 using UnityEngine;
 using static NoteEffectManager;
 
@@ -154,7 +155,10 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 registerSensors.Add(sManager.GetSensor(judgeSensors[3].Type + 8));
             }
         }
-        judgeQueue.LastOrDefault().SetIsLast();
+        if (ConnectInfo.IsConnSlide && ConnectInfo.IsGroupPartEnd)
+            judgeQueue.LastOrDefault().SetIsLast();
+        else if (ConnectInfo.IsConnSlide)
+            judgeQueue.LastOrDefault().SetNonLast();
         registerSensors.AddRange(judgeSensors);
         _judgeQueue = new(judgeQueue);
 
@@ -208,7 +212,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             if (ConnectInfo.IsGroupPartHead && startTiming >= -0.040f)
                 canCheck = true;
             else if (!ConnectInfo.IsGroupPartHead)
-                canCheck = ConnectInfo.ParentFinished;
+                canCheck = ConnectInfo.ParentFinished || ConnectInfo.ParentPendingFinish;
         }
         else if (startTiming >= -0.050f)
             canCheck = true;
@@ -492,8 +496,13 @@ public class SlideDrop : NoteLongDrop, IFlasher
     }
     void DestroySelf(bool onlyStar = false)
     {
+        
         if (onlyStar)
+        { 
             Destroy(star_slide);
+            star_slide = null;
+            ClearTriggeredSensor();
+        }
         else
         {
             if(ConnectInfo.Parent != null)
@@ -507,12 +516,17 @@ public class SlideDrop : NoteLongDrop, IFlasher
             Destroy(gameObject);
         }
     }
-    void OnDestroy()
+    void ClearTriggeredSensor()
     {
-        if (isDestroying)
-            return;
         var sensors = _judgeQueue.SelectMany(x => x.GetAreas())
                            .Select(x => x.Type);
+        foreach (var t in sensors)
+            sManager.SetSensorOff(t, guid);
+    }
+    void OnDestroy()
+    {
+        if (isDestroying || GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+            return;
         if (ConnectInfo.Parent != null)
             Destroy(ConnectInfo.Parent);
         if(star_slide != null)
@@ -533,8 +547,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             // 如果不是组内最后一个 那么也要将判定条删掉
             Destroy(slideOK);
         }
-        foreach (var t in sensors)
-            sManager.SetSensorOff(t, guid);
+        ClearTriggeredSensor();
         isDestroying = true;
     }
     void UpdateStar()

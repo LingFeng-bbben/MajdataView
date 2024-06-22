@@ -23,6 +23,16 @@ namespace Assets.Scripts.Notes
                     return Parent.GetComponent<SlideDrop>().isFinished;
             }
         }
+        public bool ParentPendingFinish
+        {
+            get
+            {
+                if (Parent == null)
+                    return false;
+                else
+                    return Parent.GetComponent<SlideDrop>().isPendingFinish;
+            }
+        }
 
 
     }

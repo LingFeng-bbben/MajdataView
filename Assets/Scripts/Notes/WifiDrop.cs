@@ -542,7 +542,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
     }
     void OnDestroy()
     {
-        if (isDestroying)
+        if (isDestroying || GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
             return;
         if (ConnectInfo.Parent != null)
             Destroy(ConnectInfo.Parent);
