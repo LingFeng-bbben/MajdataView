@@ -7,6 +7,8 @@ public class StarDrop : TapBase
 
     public bool isDouble;
     public bool isNoHead;
+    public bool isFakeStar = false;
+    public bool isFakeStarRotate = false;
 
     public Sprite tapSpr_Double;
     public Sprite eachSpr_Double;
@@ -89,6 +91,11 @@ public class StarDrop : TapBase
             return;
         }
 
+        if (timeProvider.isStart && !isFakeStar)
+            transform.Rotate(0f, 0f, -180f * Time.deltaTime * songSpeed / rotateSpeed);
+        else if (isFakeStarRotate)
+            transform.Rotate(0f, 0f, 400f * Time.deltaTime);  
+        
         base.Update();
         if (isNoHead)
         {
@@ -96,16 +103,14 @@ public class StarDrop : TapBase
             if (isEX) exSpriteRender.forceRenderingOff = true;
             tapLine.SetActive(false);
         }
-        if (distance >= 1.225f)
+        if (distance >= 1.225f && !isFakeStar)
             if (!slide.activeSelf) slide.SetActive(true);
-        if (timeProvider.isStart)
-            transform.Rotate(0f, 0f, -180f * Time.deltaTime * songSpeed / rotateSpeed);
         if (judgeTiming > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
             manager.SetSensorOn(sensor.Type, guid);
     }
     protected override void OnDestroy()
     {
-        if(!isNoHead)
+        if(!isNoHead || isFakeStar)
             base.OnDestroy();
     }
 }

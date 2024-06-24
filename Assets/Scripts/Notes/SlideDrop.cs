@@ -212,20 +212,20 @@ public class SlideDrop : NoteLongDrop, IFlasher
         }
         if (slideType is "line3" or "line7")// 1-3
         {
-            judgeQueue[1].CanSkip = false;
+            judgeQueue[1].CanSkip = ConnectInfo.IsConnSlide;
             judgeQueue[1].AddArea(judgeSensors[1].Type + 8);
             registerSensors.Add(sManager.GetSensor(judgeSensors[1].Type + 8));
         }
         else if (slideType == "circle3")// 1^3
-            judgeQueue[1].CanSkip = false;
-        else if (slideType[0] == 'L')// 1^3
+            judgeQueue[1].CanSkip = ConnectInfo.IsConnSlide;
+        else if (slideType[0] == 'L')// 1V3
         {
-            judgeQueue[1].CanSkip = false;
+            judgeQueue[1].CanSkip = ConnectInfo.IsConnSlide;
             judgeQueue[1].AddArea(judgeSensors[1].Type + 8);
             registerSensors.Add(sManager.GetSensor(judgeSensors[1].Type + 8));
-            if (slideType == "L5")
+            if (slideType == "L5")// 1V35
             {
-                judgeQueue[3].CanSkip = false;
+                judgeQueue[3].CanSkip = ConnectInfo.IsConnSlide;
                 judgeQueue[3].AddArea(judgeSensors[3].Type + 8);
                 registerSensors.Add(sManager.GetSensor(judgeSensors[3].Type + 8));
             }

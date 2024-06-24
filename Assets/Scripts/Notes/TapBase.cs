@@ -13,7 +13,6 @@ namespace Assets.Scripts.Notes
     {
         public bool isBreak;
         public bool isEX;
-        public bool isFakeStarRotate;
 
         public Sprite tapSpr;
         public Sprite eachSpr;
@@ -95,13 +94,7 @@ namespace Assets.Scripts.Notes
             if (timing > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
                 manager.SetSensorOn(sensor.Type, guid);
 
-            if (isFakeStarRotate)
-                transform.Rotate(0f, 0f, 400f * Time.deltaTime);
-            else
-                transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
             tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
-
-
             if (destScale > 0.3f) tapLine.SetActive(true);
 
             if (distance < 1.225f)

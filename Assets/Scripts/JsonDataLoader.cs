@@ -434,30 +434,36 @@ public class JsonDataLoader : MonoBehaviour
                     var note = timing.noteList[i];
                     if (note.noteType == SimaiNoteType.Tap)
                     {
-                        var GOnote = Instantiate(tapPrefab, notes.transform);
-                        var NDCompo = GOnote.GetComponent<TapDrop>();
-
-                        // note的图层顺序
-                        NDCompo.noteSortOrder = noteSortOrder;
-                        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
+                        GameObject GOnote = null;
+                        TapBase NDCompo = null;
 
                         if (note.isForceStar)
                         {
-                            NDCompo.tapSpr = customSkin.Star;
-                            NDCompo.eachSpr = customSkin.Star_Each;
-                            NDCompo.breakSpr = customSkin.Star_Break;
-                            NDCompo.exSpr = customSkin.Star_Ex;
-                            NDCompo.tapLine = starLine;
-                            NDCompo.isFakeStarRotate = note.isFakeRotate;
+                            GOnote = Instantiate(starPrefab, notes.transform);
+                            var _NDCompo = GOnote.GetComponent<StarDrop>();
+                            _NDCompo.tapSpr = customSkin.Star;
+                            _NDCompo.eachSpr = customSkin.Star_Each;
+                            _NDCompo.breakSpr = customSkin.Star_Break;
+                            _NDCompo.exSpr = customSkin.Star_Ex;
+                            _NDCompo.tapLine = starLine;
+                            _NDCompo.isFakeStarRotate = note.isFakeRotate;
+                            _NDCompo.isFakeStar = true;
+                            NDCompo = _NDCompo;
                         }
                         else
                         {
+                            GOnote = Instantiate(tapPrefab, notes.transform);
+                            NDCompo = GOnote.GetComponent<TapDrop>();
                             //自定义note样式
                             NDCompo.tapSpr = customSkin.Tap;
                             NDCompo.breakSpr = customSkin.Tap_Break;
                             NDCompo.eachSpr = customSkin.Tap_Each;
                             NDCompo.exSpr = customSkin.Tap_Ex;
                         }
+
+                        // note的图层顺序
+                        NDCompo.noteSortOrder = noteSortOrder;
+                        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
 
                         NDCompo.BreakShine = BreakShine;
 
