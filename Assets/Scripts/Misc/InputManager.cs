@@ -100,8 +100,6 @@ public class InputManager : MonoBehaviour
         foreach (var s in sensors.Select(x => x.GetComponent<RectTransform>()))
         {
             var sensor = s.GetComponent<Sensor>();
-            if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
-                continue;
 
             var rCenter = s.position;
             var rWidth = s.rect.width * s.lossyScale.x;

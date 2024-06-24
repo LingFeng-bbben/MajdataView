@@ -420,6 +420,7 @@ public class JsonDataLoader : MonoBehaviour
         var lastNoteTime = loadedData.timingList.Last().time;
 
         foreach (var timing in loadedData.timingList)
+        {
             try
             {
                 if (timing.time < ignoreOffset)
@@ -584,6 +585,7 @@ public class JsonDataLoader : MonoBehaviour
                 GameObject.Find("ErrText").GetComponent<Text>().text =
                     "在第" + (timing.rawTextPositionY + 1) + "行发现问题：\n" + e.Message;
             }
+        }
     }
 
 
@@ -827,24 +829,43 @@ public class JsonDataLoader : MonoBehaviour
         }
 
         GameObject parent = null;
+        List<SlideDrop> subSlides = new();
+        float totalLen = (float)subSlide.Select(x => x.slideTime).Sum();
+        float totalSlideLen = 0;
         for (var i = 0; i <= subSlide.Count - 1; i++)
+        {
+            bool isConn = subSlide.Count != 1;
+            bool isGroupHead = i == 0;
+            bool isGroupEnd = i == subSlide.Count - 1;
             if (note.noteContent.Contains('w')) //wifi
-                parent = InstantiateWifi(timing,
-                                         subSlide[i],
-                                         subSlide.Count != 1,
-                                         i == 0,
-                                         i == subSlide.Count - 1,
-                                         parent);
+            {
+                if (isConn)
+                    throw new InvalidOperationException("不允许Wifi Slide作为Connection Slide的一部分");
+                InstantiateWifi(timing,subSlide[i]);
+            }
             else
-                parent = InstantiateStar(timing,
-                                         subSlide[i],
-                                         subSlide.Count != 1,
-                                         i == 0,
-                                         i == subSlide.Count - 1,
-                                         parent) ;
+            {
+                ConnSlideInfo info = new ConnSlideInfo()
+                {
+                    TotalLength = totalLen,
+                    IsGroupPart = isConn,
+                    IsGroupPartHead = isGroupHead,
+                    IsGroupPartEnd = isGroupEnd,
+                    Parent = parent
+                };
+                parent = InstantiateStar(timing,subSlide[i],info);
+                subSlides.Add(parent.GetComponent<SlideDrop>());
+            }
+        }
+        subSlides.ForEach(s =>
+        {
+            s.Initialize();
+            totalSlideLen += s.GetSlideLength();
+        });
+        subSlides.ForEach(s => s.ConnectInfo.TotalSlideLen = totalSlideLen);
     }
 
-    private GameObject InstantiateWifi(SimaiTimingPoint timing, SimaiNote note, bool isConn, bool isGroupHead, bool isGroupEnd, GameObject parent)
+    private GameObject InstantiateWifi(SimaiTimingPoint timing, SimaiNote note)
     {
         var str = note.noteContent.Substring(0, 3);
         var digits = str.Split('w');
@@ -923,10 +944,10 @@ public class JsonDataLoader : MonoBehaviour
 
         WifiCompo.ConnectInfo = new ConnSlideInfo()
         {
-            IsGroupPart = isConn,
-            IsGroupPartHead = isGroupHead,
-            IsGroupPartEnd = isGroupEnd,
-            Parent = parent
+            IsGroupPart = false,
+            IsGroupPartHead = true,
+            IsGroupPartEnd = true,
+            Parent = null
         };
         WifiCompo.isBreak = note.isSlideBreak;
 
@@ -949,7 +970,7 @@ public class JsonDataLoader : MonoBehaviour
         return slideWifi;
     }
 
-    private GameObject InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isConn, bool isGroupHead,bool isGroupEnd, GameObject parent)
+    private GameObject InstantiateStar(SimaiTimingPoint timing, SimaiNote note,ConnSlideInfo info)
     {
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
@@ -1026,13 +1047,7 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
-        SliCompo.ConnectInfo = new ConnSlideInfo()
-        {
-            IsGroupPart = isConn,
-            IsGroupPartHead = isGroupHead,
-            IsGroupPartEnd = isGroupEnd,
-            Parent = parent
-        };
+        SliCompo.ConnectInfo = info;
         SliCompo.isBreak = note.isSlideBreak;
         if (note.isSlideBreak) slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star_Break;
 

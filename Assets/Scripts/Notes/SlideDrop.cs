@@ -258,6 +258,16 @@ public class SlideDrop : NoteLongDrop, IFlasher
     private void Start()
     {
         Initialize();
+        if(ConnectInfo.IsConnSlide)
+        {
+            LastFor = (ConnectInfo.TotalLength / ConnectInfo.TotalSlideLen) * GetSlideLength();
+            if(!ConnectInfo.IsGroupPartHead)
+            {
+                var parent = ConnectInfo.Parent.GetComponent<SlideDrop>();
+                time = parent.time + parent.LastFor;
+                judgeTiming = time + LastFor * CalJudgeTiming();
+            }
+        }
     }
     void GetSensors(RectTransform[] sensors)
     {
@@ -383,6 +393,17 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
         Check();
     }
+    public float GetSlideLength()
+    {
+        float len = 0;
+        for (int i = 0; i < slidePositions.Count - 2; i++)
+        {
+            var a = slidePositions[i];
+            var b = slidePositions[i + 1];
+            len += (b - a).magnitude; 
+        }
+        return len;
+    }
     /// <summary>
     /// 判定队列检查
     /// </summary>
@@ -390,6 +411,12 @@ public class SlideDrop : NoteLongDrop, IFlasher
     {
         if (isFinished || !canCheck)
             return;
+
+        if (ConnectInfo.Parent != null && judgeQueue.Count < _judgeQueue.Count)
+        {
+            if(!ConnectInfo.ParentFinished)
+                ConnectInfo.Parent.GetComponent<SlideDrop>().ForceFinish();
+        }
         try
         {
             if (judgeQueue.Count == 0)
@@ -491,7 +518,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
     /// </summary>
     void Judge()
     {
-        if (!ConnectInfo.IsGroupPartEnd || !ConnectInfo.IsConnSlide)
+        if (!ConnectInfo.IsGroupPartEnd && ConnectInfo.IsConnSlide)
             return;
         var starTiming = timeStart + (time - timeStart) * 0.667;
         var stayTime = (time + LastFor) - judgeTiming; // 停留时间
@@ -576,7 +603,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         var rHeight = s.rect.height * s.lossyScale.y;
 
         var radius = Math.Max(rWidth, rHeight) / 2;
-        for (float process = 0.85f; process < 1;process += 0.1f)
+        for (float process = 0.85f; process < 1;process += 0.01f)
         {
             var indexProcess = (slidePositions.Count - 1) * process;
             var index = (int)indexProcess;
