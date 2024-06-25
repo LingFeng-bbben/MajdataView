@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static NoteEffectManager;
 
 public class ObjectCounter : MonoBehaviour
 {
@@ -30,6 +32,33 @@ public class ObjectCounter : MonoBehaviour
 
     private EditorComboIndicator textMode = EditorComboIndicator.Combo;
 
+    InputManager inputManager;
+
+    long judgedScore = 0;
+    long judgedClassicScore = 0;
+    long lostScore = 0;
+    long lostClassicScore = 0;
+    Dictionary<JudgeType, int> judgedTapCount = new()
+    {
+        {JudgeType.FastGood, 0 },
+        {JudgeType.FastGreat2, 0 },
+        {JudgeType.FastGreat1, 0 },
+        {JudgeType.FastPerfect2, 0 },
+        {JudgeType.FastPerfect1, 0 },
+        {JudgeType.Perfect, 0 },
+        {JudgeType.LatePerfect1, 0 },
+        {JudgeType.LatePerfect2, 0 },
+        {JudgeType.LateGreat1, 0 },
+        {JudgeType.LateGreat2, 0 },
+        {JudgeType.LateGood, 0 },
+        {JudgeType.Miss, 0 },
+    };
+    Dictionary<JudgeType, int> judgedHoldCount;
+    Dictionary<JudgeType, int> judgedTouchCount = new() { };
+    Dictionary<JudgeType, int> judgedTouchHoldCount = new() { };
+    Dictionary<JudgeType, int> judgedSlideCount = new() { };
+    Dictionary<JudgeType, int> judgedBreakCount = new() { };
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -45,6 +74,12 @@ public class ObjectCounter : MonoBehaviour
         statusScore.gameObject.SetActive(false);
         statusAchievement.gameObject.SetActive(false);
         statusDXScore.gameObject.SetActive(false);
+
+        judgedHoldCount = new(judgedTapCount);
+        judgedTouchCount = new(judgedTapCount);
+        judgedTouchHoldCount = new(judgedTapCount);
+        judgedSlideCount = new(judgedTapCount);
+        judgedBreakCount = new(judgedTapCount);
     }
 
     // Update is called once per frame
@@ -52,6 +87,7 @@ public class ObjectCounter : MonoBehaviour
     {
         UpdateState();
         UpdateOutput();
+        inputManager = GameObject.Find("Input").GetComponent<InputManager>();
     }
 
     private void UpdateOutput()
@@ -60,7 +96,114 @@ public class ObjectCounter : MonoBehaviour
         if (FiSumScore() == 0) return;
         UpdateSideOutput();
     }
+    void CalNoteScore(SimaiNoteType noteType, JudgeType result, bool isBreak)
+    {
+        int lost = 0;
+        int lostClassic = 0;
+        int judged = 0;
+        int judgedClassic = 0;
 
+        if(noteType is SimaiNoteType.Tap or SimaiNoteType.Touch)
+        {
+            switch(result)
+            {
+                case JudgeType.LatePerfect2:
+                case JudgeType.LatePerfect1:
+                case JudgeType.Perfect:
+                case JudgeType.FastPerfect1:
+                case JudgeType.FastPerfect2:
+                    judged = judgedClassic = 500;
+                    lost = lostClassic = 0;
+                    break;
+                case JudgeType.LateGreat2:
+                case JudgeType.LateGreat1:
+                case JudgeType.LateGreat:
+                case JudgeType.FastGreat:
+                case JudgeType.FastGreat1:
+                case JudgeType.FastGreat2:
+                    judged = judgedClassic = 400;
+                    lost = lostClassic = 100;
+                    break;
+                case JudgeType.LateGood:
+                case JudgeType.FastGood:
+                    judged = judgedClassic = 250;
+                    lost = lostClassic = 250;
+                    break;
+                case JudgeType.Miss:
+                    judged = judgedClassic = 0;
+                    lost = lostClassic = 500;
+                    break;
+            }
+        }
+        else if(noteType is SimaiNoteType.Hold or SimaiNoteType.TouchHold)
+        {
+            switch (result)
+            {
+                case JudgeType.LatePerfect2:
+                case JudgeType.LatePerfect1:
+                case JudgeType.Perfect:
+                case JudgeType.FastPerfect1:
+                case JudgeType.FastPerfect2:
+                    judged = judgedClassic = 1000;
+                    lost = lostClassic = 0;
+                    break;
+                case JudgeType.LateGreat2:
+                case JudgeType.LateGreat1:
+                case JudgeType.LateGreat:
+                case JudgeType.FastGreat:
+                case JudgeType.FastGreat1:
+                case JudgeType.FastGreat2:
+                    judged = judgedClassic = 800;
+                    lost = lostClassic = 200;
+                    break;
+                case JudgeType.LateGood:
+                case JudgeType.FastGood:
+                    judged = judgedClassic = 500;
+                    lost = lostClassic = 500;
+                    break;
+                case JudgeType.Miss:
+                    judged = judgedClassic = 0;
+                    lost = lostClassic = 500;
+                    break;
+            }
+        }
+        judgedScore += judged;
+        judgedClassicScore += judgedClassic;
+        lostScore += lost;
+        lostClassicScore += lostClassic;
+    }
+    internal void AddJudgeResult(SimaiNoteType noteType,JudgeType result,bool isBreak = false)
+    {
+        switch(noteType)
+        {
+            case SimaiNoteType.Tap:
+                if (isBreak)
+                    judgedBreakCount[result]++;
+                else
+                    judgedTapCount[result]++;
+                CalNoteScore(noteType, result, isBreak);
+                break;
+            case SimaiNoteType.Slide:
+                if (isBreak)
+                    judgedBreakCount[result]++;
+                else
+                    judgedSlideCount[result]++; 
+                break;
+            case SimaiNoteType.Hold:
+                if (isBreak)
+                    judgedBreakCount[result]++;
+                else
+                    judgedHoldCount[result]++;
+                break;
+            case SimaiNoteType.Touch:
+                judgedTouchCount[result]++; 
+                break;
+            case SimaiNoteType.TouchHold:
+                judgedTouchHoldCount[result]++;
+                break;
+
+        }
+    }
     private void UpdateMainOutput()
     {
         var comboValue = tapCount + holdCount + slideCount + touchCount + breakCount;
@@ -124,11 +267,13 @@ public class ObjectCounter : MonoBehaviour
             "SLD: {2} / {7}\n" +
             "TOH: {3} / {8}\n" +
             "BRK: {4} / {9}\n" +
-            "ALL: {10} / {11}",
+            "ALL: {10} / {11}\n" +
+            "AutoPlay: {12}",
             tapCount, holdCount, slideCount, touchCount, breakCount,
             tapSum, holdSum, slideSum, touchSum, breakSum,
             comboN,
-            tapSum + holdSum + slideSum + touchSum + breakSum
+            tapSum + holdSum + slideSum + touchSum + breakSum,
+            inputManager.AutoPlay ? "Enable" : "Disable"
         );
 
         rate.text = string.Format(
