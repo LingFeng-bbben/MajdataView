@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Sensor;
+﻿using static Sensor;
 using UnityEngine;
+using Assets.Scripts.Notes;
 
 namespace Assets.Scripts
 {
@@ -18,6 +14,7 @@ namespace Assets.Scripts
 
 
         protected Sprite[] judgeText;
+        public TouchGroup GroupInfo;
 
         protected Quaternion GetRoation()
         {
@@ -28,20 +25,21 @@ namespace Assets.Scripts
 
             return Quaternion.Euler(new Vector3(0, 0, -deg));
         }
-        public SensorType GetSensor()
+        public SensorType GetSensor() => GetSensor(areaPosition, startPosition);
+        public static SensorType GetSensor(char areaPos, int startPos)
         {
-            switch (areaPosition)
+            switch (areaPos)
             {
                 case 'A':
-                    return (SensorType)(startPosition - 1);
+                    return (SensorType)(startPos - 1);
                 case 'B':
-                    return (SensorType)(startPosition + 7);
+                    return (SensorType)(startPos + 7);
                 case 'C':
                     return SensorType.C;
                 case 'D':
-                    return (SensorType)(startPosition + 16);
+                    return (SensorType)(startPos + 16);
                 case 'E':
-                    return (SensorType)(startPosition + 24);
+                    return (SensorType)(startPos + 24);
                 default:
                     return SensorType.A1;
             }

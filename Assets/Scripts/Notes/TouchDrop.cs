@@ -108,7 +108,18 @@ public class TouchDrop : TouchBase
     }
     private void FixedUpdate()
     {
-        if (!isJudged && GetJudgeTiming() > 0.316667f)
+        if(!isJudged && GetJudgeTiming() <= 0.316667f)
+        {
+            if (GroupInfo is null)
+                return;
+            if (GroupInfo.Percent > 0.5f && GroupInfo.JudgeResult != null)
+            {
+                isJudged = true;
+                judgeResult = (JudgeType)GroupInfo.JudgeResult;
+                Destroy(gameObject);
+            }
+        }
+        else if (!isJudged)
         {
             judgeResult = JudgeType.Miss;
             isJudged = true;
@@ -202,6 +213,8 @@ public class TouchDrop : TouchBase
             return;
         multTouchHandler.cancelTouch(this);
         PlayJudgeEffect();
+        if (GroupInfo is not null && judgeResult != JudgeType.Miss)
+            GroupInfo.JudgeResult = judgeResult;
         GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().touchCount++;
         GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[sensor.Type]++;
         if (isFirework && judgeResult != JudgeType.Miss)
