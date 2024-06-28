@@ -206,30 +206,12 @@ public class WifiDrop : NoteLongDrop,IFlasher
         var startTiming = timeProvider.AudioTime - timeStart;
         var forceJudgeTiming = time + LastFor + 0.6;
 
-        if (ConnectInfo.IsGroupPart)
-        {
-            if (ConnectInfo.IsGroupPartHead && startTiming >= -0.040f)
-                canCheck = true;
-            else if (!ConnectInfo.IsGroupPartHead)
-                canCheck = ConnectInfo.ParentFinished;
-        }
-        else if (startTiming >= -0.050f)
+        if (startTiming >= -0.050f)
             canCheck = true;
-
-        if (timing > 0)
+        else if (timing > 0)
             Running();        
-
-        if (ConnectInfo.IsConnSlide)
-        {
-            if (ConnectInfo.IsGroupPartEnd && isFinished)
-            {
-                HideBar(areaStep.LastOrDefault());
-                Judge();
-            }
-            else if (ConnectInfo.IsGroupPartEnd && timeProvider.AudioTime - forceJudgeTiming >= 0)
-                TooLateJudge();
-        }
-        else if (isFinished)
+        
+        if (isFinished)
         {
             HideBar(areaStep.LastOrDefault());
             Judge();
@@ -329,12 +311,10 @@ public class WifiDrop : NoteLongDrop,IFlasher
     }
     void Judge()
     {
-        if (!isGroupPartEnd)
-            return;
         var timing = timeProvider.AudioTime - time;
         var starTiming = timeStart + (time - timeStart) * 0.667;
         var pTime = LastFor / areaStep.Last();
-        var judgeTime = time + pTime * (areaStep.LastOrDefault() - 3.5f);// 正解帧
+        var judgeTime = time + pTime * (areaStep.LastOrDefault() - 2.1f);// 正解帧
         var stayTime = (time + LastFor) - judgeTime; // 停留时间
         if (!isJudged)
         {

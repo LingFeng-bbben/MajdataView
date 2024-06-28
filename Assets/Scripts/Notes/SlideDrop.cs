@@ -140,7 +140,11 @@ public class SlideDrop : NoteLongDrop, IFlasher
         var x = slidePositions.LastOrDefault() - Vector3.zero;
         var y = endPos - Vector3.zero;
         var angle = Mathf.Acos(Vector3.Dot(x, y) / (x.magnitude * y.magnitude)) * Mathf.Rad2Deg;
-        var q = slideRotations.LastOrDefault() * Quaternion.Euler(0, 0, -angle);
+        var offset = slideRotations.TakeLast(1).First().eulerAngles - slideRotations.TakeLast(2).First().eulerAngles;
+        if (offset.z < 0)
+            angle = -angle;
+            
+        var q = slideRotations.LastOrDefault() * Quaternion.Euler(0, 0, angle);
         slidePositions.Add(endPos);
         slideRotations.Add(q);
         foreach (var gm in slideBars)
