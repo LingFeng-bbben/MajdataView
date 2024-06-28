@@ -5,6 +5,9 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
 using Assets.Scripts.Notes;
+using static Sensor;
+using Assets.Scripts;
+using System.IO;
 
 public class JsonDataLoader : MonoBehaviour
 {
@@ -298,6 +301,47 @@ public class JsonDataLoader : MonoBehaviour
         {"L5", 40 },
     };
 
+    static readonly Dictionary<SensorType, SensorType[]> TOUCH_GROUPS = new()
+    {
+        { SensorType.A1, new SensorType[]{ SensorType.D1, SensorType.D2, SensorType.E1, SensorType.E2 } },
+        { SensorType.A2, new SensorType[]{ SensorType.D2, SensorType.D3, SensorType.E2, SensorType.E3 } },
+        { SensorType.A3, new SensorType[]{ SensorType.D3, SensorType.D4, SensorType.E3, SensorType.E4 } },
+        { SensorType.A4, new SensorType[]{ SensorType.D4, SensorType.D5, SensorType.E4, SensorType.E5 } },
+        { SensorType.A5, new SensorType[]{ SensorType.D5, SensorType.D6, SensorType.E5, SensorType.E6 } },
+        { SensorType.A6, new SensorType[]{ SensorType.D6, SensorType.D7, SensorType.E6, SensorType.E7 } },
+        { SensorType.A7, new SensorType[]{ SensorType.D7, SensorType.D8, SensorType.E7, SensorType.E8 } },
+        { SensorType.A8, new SensorType[]{ SensorType.D8, SensorType.D1, SensorType.E8, SensorType.E1 } },
+
+        { SensorType.D1, new SensorType[]{ SensorType.A1, SensorType.A8, SensorType.E1 } },
+        { SensorType.D2, new SensorType[]{ SensorType.A2, SensorType.A1, SensorType.E2 } },
+        { SensorType.D3, new SensorType[]{ SensorType.A3, SensorType.A2, SensorType.E3 } },
+        { SensorType.D4, new SensorType[]{ SensorType.A4, SensorType.A3, SensorType.E4 } },
+        { SensorType.D5, new SensorType[]{ SensorType.A5, SensorType.A4, SensorType.E5 } },
+        { SensorType.D6, new SensorType[]{ SensorType.A6, SensorType.A5, SensorType.E6 } },
+        { SensorType.D7, new SensorType[]{ SensorType.A7, SensorType.A6, SensorType.E7 } },
+        { SensorType.D8, new SensorType[]{ SensorType.A8, SensorType.A7, SensorType.E8 } },
+
+        { SensorType.E1, new SensorType[]{ SensorType.D1, SensorType.A1, SensorType.A8, SensorType.B1, SensorType.B8 } },
+        { SensorType.E2, new SensorType[]{ SensorType.D2, SensorType.A2, SensorType.A1, SensorType.B2, SensorType.B1 } },
+        { SensorType.E3, new SensorType[]{ SensorType.D3, SensorType.A3, SensorType.A2, SensorType.B3, SensorType.B2 } },
+        { SensorType.E4, new SensorType[]{ SensorType.D4, SensorType.A4, SensorType.A3, SensorType.B4, SensorType.B3 } },
+        { SensorType.E5, new SensorType[]{ SensorType.D5, SensorType.A5, SensorType.A4, SensorType.B5, SensorType.B4 } },
+        { SensorType.E6, new SensorType[]{ SensorType.D6, SensorType.A6, SensorType.A5, SensorType.B6, SensorType.B5 } },
+        { SensorType.E7, new SensorType[]{ SensorType.D7, SensorType.A7, SensorType.A6, SensorType.B7, SensorType.B6 } },
+        { SensorType.E8, new SensorType[]{ SensorType.D8, SensorType.A8, SensorType.A7, SensorType.B8, SensorType.B7 } },
+
+        { SensorType.B1, new SensorType[]{ SensorType.E1, SensorType.E2, SensorType.B8, SensorType.B2, SensorType.A1, SensorType.C } },
+        { SensorType.B2, new SensorType[]{ SensorType.E2, SensorType.E3, SensorType.B1, SensorType.B3, SensorType.A2, SensorType.C } },
+        { SensorType.B3, new SensorType[]{ SensorType.E3, SensorType.E4, SensorType.B2, SensorType.B4, SensorType.A3, SensorType.C } },
+        { SensorType.B4, new SensorType[]{ SensorType.E4, SensorType.E5, SensorType.B3, SensorType.B5, SensorType.A4, SensorType.C } },
+        { SensorType.B5, new SensorType[]{ SensorType.E5, SensorType.E6, SensorType.B4, SensorType.B6, SensorType.A5, SensorType.C } },
+        { SensorType.B6, new SensorType[]{ SensorType.E6, SensorType.E7, SensorType.B5, SensorType.B7, SensorType.A6, SensorType.C } },
+        { SensorType.B7, new SensorType[]{ SensorType.E7, SensorType.E8, SensorType.B6, SensorType.B8, SensorType.A7, SensorType.C } },
+        { SensorType.B8, new SensorType[]{ SensorType.E8, SensorType.E1, SensorType.B7, SensorType.B1, SensorType.A8, SensorType.C } },
+
+        { SensorType.C, new SensorType[]{ SensorType.B1, SensorType.B2, SensorType.B3, SensorType.B4, SensorType.B5, SensorType.B6, SensorType.B7, SensorType.B8} },
+    };
+
     static Dictionary<string, float> SLIDE_AREA_CONST = new()
     {
         { "line3", 0.1919f},
@@ -383,7 +427,7 @@ public class JsonDataLoader : MonoBehaviour
         {"pq6", new List<int>(){ 0, 3, 8, 11, 15, 18, 21, 25, 28, 31, 35, 38, 42 } },
         {"pq7", new List<int>(){ 0, 3, 8, 12, 15, 18, 22, 25, 28, 32, 35, 39 } },
         {"pq8", new List<int>(){ 0, 3, 8, 11, 14, 17, 21, 24, 27, 30, 36 } },
-        {"s", new List<int>(){ 0, 3, 8, 11, 17, 21, 24, 32 } },
+        {"s", new List<int>(){ 0, 3, 8, 11, 17, 21, 24, 30 } },
         {"wifi", new List<int>(){ 0, 2, 4, 7, 11 } },
         {"L2", new List<int>(){ 0, 2, 7, 15, 21, 26, 32 } },
         {"L3", new List<int>(){ 0, 2, 8, 17, 20, 26, 29, 34 } },
@@ -420,6 +464,7 @@ public class JsonDataLoader : MonoBehaviour
         var lastNoteTime = loadedData.timingList.Last().time;
 
         foreach (var timing in loadedData.timingList)
+        {
             try
             {
                 if (timing.time < ignoreOffset)
@@ -427,36 +472,42 @@ public class JsonDataLoader : MonoBehaviour
                     CountNoteCount(timing.noteList);
                     continue;
                 }
-
+                List<TouchDrop> members = new();
                 for (var i = 0; i < timing.noteList.Count; i++)
                 {
                     var note = timing.noteList[i];
                     if (note.noteType == SimaiNoteType.Tap)
                     {
-                        var GOnote = Instantiate(tapPrefab, notes.transform);
-                        var NDCompo = GOnote.GetComponent<TapDrop>();
-
-                        // note的图层顺序
-                        NDCompo.noteSortOrder = noteSortOrder;
-                        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
+                        GameObject GOnote = null;
+                        TapBase NDCompo = null;
 
                         if (note.isForceStar)
                         {
-                            NDCompo.tapSpr = customSkin.Star;
-                            NDCompo.eachSpr = customSkin.Star_Each;
-                            NDCompo.breakSpr = customSkin.Star_Break;
-                            NDCompo.exSpr = customSkin.Star_Ex;
-                            NDCompo.tapLine = starLine;
-                            NDCompo.isFakeStarRotate = note.isFakeRotate;
+                            GOnote = Instantiate(starPrefab, notes.transform);
+                            var _NDCompo = GOnote.GetComponent<StarDrop>();
+                            _NDCompo.tapSpr = customSkin.Star;
+                            _NDCompo.eachSpr = customSkin.Star_Each;
+                            _NDCompo.breakSpr = customSkin.Star_Break;
+                            _NDCompo.exSpr = customSkin.Star_Ex;
+                            _NDCompo.tapLine = starLine;
+                            _NDCompo.isFakeStarRotate = note.isFakeRotate;
+                            _NDCompo.isFakeStar = true;
+                            NDCompo = _NDCompo;
                         }
                         else
                         {
+                            GOnote = Instantiate(tapPrefab, notes.transform);
+                            NDCompo = GOnote.GetComponent<TapDrop>();
                             //自定义note样式
                             NDCompo.tapSpr = customSkin.Tap;
                             NDCompo.breakSpr = customSkin.Tap_Break;
                             NDCompo.eachSpr = customSkin.Tap_Each;
                             NDCompo.exSpr = customSkin.Tap_Ex;
                         }
+
+                        // note的图层顺序
+                        NDCompo.noteSortOrder = noteSortOrder;
+                        noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
 
                         NDCompo.BreakShine = BreakShine;
 
@@ -467,8 +518,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.startPosition = note.startPosition;
                         NDCompo.speed = noteSpeed * timing.HSpeed;
                     }
-
-                    if (note.noteType == SimaiNoteType.Hold)
+                    else if (note.noteType == SimaiNoteType.Hold)
                     {
                         var GOnote = Instantiate(holdPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<HoldDrop>();
@@ -497,8 +547,7 @@ public class JsonDataLoader : MonoBehaviour
                         NDCompo.isEX = note.isEx;
                         NDCompo.isBreak = note.isBreak;
                     }
-
-                    if (note.noteType == SimaiNoteType.TouchHold)
+                    else if (note.noteType == SimaiNoteType.TouchHold)
                     {
                         var GOnote = Instantiate(touchHoldPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TouchHoldDrop>();
@@ -515,8 +564,7 @@ public class JsonDataLoader : MonoBehaviour
                         Array.Copy(customSkin.TouchHold, NDCompo.TouchHoldSprite, 5);
                         NDCompo.TouchPointSprite = customSkin.TouchPoint;
                     }
-
-                    if (note.noteType == SimaiNoteType.Touch)
+                    else if (note.noteType == SimaiNoteType.Touch)
                     {
                         var GOnote = Instantiate(touchPrefab, notes.transform);
                         var NDCompo = GOnote.GetComponent<TouchDrop>();
@@ -537,13 +585,84 @@ public class JsonDataLoader : MonoBehaviour
                         Array.Copy(customSkin.TouchBorder, NDCompo.multTouchNormalSprite, 2);
                         Array.Copy(customSkin.TouchBorder_Each, NDCompo.multTouchEachSprite, 2);
 
-                        if (timing.noteList.Count > 1) NDCompo.isEach = true;
+                        if (timing.noteList.Count > 1) 
+                        { 
+                            NDCompo.isEach = true;
+                            members.Add(NDCompo);
+                        }
                         NDCompo.speed = touchSpeed * timing.HSpeed;
                         NDCompo.isFirework = note.isHanabi;
+                        NDCompo.GroupInfo = null;
                     }
 
-                    if (note.noteType == SimaiNoteType.Slide)
+                    else if (note.noteType == SimaiNoteType.Slide)
                         InstantiateStarGroup(timing, note, i, lastNoteTime); // 星星组
+                }
+
+                
+                if(members.Count != 0)
+                {
+                    var sensorTypes = members.GroupBy(x => x.GetSensor())
+                                             .Select(x => x.Key)
+                                             .ToList();
+                    List<List<SensorType>> sensorGroups = new();
+
+                    while(sensorTypes.Count > 0)
+                    {
+                        var sensorType = sensorTypes[0];
+                        var existsGroup = sensorGroups.FindAll(x => x.Contains(sensorType));
+                        var groupMap = TOUCH_GROUPS[sensorType];
+                        existsGroup.AddRange(sensorGroups.FindAll(x => x.Any(y => groupMap.Contains(y))));
+
+                        var groupMembers = existsGroup.SelectMany(x => x)
+                                                      .ToList();
+                        var newMembers = sensorTypes.FindAll(x => groupMap.Contains(x));
+
+                        groupMembers.AddRange(newMembers);
+                        groupMembers.Add(sensorType);
+                        var newGroup = groupMembers.GroupBy(x => x)
+                                                   .Select(x => x.Key)
+                                                   .ToList();
+
+                        foreach (var newMember in newGroup)
+                            sensorTypes.Remove(newMember);
+                        foreach (var oldGroup in existsGroup)
+                            sensorGroups.Remove(oldGroup);
+
+                        sensorGroups.Add(newGroup);
+                    }
+                    List<TouchGroup> touchGroups = new();
+                    var memberMapping = members.ToDictionary(x => x.GetSensor());
+                    foreach(var group in sensorGroups)
+                    {
+                        touchGroups.Add(new TouchGroup()
+                        {
+                            Members = group.Select(x => memberMapping[x]).ToArray()
+                        });
+                    }
+                    foreach (var member in members)
+                        member.GroupInfo = touchGroups.Find(x => x.Members.Any(y => y == member));
+                    //List<TouchGroup> groups = new();
+                    //foreach(var touch in members)
+                    //{
+                    //    var sensor = touch.GetSensor();
+                    //    var groupMember = members.Where(x =>
+                    //    {
+                    //        if (x == touch)
+                    //            return true;
+                    //        var tSensor = x.GetSensor();
+                    //        return TOUCH_GROUPS[sensor].Contains(tSensor);
+                    //    });
+                    //    groups.Add(new TouchGroup()
+                    //    {
+                    //        Members = groupMember.ToArray()
+                    //    });
+                    //}
+                    //foreach (var touch in members)
+                    //{
+                    //    var result = groups.Where(x => x.Members.Contains(touch)).ToArray();
+                    //    touch.GroupInfos = result;
+                    //}
                 }
 
                 var eachNotes = timing.noteList.FindAll(o =>
@@ -584,6 +703,7 @@ public class JsonDataLoader : MonoBehaviour
                 GameObject.Find("ErrText").GetComponent<Text>().text =
                     "在第" + (timing.rawTextPositionY + 1) + "行发现问题：\n" + e.Message;
             }
+        }
     }
 
 
@@ -827,24 +947,43 @@ public class JsonDataLoader : MonoBehaviour
         }
 
         GameObject parent = null;
+        List<SlideDrop> subSlides = new();
+        float totalLen = (float)subSlide.Select(x => x.slideTime).Sum();
+        float totalSlideLen = 0;
         for (var i = 0; i <= subSlide.Count - 1; i++)
+        {
+            bool isConn = subSlide.Count != 1;
+            bool isGroupHead = i == 0;
+            bool isGroupEnd = i == subSlide.Count - 1;
             if (note.noteContent.Contains('w')) //wifi
-                parent = InstantiateWifi(timing,
-                                         subSlide[i],
-                                         subSlide.Count != 1,
-                                         i == 0,
-                                         i == subSlide.Count - 1,
-                                         parent);
+            {
+                if (isConn)
+                    throw new InvalidOperationException("不允许Wifi Slide作为Connection Slide的一部分");
+                InstantiateWifi(timing,subSlide[i]);
+            }
             else
-                parent = InstantiateStar(timing,
-                                         subSlide[i],
-                                         subSlide.Count != 1,
-                                         i == 0,
-                                         i == subSlide.Count - 1,
-                                         parent) ;
+            {
+                ConnSlideInfo info = new ConnSlideInfo()
+                {
+                    TotalLength = totalLen,
+                    IsGroupPart = isConn,
+                    IsGroupPartHead = isGroupHead,
+                    IsGroupPartEnd = isGroupEnd,
+                    Parent = parent
+                };
+                parent = InstantiateStar(timing,subSlide[i],info);
+                subSlides.Add(parent.GetComponent<SlideDrop>());
+            }
+        }
+        subSlides.ForEach(s =>
+        {
+            s.Initialize();
+            totalSlideLen += s.GetSlideLength();
+        });
+        subSlides.ForEach(s => s.ConnectInfo.TotalSlideLen = totalSlideLen);
     }
 
-    private GameObject InstantiateWifi(SimaiTimingPoint timing, SimaiNote note, bool isConn, bool isGroupHead, bool isGroupEnd, GameObject parent)
+    private GameObject InstantiateWifi(SimaiTimingPoint timing, SimaiNote note)
     {
         var str = note.noteContent.Substring(0, 3);
         var digits = str.Split('w');
@@ -923,10 +1062,10 @@ public class JsonDataLoader : MonoBehaviour
 
         WifiCompo.ConnectInfo = new ConnSlideInfo()
         {
-            IsGroupPart = isConn,
-            IsGroupPartHead = isGroupHead,
-            IsGroupPartEnd = isGroupEnd,
-            Parent = parent
+            IsGroupPart = false,
+            IsGroupPartHead = true,
+            IsGroupPartEnd = true,
+            Parent = null
         };
         WifiCompo.isBreak = note.isSlideBreak;
 
@@ -949,7 +1088,7 @@ public class JsonDataLoader : MonoBehaviour
         return slideWifi;
     }
 
-    private GameObject InstantiateStar(SimaiTimingPoint timing, SimaiNote note, bool isConn, bool isGroupHead,bool isGroupEnd, GameObject parent)
+    private GameObject InstantiateStar(SimaiTimingPoint timing, SimaiNote note,ConnSlideInfo info)
     {
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
@@ -1026,13 +1165,7 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
-        SliCompo.ConnectInfo = new ConnSlideInfo()
-        {
-            IsGroupPart = isConn,
-            IsGroupPartHead = isGroupHead,
-            IsGroupPartEnd = isGroupEnd,
-            Parent = parent
-        };
+        SliCompo.ConnectInfo = info;
         SliCompo.isBreak = note.isSlideBreak;
         if (note.isSlideBreak) slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star_Break;
 

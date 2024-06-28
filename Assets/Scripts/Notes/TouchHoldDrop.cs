@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Notes;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Claims;
@@ -306,9 +307,10 @@ public class TouchHoldDrop : NoteLongDrop
             case JudgeType.FastGreat1:
             case JudgeType.FastGreat:
                 judgeObj.GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite = judgeText[2];
-                transform.Rotate(0, 0f, 30f);
+                //transform.Rotate(0, 0f, 30f);
                 effect = Instantiate(effects.transform.GetChild(2).GetChild(0), transform.position, transform.rotation).gameObject;
                 effect.SetActive(true);
+                effect.gameObject.GetComponent<Animator>().SetTrigger("great");
                 break;
             case JudgeType.LatePerfect2:
             case JudgeType.FastPerfect2:

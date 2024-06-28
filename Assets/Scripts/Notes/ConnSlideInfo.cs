@@ -4,6 +4,8 @@ namespace Assets.Scripts.Notes
 {
     public class ConnSlideInfo
     {
+        public float TotalLength { get; set; }
+        public float TotalSlideLen { get; set; }
         public bool IsGroupPartHead { get; set; }
         public bool IsGroupPart { get; set; }
         public bool IsGroupPartEnd { get; set; }

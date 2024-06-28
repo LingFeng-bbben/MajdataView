@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using UnityEngine;
 using static NoteEffectManager;
 using static Sensor;
@@ -257,6 +258,8 @@ public class HoldDrop : NoteLongDrop
         if (holdTime >= 0 || 
             holdTime >= 0 && LastFor <= 0.15f)
         {
+            tapLine.transform.localScale = new Vector3(1f, 1f, 1f);
+            transform.position = getPositionFromDistance(4.8f);
             return;
         }
 
