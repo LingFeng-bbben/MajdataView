@@ -1065,13 +1065,6 @@ public class JsonDataLoader : MonoBehaviour
             }
         }
 
-        WifiCompo.ConnectInfo = new ConnSlideInfo()
-        {
-            IsGroupPart = false,
-            IsGroupPartHead = true,
-            IsGroupPartEnd = true,
-            Parent = null
-        };
         WifiCompo.isBreak = note.isSlideBreak;
 
         NDCompo.isNoHead = note.isSlideNoHead;

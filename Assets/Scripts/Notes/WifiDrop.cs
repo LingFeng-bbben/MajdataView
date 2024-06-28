@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Interfaces;
-using Assets.Scripts.Notes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +45,6 @@ public class WifiDrop : NoteLongDrop,IFlasher
 
     Animator fadeInAnimator = null;
 
-    private readonly List<Animator> animators = new();
     private readonly List<SpriteRenderer> sbRender = new();
 
     private readonly List<GameObject> slideBars = new();
@@ -60,14 +58,11 @@ public class WifiDrop : NoteLongDrop,IFlasher
 
     private bool isDestroying = false;
 
-    public ConnSlideInfo ConnectInfo { get; set; }
     bool isFinished { get => _judgeQueues.All(x => x.Count == 0); }
-    public GameObject parent;
     bool canCheck = false;
     Dictionary<GameObject, Guid> guids = new();
     SensorManager sManager;
     List<GameObject> sensors = new();
-    //public List<JudgeAreaGroup> _judgeQueues = new();
     public List<List<JudgeArea>> _judgeQueues = new();
     public List<List<JudgeArea>> judgeQueues = new();
     public Dictionary<GameObject, List<Sensor>> triggerSensors = new();
@@ -447,14 +442,9 @@ public class WifiDrop : NoteLongDrop,IFlasher
         {
             canShine = true;
             float alpha;
-            if (ConnectInfo.IsConnSlide && !ConnectInfo.IsGroupPartHead)
-                alpha = 0;
-            else
-            {
-                alpha = 1f - -timing / (time - timeStart);
-                alpha = alpha > 1f ? 1f : alpha;
-                alpha = alpha < 0f ? 0f : alpha;
-            }
+            alpha = 1f - -timing / (time - timeStart);
+            alpha = alpha > 1f ? 1f : alpha;
+            alpha = alpha < 0f ? 0f : alpha;
 
             for (var i = 0; i < star_slide.Length; i++)
             {
@@ -478,8 +468,6 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 }
                 if (isFinished)
                     DestroySelf();
-                else if (ConnectInfo.IsConnSlide && !ConnectInfo.IsGroupPartEnd)
-                    DestroySelf(true);
             }
             else
             {
@@ -506,8 +494,6 @@ public class WifiDrop : NoteLongDrop,IFlasher
         }
         else
         {
-            if (ConnectInfo.Parent != null)
-                Destroy(ConnectInfo.Parent);
 
             foreach (GameObject obj in slideBars)
                 obj.SetActive(false);
@@ -521,20 +507,15 @@ public class WifiDrop : NoteLongDrop,IFlasher
     {
         if (isDestroying || GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
             return;
-        if (ConnectInfo.Parent != null)
-            Destroy(ConnectInfo.Parent);
 
-        if (ConnectInfo.IsGroupPartEnd)
-        {
-            // 只有组内最后一个Slide完成 才会显示判定条并增加总数
-            if (isBreak)
-                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-            else
-                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
-            if (isBreak && judgeResult == JudgeType.Perfect)
-                slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
-            slideOK.SetActive(true);
-        }
+        if (isBreak)
+            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
+        else
+            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
+        if (isBreak && judgeResult == JudgeType.Perfect)
+            slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
+        slideOK.SetActive(true);
+
         foreach (var sensor in sensors)
         {
             var s = sensor.GetComponent<Sensor>();
