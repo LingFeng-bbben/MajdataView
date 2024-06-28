@@ -175,7 +175,16 @@ public class TouchDrop : TouchBase
             manager.SetSensorOn(sensor.Type, guid);
         }
         else if (timing >= 0)
+        {
+            var _pow = -Mathf.Exp(- 0.85f) + 0.42f;
+            var _distance = Mathf.Clamp(_pow, 0f, 0.4f);
+            for (var i = 0; i < 4; i++)
+            {
+                var pos = (0.226f + _distance) * GetAngle(i);
+                fans[i].transform.localPosition = pos;
+            }
             return;
+        }
 
         if (timing > -0.02f) justEffect.SetActive(true);
 
