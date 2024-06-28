@@ -118,8 +118,6 @@ public class WifiDrop : NoteLongDrop,IFlasher
             slideOK.GetComponent<LoadJustSprite>().setL();
             slideOK.transform.Rotate(new Vector3(0f, 0f, 180f));
         }
-        if (isBreak)
-            slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
 
         if (isBreak)
         {
@@ -221,15 +219,21 @@ public class WifiDrop : NoteLongDrop,IFlasher
     }
     int GetLastIndex()
     {
-        var queue1 = _judgeQueues[0];
-        var queue2 = _judgeQueues[1];
-        var queue3 = _judgeQueues[2];
-        var _ = new List<int>();
-        _.AddRange(queue1.Select(x => x.SlideIndex));
-        _.AddRange(queue2.Select(x => x.SlideIndex));
-        _.AddRange(queue3.Select(x => x.SlideIndex));
-        var min = _.Min();
-        return areaStep[areaStep.FindIndex(x => x == min) - 1];
+        if(_judgeQueues.All(x => x.Count == 0))
+            return areaStep.LastOrDefault();
+        else
+        {
+            IEnumerable<int>[] queues = new IEnumerable<int>[]
+            {
+                _judgeQueues[0].Select(x => x.SlideIndex),
+                _judgeQueues[1].Select(x => x.SlideIndex),
+                _judgeQueues[2].Select(x => x.SlideIndex),
+            };
+            var _ = queues.SelectMany(x => x)
+                          .GroupBy(x => x)
+                          .Select(x => x.Key);
+            return areaStep[areaStep.FindIndex(x => x == _.Min())];
+        }
     }
     void TooLateJudge()
     {
@@ -254,59 +258,52 @@ public class WifiDrop : NoteLongDrop,IFlasher
     }
     public void Check(ref List<JudgeArea> judgeQueue)
     {
-        try
+        if (judgeQueue.Count == 0)
+            return;
+
+        var first = judgeQueue.First();
+        JudgeArea second = null;
+
+        if (judgeQueue.Count >= 2)
+            second = judgeQueue[1];
+        var fType = first.GetSensorTypes();
+        foreach (var t in fType)
         {
-            if (judgeQueue.Count == 0)
-                return;
+            var sensor = sManager.GetSensor(t);
+            first.Judge(t, sensor.Status);
+        }
 
-            var first = judgeQueue.First();
-            JudgeArea second = null;
-
-            if (judgeQueue.Count >= 2)
-                second = judgeQueue[1];
-            var fType = first.GetSensorTypes();
-            foreach (var t in fType)
+        if (second is not null && (first.CanSkip || first.On))
+        {
+            var sType = second.GetSensorTypes();
+            foreach (var t in sType)
             {
                 var sensor = sManager.GetSensor(t);
-                first.Judge(t, sensor.Status);
+                second.Judge(t, sensor.Status);
             }
 
-            if (second is not null && (first.CanSkip || first.On))
+            if (second.IsFinished)
             {
-                var sType = second.GetSensorTypes();
-                foreach (var t in sType)
-                {
-                    var sensor = sManager.GetSensor(t);
-                    second.Judge(t, sensor.Status);
-                }
-
-                if (second.IsFinished)
-                {
-                    //HideBar(first.SlideIndex);
-                    judgeQueue = judgeQueue.Skip(2).ToList();
-                    return;
-                }
-                else if (second.On)
-                {
-                    //HideBar(first.SlideIndex);
-                    judgeQueue = judgeQueue.Skip(1).ToList();
-                    return;
-                }
+                //HideBar(first.SlideIndex);
+                judgeQueue = judgeQueue.Skip(2).ToList();
+                return;
             }
-
-            if (first.IsFinished)
+            else if (second.On)
             {
                 //HideBar(first.SlideIndex);
                 judgeQueue = judgeQueue.Skip(1).ToList();
                 return;
             }
-            if (!isFinished)
-                HideBar(GetLastIndex());
         }
-        catch (Exception e)
+
+        if (first.IsFinished)
         {
-            print(e);
+            //HideBar(first.SlideIndex);
+            judgeQueue = judgeQueue.Skip(1).ToList();
+            return;
         }
+        if (!isFinished)
+            HideBar(GetLastIndex());
 
     }
     void Judge()
@@ -534,6 +531,8 @@ public class WifiDrop : NoteLongDrop,IFlasher
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
             else
                 GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
+            if (isBreak && judgeResult == JudgeType.Perfect)
+                slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
             slideOK.SetActive(true);
         }
         foreach (var sensor in sensors)
