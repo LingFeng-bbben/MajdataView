@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
+using Assets.Scripts.IO;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using static Sensor;
 
 public class Area
 {

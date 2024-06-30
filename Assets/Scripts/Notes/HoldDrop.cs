@@ -1,8 +1,7 @@
-﻿using System;
-using System.Net;
+﻿using Assets.Scripts.IO;
+using System;
 using UnityEngine;
 using static NoteEffectManager;
-using static Sensor;
 
 public class HoldDrop : NoteLongDrop
 {
@@ -103,8 +102,8 @@ public class HoldDrop : NoteLongDrop
                                 .GetComponent<SensorManager>();
         inputManager = GameObject.Find("Input")
                                  .GetComponent<InputManager>();
-        sensor.OnSensorStatusChange += Check;
-        inputManager.OnSensorStatusChange += Check;
+        sensor.OnStatusChanged += Check;
+        inputManager.OnButtonStatusChanged += Check;
     }
     private void FixedUpdate()
     {
@@ -119,16 +118,17 @@ public class HoldDrop : NoteLongDrop
         }
         else if (isJudged)
         {
-            if (sensor.Status == SensorStatus.On)
+            var on = inputManager.CheckSensorStatus(sensor.Type, SensorStatus.On) || inputManager.CheckButtonStatus(sensor.Type, SensorStatus.On);
+            if (on)
                 PlayHoldEffect();
             if (GetJudgeTiming() < 0.1f || (GetRemainingTime() < 0.2f && GetRemainingTime() != 0 ))
                 return;
-            if(sensor.Status == SensorStatus.On)
+            if(on)
             {
                 if(!userHold.IsRunning)
                     userHold.Start();
             }
-            else if(sensor.Status == SensorStatus.Off)
+            else
             {
                 if (userHold.IsRunning)
                     userHold.Stop();
@@ -139,8 +139,8 @@ public class HoldDrop : NoteLongDrop
         {
             judgeDiff = 150;
             judgeResult = JudgeType.Miss;
-            sensor.OnSensorStatusChange -= Check;
-            inputManager.OnSensorStatusChange -= Check;
+            sensor.OnStatusChanged -= Check;
+            inputManager.OnButtonStatusChanged -= Check;
             isJudged = true;
             GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
         }
@@ -162,25 +162,37 @@ public class HoldDrop : NoteLongDrop
             isAutoTrigger = false;
         }
     }
-    void Check(SensorType s, SensorStatus oStatus, SensorStatus nStatus)
+    void Check(object sender, InputEventArgs arg)
     {
-        if (s != sensor.Type)
+        if (arg.Type != sensor.Type)
             return;
         if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
             return;
-        if (oStatus == SensorStatus.Off && nStatus == SensorStatus.On)
+        if (arg.IsClick)
         {
-            if (sensor.IsJudging)
+            var isJudging = false;
+
+            if (arg.IsButton)
+                isJudging = inputManager.IsBusying(arg.Type);
+            else
+                isJudging = sensor.IsJudging;
+
+            if (isJudging)
                 return;
             else
-                sensor.IsJudging = true;
+            {
+                if (arg.IsButton)
+                    inputManager.SetBusying(arg.Type, true);
+                else
+                    sensor.IsJudging = true;
+            }
             Judge(); 
         }
 
         if(isJudged)
         {
-            sensor.OnSensorStatusChange -= Check;
-            inputManager.OnSensorStatusChange -= Check;
+            sensor.OnStatusChanged -= Check;
+            inputManager.OnButtonStatusChanged -= Check;
             GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
         }
     }
@@ -378,8 +390,8 @@ public class HoldDrop : NoteLongDrop
             manager.SetSensorOff(sensor.Type, guid);
         if(!isJudged)
             GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
-        sensor.OnSensorStatusChange -= Check;
-        inputManager.OnSensorStatusChange -= Check;
+        sensor.OnStatusChanged -= Check;
+        inputManager.OnButtonStatusChanged -= Check;
     }
     protected override void PlayHoldEffect()
     {

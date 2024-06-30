@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Assets.Scripts.IO;
+using System;
 using UnityEngine;
 using static NoteEffectManager;
-using static Sensor;
 
 namespace Assets.Scripts.Notes
 {
@@ -117,18 +113,30 @@ namespace Assets.Scripts.Notes
 
 
         }
-        protected void Check(SensorType s, SensorStatus oStatus, SensorStatus nStatus)
+        protected void Check(object sender, InputEventArgs arg)
         {
-            if (s != sensor.Type)
+            if (arg.Type != sensor.Type)
                 return;
             if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
                 return;
-            if (oStatus == SensorStatus.Off && nStatus == SensorStatus.On)
+            if (arg.IsClick)
             {
-                if (sensor.IsJudging)
+                var isJudging = false;
+
+                if (arg.IsButton)
+                    isJudging = inputManager.IsBusying(arg.Type);
+                else
+                    isJudging = sensor.IsJudging;
+
+                if (isJudging)
                     return;
                 else
-                    sensor.IsJudging = true;
+                {
+                    if (arg.IsButton)
+                        inputManager.SetBusying(arg.Type, true);
+                    else
+                        sensor.IsJudging = true;
+                }
                 Judge();
                 if (isJudged)
                 {
@@ -195,8 +203,8 @@ namespace Assets.Scripts.Notes
             GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
             if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
                 manager.SetSensorOff(sensor.Type, guid);
-            sensor.OnSensorStatusChange -= Check;
-            inputManager.OnSensorStatusChange -= Check;
+            sensor.OnStatusChanged -= Check;
+            inputManager.OnButtonStatusChanged -= Check;
         }
     }
 }

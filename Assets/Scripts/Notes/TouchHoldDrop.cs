@@ -1,12 +1,7 @@
-﻿using Assets.Scripts.Notes;
+﻿using Assets.Scripts.IO;
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security.Claims;
 using UnityEngine;
-using UnityEngine.U2D;
 using static NoteEffectManager;
-using static Sensor;
 
 public class TouchHoldDrop : NoteLongDrop
 {
@@ -70,13 +65,13 @@ public class TouchHoldDrop : NoteLongDrop
                                 .GetComponent<SensorManager>();
         var customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
         judgeText = customSkin.JudgeText;
-        sensor.OnSensorStatusChange += Check;
+        sensor.OnStatusChanged += Check;
     }
-    void Check(SensorType s, SensorStatus oStatus, SensorStatus nStatus)
+    void Check(object sender, InputEventArgs arg)
     {
         if (isJudged || !noteManager.CanJudge(gameObject, sensor.Type))
             return;
-        else if (oStatus == SensorStatus.Off && nStatus == SensorStatus.On)
+        else if (arg.IsClick)
         {
             if (sensor.IsJudging)
                 return;
@@ -85,7 +80,7 @@ public class TouchHoldDrop : NoteLongDrop
             Judge();
             if (isJudged)
             {
-                sensor.OnSensorStatusChange -= Check;
+                sensor.OnStatusChanged -= Check;
                 GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[SensorType.C]++;
             }
         }
@@ -163,7 +158,7 @@ public class TouchHoldDrop : NoteLongDrop
         {
             judgeDiff = 316.667f;
             judgeResult = JudgeType.Miss;
-            sensor.OnSensorStatusChange -= Check;
+            sensor.OnStatusChanged -= Check;
             isJudged = true;
             GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[SensorType.C]++;
         }

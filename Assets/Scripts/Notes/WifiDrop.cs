@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -393,7 +394,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
             foreach (var s in sensors.Select(x => x.GetComponent<RectTransform>()))
             {
                 var sensor = s.GetComponent<Sensor>();
-                if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+                if (sensor.Group == SensorGroup.E || sensor.Group == SensorGroup.D)
                     continue;
 
                 var rCenter = s.position;

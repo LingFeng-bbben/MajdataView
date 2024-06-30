@@ -1,9 +1,9 @@
 ﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.IO;
 using Assets.Scripts.Notes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
 using UnityEngine;
 using static NoteEffectManager;
 
@@ -209,7 +209,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             else
                 index = _slideIndex[i];
             judgeQueue.Add(new JudgeArea(
-                new Dictionary<Sensor.SensorType, bool>
+                new Dictionary<SensorType, bool>
                 {
                     {sensor.Type, i == judgeSensors.Count - 1 }
                 }, index));
@@ -283,7 +283,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             foreach (var s in sensors)
             {
                 var sensor = s.GetComponent<Sensor>();
-                if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+                if (sensor.Group == SensorGroup.E || sensor.Group == SensorGroup.D)
                     continue;
 
                 var rCenter = s.position;
@@ -498,7 +498,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         foreach (var s in sensors.Select(x => x.GetComponent<RectTransform>()))
         {
             var sensor = s.GetComponent<Sensor>();
-            if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+            if (sensor.Group == SensorGroup.E || sensor.Group == SensorGroup.D)
                 continue;
 
             var rCenter = s.position;

@@ -1,7 +1,6 @@
-using System.Collections;
+using Assets.Scripts.IO;
 using System.Collections.Generic;
 using UnityEngine;
-using static Sensor;
 
 public class NoteManager : MonoBehaviour
 {
