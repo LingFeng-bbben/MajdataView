@@ -131,6 +131,7 @@ public class BGManager : MonoBehaviour
         var scale = videoPlayer.height / (float)videoPlayer.width;
         spriteRender.sprite =
             Sprite.Create(new Texture2D(1080, 1080), new Rect(0, 0, 1080, 1080), new Vector2(0.5f, 0.5f));
-        gameObject.transform.localScale = new Vector3(1f, scale);
+        var origW = gameObject.transform.localScale.x;
+        gameObject.transform.localScale = new Vector3(origW, scale* origW);
     }
 }
