@@ -85,7 +85,7 @@ public class NoteLongDrop : NoteDrop
                 material.SetColor("_Color", new Color(0.56f, 1f, 0.59f)); // Green
                 break;
             case JudgeType.Miss:
-                material.SetColor("_Color", new Color(1f, 1f, 1f));
+                material.SetColor("_Color", new Color(1f, 1f, 1f)); // White
                 break;
             default:
                 break;

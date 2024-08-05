@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
     public bool AutoPlay = false;
     public Dictionary<int,List<Sensor>> triggerSensors = new();
 
-    public event EventHandler<InputEventArgs> OnSensorStatusChanged;
+    //public event EventHandler<InputEventArgs> OnSensorStatusChanged;
     public event EventHandler<InputEventArgs> OnButtonStatusChanged;
 
     Guid guid = Guid.NewGuid();

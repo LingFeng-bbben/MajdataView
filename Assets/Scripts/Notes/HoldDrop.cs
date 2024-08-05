@@ -109,8 +109,8 @@ public class HoldDrop : NoteLongDrop
     private void FixedUpdate()
     {
         var autoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
-
-        if (GetRemainingTime() == 0 && isJudged)
+        var remainingTime = GetRemainingTime();
+        if (remainingTime == 0 && isJudged)
         {
             userHold.Stop();
             Destroy(tapLine);
@@ -120,20 +120,23 @@ public class HoldDrop : NoteLongDrop
         else if (isJudged)
         {
             var on = inputManager.CheckSensorStatus(sensor.Type, SensorStatus.On) || inputManager.CheckButtonStatus(sensor.Type, SensorStatus.On);
-            if (on)
-                PlayHoldEffect();
-            if (GetJudgeTiming() < 0.1f || (GetRemainingTime() < 0.2f && GetRemainingTime() != 0 ))
+            
+            if (remainingTime < 0.2f && remainingTime != 0)
                 return;
-            if(on)
+            else if(GetJudgeTiming() > 0.1f)
             {
-                if(!userHold.IsRunning)
-                    userHold.Start();
-            }
-            else
-            {
-                if (userHold.IsRunning)
-                    userHold.Stop();
-                StopHoldEffect();
+                if (on)
+                {
+                    if (!userHold.IsRunning)
+                        userHold.Start();
+                    PlayHoldEffect();
+                }
+                else
+                {
+                    if (userHold.IsRunning)
+                        userHold.Stop();
+                    StopHoldEffect();
+                }
             }
         }
         else if (GetJudgeTiming() > 0.15f)
@@ -245,9 +248,9 @@ public class HoldDrop : NoteLongDrop
             judgeDiff = diff;
         if (!userHold.IsRunning)
             userHold.Start();
-        PlayHoldEffect();
         judgeResult = result;
         isJudged = true;
+        PlayHoldEffect();
     }
     // Update is called once per frame
     private void Update()
@@ -400,7 +403,7 @@ public class HoldDrop : NoteLongDrop
         GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().ResetEffect(startPosition);
         if (LastFor <= 0.3)
             return;
-        else if (!holdAnimStart && timeProvider.AudioTime - time > 0.1)//忽略开头6帧与结尾12帧
+        else if (!holdAnimStart && GetJudgeTiming() >= 0.1f)//忽略开头6帧与结尾12帧
         {
             holdAnimStart = true;
             animator.runtimeAnimatorController = HoldShine;

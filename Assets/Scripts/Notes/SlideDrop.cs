@@ -524,7 +524,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
     {
         if (!ConnectInfo.IsGroupPartEnd && ConnectInfo.IsConnSlide)
             return;
-        var starTiming = timeStart + (time - timeStart) * 0.667;
+        var starTiming = timeStart + (time - timeStart) * 0.75;
         var stayTime = (time + LastFor) - judgeTiming; // 停留时间
         if (!isJudged)
         {
@@ -589,9 +589,9 @@ public class SlideDrop : NoteLongDrop, IFlasher
             judgeResult = judge ?? JudgeType.Miss;
             isJudged = true;
         }
-        else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)
+        else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.8)
             DestroySelf();
-        else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.667)
+        else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.8)
             DestroySelf();
     }
     /// <summary>
