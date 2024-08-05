@@ -1,9 +1,9 @@
 ﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.IO;
 using Assets.Scripts.Notes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
 using UnityEngine;
 using static NoteEffectManager;
 
@@ -84,7 +84,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             return;
         isInitialized = true;
         slideOK = transform.GetChild(transform.childCount - 1).gameObject; //slideok is the last one        
-
+        objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
 
         if (isMirror)
         {
@@ -209,7 +209,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             else
                 index = _slideIndex[i];
             judgeQueue.Add(new JudgeArea(
-                new Dictionary<Sensor.SensorType, bool>
+                new Dictionary<SensorType, bool>
                 {
                     {sensor.Type, i == judgeSensors.Count - 1 }
                 }, index));
@@ -283,7 +283,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             foreach (var s in sensors)
             {
                 var sensor = s.GetComponent<Sensor>();
-                if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+                if (sensor.Group == SensorGroup.E || sensor.Group == SensorGroup.D)
                     continue;
 
                 var rCenter = s.position;
@@ -498,7 +498,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         foreach (var s in sensors.Select(x => x.GetComponent<RectTransform>()))
         {
             var sensor = s.GetComponent<Sensor>();
-            if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+            if (sensor.Group == SensorGroup.E || sensor.Group == SensorGroup.D)
                 continue;
 
             var rCenter = s.position;
@@ -524,7 +524,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
     {
         if (!ConnectInfo.IsGroupPartEnd && ConnectInfo.IsConnSlide)
             return;
-        var starTiming = timeStart + (time - timeStart) * 0.667;
+        var starTiming = timeStart + (time - timeStart) * 0.75;
         var stayTime = (time + LastFor) - judgeTiming; // 停留时间
         if (!isJudged)
         {
@@ -589,9 +589,9 @@ public class SlideDrop : NoteLongDrop, IFlasher
             judgeResult = judge ?? JudgeType.Miss;
             isJudged = true;
         }
-        else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)
+        else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.8)
             DestroySelf();
-        else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.667)
+        else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.8)
             DestroySelf();
     }
     /// <summary>
@@ -683,10 +683,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         if (ConnectInfo.IsGroupPartEnd)
         {
             // 只有组内最后一个Slide完成 才会显示判定条并增加总数
-            if (isBreak)
-                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-            else
-                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
+            objectCounter.ReportResult(this, judgeResult, isBreak);
             if (isBreak && judgeResult == JudgeType.Perfect)
                 slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
             slideOK.SetActive(true);

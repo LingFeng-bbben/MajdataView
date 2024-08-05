@@ -1,22 +1,45 @@
+using Assets.Scripts.IO;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static Sensor;
+using static UnityEngine.GraphicsBuffer;
 
 public class InputManager : MonoBehaviour
 {
     public Camera mainCamera;
     public bool AutoPlay = false;
-    public event Action<SensorType, SensorStatus, SensorStatus> OnSensorStatusChange;//oStatus nStatus
+    public Dictionary<int,List<Sensor>> triggerSensors = new();
+
+    //public event EventHandler<InputEventArgs> OnSensorStatusChanged;
+    public event EventHandler<InputEventArgs> OnButtonStatusChanged;
 
     Guid guid = Guid.NewGuid();
-    public Dictionary<int,List<Sensor>> triggerSensors = new();
+    
     List<GameObject> sensors = new();
     SensorManager sManager;
-
-    Dictionary<KeyCode, SensorType> keyMap = new();
+    Dictionary<KeyCode, SensorType> keyMap = new()
+    {
+        { KeyCode.W,SensorType.A1 },
+        { KeyCode.E,SensorType.A2 },
+        { KeyCode.D,SensorType.A3 },
+        { KeyCode.C,SensorType.A4 },
+        { KeyCode.X,SensorType.A5 },
+        { KeyCode.Z,SensorType.A6 },
+        { KeyCode.A,SensorType.A7 },
+        { KeyCode.Q,SensorType.A8 },
+    };
+    Dictionary<KeyCode, (SensorStatus,bool)> keyStatus = new()
+    {
+        { KeyCode.W,(SensorStatus.Off,false) },
+        { KeyCode.E,(SensorStatus.Off,false) },
+        { KeyCode.D,(SensorStatus.Off,false) },
+        { KeyCode.C,(SensorStatus.Off,false) },
+        { KeyCode.X,(SensorStatus.Off,false) },
+        { KeyCode.Z,(SensorStatus.Off,false) },
+        { KeyCode.A,(SensorStatus.Off,false) },
+        { KeyCode.Q,(SensorStatus.Off,false) },
+    };
     // Start is called before the first frame update
     void Start()
     {
@@ -25,15 +48,14 @@ public class InputManager : MonoBehaviour
         for (int i = 0; i < count; i++)
             sensors.Add(sManagerObj.transform.GetChild(i).gameObject);
         sManager = sManagerObj.GetComponent<SensorManager>();
-        keyMap.Add(KeyCode.LeftArrow, SensorType.A1);
-        keyMap.Add(KeyCode.RightArrow, SensorType.A1);
+
     }
 
     // Update is called once per frame
     void Update()
     {
         var count = Input.touchCount;
-        CheckKey(new KeyCode[] {KeyCode.LeftArrow , KeyCode.RightArrow});
+        CheckButton();
 
         if (Input.GetKeyDown(KeyCode.Home))
             AutoPlay = !AutoPlay;
@@ -61,6 +83,35 @@ public class InputManager : MonoBehaviour
         }
 
     }
+    public bool CheckSensorStatus(SensorType target,SensorStatus targetStatus)
+    {
+        var sensor = sensors[(int)target].GetComponent<Sensor>();
+        return sensor.Status == targetStatus;
+    }
+    public bool CheckButtonStatus(SensorType target, SensorStatus targetStatus)
+    {
+        if (target > SensorType.A8)
+            throw new InvalidOperationException("Button index cannot greater than A8");
+        var _ = keyMap.ToDictionary(x => x.Value,y => y.Key);
+        var (buttonStatus, _) = keyStatus[_[target]];
+        return buttonStatus == targetStatus;
+    }
+    public void SetBusying(SensorType target,bool isJudging)
+    {
+        if (target > SensorType.A8)
+            throw new InvalidOperationException("Button index cannot greater than A8");
+        var _ = keyMap.ToDictionary(x => x.Value, y => y.Key);
+        var (x, y) = keyStatus[_[target]];
+        keyStatus[_[target]] = (x, isJudging);
+    }
+    public bool IsBusying(SensorType target)
+    {
+        if (target > SensorType.A8)
+            throw new InvalidOperationException("Button index cannot greater than A8");
+        var _ = keyMap.ToDictionary(x => x.Value, y => y.Key);
+        var (x, y) = keyStatus[_[target]];
+        return y;
+    }
     void Untrigger(int id)
     {
         if (triggerSensors.Count() == 0 || !triggerSensors.ContainsKey(id))
@@ -79,15 +130,26 @@ public class InputManager : MonoBehaviour
             triggerSensors.Add(id, new());
         Running(id,wPosition);
     }
-    void CheckKey(KeyCode[] keys)
+    void CheckButton()
     {
-        var dict = keys.ToDictionary(x => x,x => Input.GetKeyDown(x));
-        foreach(var key in dict.Keys)
+        var keys = keyMap.ToDictionary(x => x.Key, y => Input.GetKey(y.Key) ? SensorStatus.On: SensorStatus.Off);
+        foreach(var keyPair in keys)
         {
-            if (keyMap.ContainsKey(key) && OnSensorStatusChange != null && dict[key])
+            var (oldStatus, busying) = keyStatus[keyPair.Key];
+            if(oldStatus != keyPair.Value)
             {
-                OnSensorStatusChange(keyMap[key], SensorStatus.Off, SensorStatus.On);
-                sManager.GetSensor(keyMap[key]).IsJudging = false;
+                print($"Key \"{keyPair.Key}\": {keyPair.Value}");
+                if(OnButtonStatusChanged is not null)
+                {
+                    OnButtonStatusChanged(this, new InputEventArgs()
+                    {
+                        Type = keyMap[keyPair.Key],
+                        OldStatus = oldStatus,
+                        Status = keyPair.Value,
+                        IsButton = true
+                    });
+                }
+                keyStatus[keyPair.Key] = (keyPair.Value, false);
             }
         }
     }

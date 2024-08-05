@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Interfaces;
+using Assets.Scripts.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
         fadeInAnimator.speed = 0.2f / interval; //淡入时机与正解帧间隔小于200ms时，加快淡入动画的播放速度; interval永不为0
         fadeInAnimator.SetTrigger("wifi");
 
+        objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         var notes = GameObject.Find("Notes").transform;
         for (var i = 0; i < star_slide.Length; i++)
@@ -367,6 +369,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
                     break;
             }
             print($"diff : {diff} ms");
+            judgeResult = (JudgeType)judge;
             isJudged = true;
         }
         else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.667)
@@ -393,7 +396,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
             foreach (var s in sensors.Select(x => x.GetComponent<RectTransform>()))
             {
                 var sensor = s.GetComponent<Sensor>();
-                if (sensor.Group == Sensor.SensorGroup.E || sensor.Group == Sensor.SensorGroup.D)
+                if (sensor.Group == SensorGroup.E || sensor.Group == SensorGroup.D)
                     continue;
 
                 var rCenter = s.position;
@@ -466,7 +469,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
                     star_slide[i].transform.position = SlidePositionEnd[i];
                     star_slide[i].transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
                 }
-                if (isFinished)
+                if (isFinished && isJudged)
                     DestroySelf();
             }
             else
@@ -508,10 +511,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
         if (isDestroying || GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
             return;
 
-        if (isBreak)
-            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-        else
-            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
+        objectCounter.ReportResult(this, judgeResult, isBreak);
         if (isBreak && judgeResult == JudgeType.Perfect)
             slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
         slideOK.SetActive(true);

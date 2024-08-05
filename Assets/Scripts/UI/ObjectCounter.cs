@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Assets.Scripts.IO;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static NoteEffectManager;
@@ -29,41 +31,40 @@ public class ObjectCounter : MonoBehaviour
     private Text statusDXScore;
     private Text statusScore;
     private Text table;
+    private Text judgeResultCount;
 
     private EditorComboIndicator textMode = EditorComboIndicator.Combo;
 
     InputManager inputManager;
+    NoteManager notes;
 
     long judgedScore = 0;
     long judgedClassicScore = 0;
     long lostScore = 0;
     long lostClassicScore = 0;
-    Dictionary<JudgeType, int> judgedTapCount = new()
-    {
-        {JudgeType.FastGood, 0 },
-        {JudgeType.FastGreat2, 0 },
-        {JudgeType.FastGreat1, 0 },
-        {JudgeType.FastPerfect2, 0 },
-        {JudgeType.FastPerfect1, 0 },
-        {JudgeType.Perfect, 0 },
-        {JudgeType.LatePerfect1, 0 },
-        {JudgeType.LatePerfect2, 0 },
-        {JudgeType.LateGreat1, 0 },
-        {JudgeType.LateGreat2, 0 },
-        {JudgeType.LateGood, 0 },
-        {JudgeType.Miss, 0 },
-    };
+
+    long cPerfectCount = 0;
+    long perfectCount = 0;
+    long greatCount = 0;
+    long goodCount = 0;
+    long missCount = 0;
+    long combo = 0;
+    Dictionary<JudgeType, int> judgedTapCount;
     Dictionary<JudgeType, int> judgedHoldCount;
-    Dictionary<JudgeType, int> judgedTouchCount = new() { };
-    Dictionary<JudgeType, int> judgedTouchHoldCount = new() { };
-    Dictionary<JudgeType, int> judgedSlideCount = new() { };
-    Dictionary<JudgeType, int> judgedBreakCount = new() { };
+    Dictionary<JudgeType, int> judgedTouchCount;
+    Dictionary<JudgeType, int> judgedTouchHoldCount;
+    Dictionary<JudgeType, int> judgedSlideCount;
+    Dictionary<JudgeType, int> judgedBreakCount;
+    Dictionary<JudgeType, int> totalJudgedCount;
 
     // Start is called before the first frame update
     private void Start()
     {
+        notes = GameObject.Find("Notes").GetComponent<NoteManager>();
+        judgeResultCount = GameObject.Find("JudgeResultCount").GetComponent<Text>();
         table = GameObject.Find("ObjectCount").GetComponent<Text>();
         rate = GameObject.Find("ObjectRate").GetComponent<Text>();
+        inputManager = GameObject.Find("Input").GetComponent<InputManager>();
 
         statusCombo = GameObject.Find("ComboText").GetComponent<Text>();
         statusScore = GameObject.Find("ScoreText").GetComponent<Text>();
@@ -75,11 +76,125 @@ public class ObjectCounter : MonoBehaviour
         statusAchievement.gameObject.SetActive(false);
         statusDXScore.gameObject.SetActive(false);
 
-        judgedHoldCount = new(judgedTapCount);
-        judgedTouchCount = new(judgedTapCount);
-        judgedTouchHoldCount = new(judgedTapCount);
-        judgedSlideCount = new(judgedTapCount);
-        judgedBreakCount = new(judgedTapCount);
+        judgedTapCount = new()
+        {
+            {JudgeType.FastGood, 0 },
+            {JudgeType.FastGreat2, 0 },
+            {JudgeType.FastGreat1, 0 },
+            {JudgeType.FastGreat, 0 },
+            {JudgeType.FastPerfect2, 0 },
+            {JudgeType.FastPerfect1, 0 },
+            {JudgeType.Perfect, 0 },
+            {JudgeType.LatePerfect1, 0 },
+            {JudgeType.LatePerfect2, 0 },
+            {JudgeType.LateGreat, 0 },
+            {JudgeType.LateGreat1, 0 },
+            {JudgeType.LateGreat2, 0 },
+            {JudgeType.LateGood, 0 },
+            {JudgeType.Miss, 0 },
+        };
+        judgedHoldCount = new()
+        {
+            {JudgeType.FastGood, 0 },
+            {JudgeType.FastGreat2, 0 },
+            {JudgeType.FastGreat1, 0 },
+            {JudgeType.FastGreat, 0 },
+            {JudgeType.FastPerfect2, 0 },
+            {JudgeType.FastPerfect1, 0 },
+            {JudgeType.Perfect, 0 },
+            {JudgeType.LatePerfect1, 0 },
+            {JudgeType.LatePerfect2, 0 },
+            {JudgeType.LateGreat, 0 },
+            {JudgeType.LateGreat1, 0 },
+            {JudgeType.LateGreat2, 0 },
+            {JudgeType.LateGood, 0 },
+            {JudgeType.Miss, 0 },
+        };
+        judgedTouchCount = new()
+        {
+            {JudgeType.FastGood, 0 },
+            {JudgeType.FastGreat2, 0 },
+            {JudgeType.FastGreat1, 0 },
+            {JudgeType.FastGreat, 0 },
+            {JudgeType.FastPerfect2, 0 },
+            {JudgeType.FastPerfect1, 0 },
+            {JudgeType.Perfect, 0 },
+            {JudgeType.LatePerfect1, 0 },
+            {JudgeType.LatePerfect2, 0 },
+            {JudgeType.LateGreat, 0 },
+            {JudgeType.LateGreat1, 0 },
+            {JudgeType.LateGreat2, 0 },
+            {JudgeType.LateGood, 0 },
+            {JudgeType.Miss, 0 },
+        };
+        judgedTouchHoldCount = new()
+        {
+            {JudgeType.FastGood, 0 },
+            {JudgeType.FastGreat2, 0 },
+            {JudgeType.FastGreat1, 0 },
+            {JudgeType.FastGreat, 0 },
+            {JudgeType.FastPerfect2, 0 },
+            {JudgeType.FastPerfect1, 0 },
+            {JudgeType.Perfect, 0 },
+            {JudgeType.LatePerfect1, 0 },
+            {JudgeType.LatePerfect2, 0 },
+            {JudgeType.LateGreat, 0 },
+            {JudgeType.LateGreat1, 0 },
+            {JudgeType.LateGreat2, 0 },
+            {JudgeType.LateGood, 0 },
+            {JudgeType.Miss, 0 },
+        };
+        judgedSlideCount = new()
+        {
+            {JudgeType.FastGood, 0 },
+            {JudgeType.FastGreat2, 0 },
+            {JudgeType.FastGreat1, 0 },
+            {JudgeType.FastGreat, 0 },
+            {JudgeType.FastPerfect2, 0 },
+            {JudgeType.FastPerfect1, 0 },
+            {JudgeType.Perfect, 0 },
+            {JudgeType.LatePerfect1, 0 },
+            {JudgeType.LatePerfect2, 0 },
+            {JudgeType.LateGreat, 0 },
+            {JudgeType.LateGreat1, 0 },
+            {JudgeType.LateGreat2, 0 },
+            {JudgeType.LateGood, 0 },
+            {JudgeType.Miss, 0 },
+        };
+        judgedBreakCount = new()
+        {
+            {JudgeType.FastGood, 0 },
+            {JudgeType.FastGreat2, 0 },
+            {JudgeType.FastGreat1, 0 },
+            {JudgeType.FastGreat, 0 },
+            {JudgeType.FastPerfect2, 0 },
+            {JudgeType.FastPerfect1, 0 },
+            {JudgeType.Perfect, 0 },
+            {JudgeType.LatePerfect1, 0 },
+            {JudgeType.LatePerfect2, 0 },
+            {JudgeType.LateGreat, 0 },
+            {JudgeType.LateGreat1, 0 },
+            {JudgeType.LateGreat2, 0 },
+            {JudgeType.LateGood, 0 },
+            {JudgeType.Miss, 0 },
+        };
+        totalJudgedCount = new()
+        {
+            {JudgeType.FastGood, 0 },
+            {JudgeType.FastGreat2, 0 },
+            {JudgeType.FastGreat1, 0 },
+            {JudgeType.FastGreat, 0 },
+            {JudgeType.FastPerfect2, 0 },
+            {JudgeType.FastPerfect1, 0 },
+            {JudgeType.Perfect, 0 },
+            {JudgeType.LatePerfect1, 0 },
+            {JudgeType.LatePerfect2, 0 },
+            {JudgeType.LateGreat, 0 },
+            {JudgeType.LateGreat1, 0 },
+            {JudgeType.LateGreat2, 0 },
+            {JudgeType.LateGood, 0 },
+            {JudgeType.Miss, 0 },
+        };
     }
 
     // Update is called once per frame
@@ -87,12 +202,12 @@ public class ObjectCounter : MonoBehaviour
     {
         UpdateState();
         UpdateOutput();
-        inputManager = GameObject.Find("Input").GetComponent<InputManager>();
     }
 
     private void UpdateOutput()
     {
         UpdateMainOutput();
+        UpdateJudgeResult();
         if (FiSumScore() == 0) return;
         UpdateSideOutput();
     }
@@ -103,7 +218,63 @@ public class ObjectCounter : MonoBehaviour
         int judged = 0;
         int judgedClassic = 0;
 
-        if(noteType is SimaiNoteType.Tap or SimaiNoteType.Touch)
+        if(isBreak)
+        {
+            switch (result)
+            {
+                case JudgeType.Perfect:
+                    judged = judgedClassic = 2600;
+                    lost = lostClassic = 0;
+                    break;
+                case JudgeType.LatePerfect1:
+                case JudgeType.FastPerfect1:
+                    judged = 2575;
+                    judgedClassic = 2550;
+                    lost = 25;
+                    lostClassic = 50;
+                    break;
+                case JudgeType.LatePerfect2:
+                case JudgeType.FastPerfect2:
+                    judged = 2550;
+                    judgedClassic = 2500;
+                    lost = 50;
+                    lostClassic = 100;
+                    break;
+                case JudgeType.LateGreat:
+                case JudgeType.FastGreat:
+                    judged = 2040;
+                    judgedClassic = 2000;
+                    lost = 510;
+                    lostClassic = 600;
+                    break;
+                case JudgeType.LateGreat1:
+                case JudgeType.FastGreat1:
+                    judged = 1540;
+                    judgedClassic = 1500;
+                    lost = 1010;
+                    lostClassic = 1100;
+                    break;
+                case JudgeType.LateGreat2:
+                case JudgeType.FastGreat2:
+                    judged = 1290;
+                    judgedClassic = 1250;
+                    lost = 1310;
+                    lostClassic = 1350;
+                    break;
+                case JudgeType.LateGood:
+                case JudgeType.FastGood:
+                    judged = 1030;
+                    judgedClassic = 1000;
+                    lost = 1570;
+                    lostClassic = 1600;
+                    break;
+                case JudgeType.Miss:
+                    judged = judgedClassic = 0;
+                    lost = lostClassic = 2600;
+                    break;
+            }
+        }
+        else if(noteType is SimaiNoteType.Tap or SimaiNoteType.Touch)
         {
             switch(result)
             {
@@ -172,41 +343,106 @@ public class ObjectCounter : MonoBehaviour
         lostScore += lost;
         lostClassicScore += lostClassic;
     }
-    internal void AddJudgeResult(SimaiNoteType noteType,JudgeType result,bool isBreak = false)
+    internal void ReportResult(NoteDrop note, JudgeType result,bool isBreak = false)
     {
+        var noteType = GetNoteType(note);
         switch(noteType)
         {
             case SimaiNoteType.Tap:
                 if (isBreak)
+                {
                     judgedBreakCount[result]++;
+                    breakCount++;
+                }
                 else
+                {
                     judgedTapCount[result]++;
-                CalNoteScore(noteType, result, isBreak);
+                    tapCount++;
+                }
                 break;
             case SimaiNoteType.Slide:
                 if (isBreak)
+                {
                     judgedBreakCount[result]++;
+                    breakCount++;
+                }
                 else
-                    judgedSlideCount[result]++; 
+                {
+                    judgedSlideCount[result]++;
+                    slideCount++;
+                }
                 break;
             case SimaiNoteType.Hold:
                 if (isBreak)
+                {
                     judgedBreakCount[result]++;
+                    breakCount++;
+                }
                 else
+                {
                     judgedHoldCount[result]++;
+                    holdCount++;
+                }
                 break;
             case SimaiNoteType.Touch:
                 judgedTouchCount[result]++; 
+                touchCount++;
                 break;
             case SimaiNoteType.TouchHold:
                 judgedTouchHoldCount[result]++;
+                holdCount++;
                 break;
 
         }
+        totalJudgedCount[result]++;
+        CalNoteScore(noteType, result, isBreak);
+        if(result != 0)
+            combo++;
+        switch (result)
+        {
+            case JudgeType.Miss:
+                missCount++;
+                combo = 0;
+                break;
+            case JudgeType.Perfect:
+                cPerfectCount++; 
+                break;
+            case JudgeType.LatePerfect2:
+            case JudgeType.LatePerfect1:
+            case JudgeType.FastPerfect1:
+            case JudgeType.FastPerfect2:
+                perfectCount++;
+                break;
+            case JudgeType.LateGreat2:
+            case JudgeType.LateGreat1:
+            case JudgeType.LateGreat:
+            case JudgeType.FastGreat:
+            case JudgeType.FastGreat1:
+            case JudgeType.FastGreat2:
+                greatCount++;
+                break;
+            case JudgeType.LateGood:
+            case JudgeType.FastGood:
+                goodCount++;
+                break;
+        }
     }
+    internal void NextNote(int pos) => notes.noteIndex[pos]++;
+    internal void NextTouch(SensorType pos) => notes.touchIndex[pos]++;
+    SimaiNoteType GetNoteType(NoteDrop note) => note switch
+    {
+        TapDrop => SimaiNoteType.Tap,
+        StarDrop => SimaiNoteType.Tap,
+        HoldDrop => SimaiNoteType.Hold,
+        SlideDrop => SimaiNoteType.Slide,
+        WifiDrop => SimaiNoteType.Slide,
+        TouchHoldDrop => SimaiNoteType.TouchHold,
+        TouchDrop => SimaiNoteType.Touch,
+        _ => throw new InvalidOperationException()
+    };
     private void UpdateMainOutput()
     {
-        var comboValue = tapCount + holdCount + slideCount + touchCount + breakCount;
+        //var comboValue = tapCount + holdCount + slideCount + touchCount + breakCount;
         var scoreSSSValue = FiSumScore();
         int[] scoreValues =
         {
@@ -252,9 +488,19 @@ public class ObjectCounter : MonoBehaviour
                 break;
             case EditorComboIndicator.Combo:
             default:
-                statusCombo.text = comboValue > 0 ? comboValue.ToString() : "";
+                statusCombo.text = combo > 0 ? combo.ToString() : "";
                 break;
         }
+    }
+    void UpdateJudgeResult()
+    {
+        var fast = totalJudgedCount.Where(x => x.Key > JudgeType.Perfect && x.Key != JudgeType.Miss)
+                                   .Select(x => x.Value)
+                                   .Sum();
+        var late = totalJudgedCount.Where(x => x.Key < JudgeType.Perfect && x.Key != JudgeType.Miss)
+                                   .Select(x => x.Value)
+                                   .Sum();
+        judgeResultCount.text = $"{cPerfectCount}\n{perfectCount}\n{greatCount}\n{goodCount}\n{missCount}\n\n{fast}\n{late}";
     }
 
     private void UpdateSideOutput()

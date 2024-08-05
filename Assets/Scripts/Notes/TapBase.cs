@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Assets.Scripts.IO;
+using System;
 using UnityEngine;
 using static NoteEffectManager;
-using static Sensor;
 
 namespace Assets.Scripts.Notes
 {
@@ -35,8 +31,6 @@ namespace Assets.Scripts.Notes
         protected SpriteRenderer exSpriteRender;
         protected SpriteRenderer lineSpriteRender;
 
-        protected ObjectCounter ObjectCounter;
-
         protected SpriteRenderer spriteRenderer;
         protected InputManager inputManager;
 
@@ -50,7 +44,7 @@ namespace Assets.Scripts.Notes
             spriteRenderer = GetComponent<SpriteRenderer>();
             exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
             timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-            ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
+            objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
 
             spriteRenderer.sortingOrder += noteSortOrder;
             exSpriteRender.sortingOrder += noteSortOrder;
@@ -117,18 +111,30 @@ namespace Assets.Scripts.Notes
 
 
         }
-        protected void Check(SensorType s, SensorStatus oStatus, SensorStatus nStatus)
+        protected void Check(object sender, InputEventArgs arg)
         {
-            if (s != sensor.Type)
+            if (arg.Type != sensor.Type)
                 return;
             if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
                 return;
-            if (oStatus == SensorStatus.Off && nStatus == SensorStatus.On)
+            if (arg.IsClick)
             {
-                if (sensor.IsJudging)
+                var isJudging = false;
+
+                if (arg.IsButton)
+                    isJudging = inputManager.IsBusying(arg.Type);
+                else
+                    isJudging = sensor.IsJudging;
+
+                if (isJudging)
                     return;
                 else
-                    sensor.IsJudging = true;
+                {
+                    if (arg.IsButton)
+                        inputManager.SetBusying(arg.Type, true);
+                    else
+                        sensor.IsJudging = true;
+                }
                 Judge();
                 if (isJudged)
                 {
@@ -190,13 +196,12 @@ namespace Assets.Scripts.Notes
             var effectManager = GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>();
             effectManager.PlayEffect(startPosition, isBreak, judgeResult);
             effectManager.PlayFastLate(startPosition, judgeResult);
-            if (isBreak) ObjectCounter.breakCount++;
-            else ObjectCounter.tapCount++;
-            GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
+            objectCounter.NextNote(startPosition);
+            objectCounter.ReportResult(this, judgeResult,isBreak);
             if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
                 manager.SetSensorOff(sensor.Type, guid);
-            sensor.OnSensorStatusChange -= Check;
-            inputManager.OnSensorStatusChange -= Check;
+            sensor.OnStatusChanged -= Check;
+            inputManager.OnButtonStatusChanged -= Check;
         }
     }
 }

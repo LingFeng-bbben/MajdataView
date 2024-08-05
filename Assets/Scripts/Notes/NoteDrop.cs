@@ -19,7 +19,7 @@ public class NoteDrop : MonoBehaviour
     protected Guid guid = Guid.NewGuid();
     protected bool isJudged = false;
     protected JudgeType judgeResult;
-
+    protected ObjectCounter objectCounter;
     /// <summary>
     /// 获取当前时刻距离正解帧的时间长度
     /// </summary>
@@ -85,7 +85,7 @@ public class NoteLongDrop : NoteDrop
                 material.SetColor("_Color", new Color(0.56f, 1f, 0.59f)); // Green
                 break;
             case JudgeType.Miss:
-                material.SetColor("_Color", new Color(1f, 1f, 1f));
+                material.SetColor("_Color", new Color(1f, 1f, 1f)); // White
                 break;
             default:
                 break;

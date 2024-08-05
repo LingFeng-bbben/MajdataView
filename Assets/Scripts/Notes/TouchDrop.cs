@@ -1,10 +1,9 @@
 ﻿using Assets.Scripts;
+using Assets.Scripts.IO;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D;
 using static NoteEffectManager;
-using static Sensor;
+using static UnityEngine.Networking.UnityWebRequest;
 
 public class TouchDrop : TouchBase
 {
@@ -48,7 +47,7 @@ public class TouchDrop : TouchBase
         noteManager = notes.GetComponent<NoteManager>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         multTouchHandler = GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>();
-
+        objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
         firework = GameObject.Find("FireworkEffect");
         fireworkEffect = firework.GetComponent<Animator>();
 
@@ -86,13 +85,13 @@ public class TouchDrop : TouchBase
 
         var customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
         judgeText = customSkin.JudgeText;
-        sensor.OnSensorStatusChange += Check;
+        sensor.OnStatusChanged += Check;
     }
-    void Check(SensorType s, SensorStatus oStatus, SensorStatus nStatus)
+    void Check(object sender,InputEventArgs inputInfo)
     {
         if (isJudged || !noteManager.CanJudge(gameObject, sensor.Type))
             return;
-        else if (oStatus == SensorStatus.Off && nStatus == SensorStatus.On)
+        else if (inputInfo.IsClick)
         {
             if (sensor.IsJudging)
                 return;
@@ -101,7 +100,7 @@ public class TouchDrop : TouchBase
             Judge();
             if (isJudged)
             {
-                sensor.OnSensorStatusChange -= Check;
+                sensor.OnStatusChanged -= Check;
                 Destroy(gameObject);
             }
         }
@@ -224,14 +223,15 @@ public class TouchDrop : TouchBase
         PlayJudgeEffect();
         if (GroupInfo is not null && judgeResult != JudgeType.Miss)
             GroupInfo.JudgeResult = judgeResult;
-        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().touchCount++;
-        GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[sensor.Type]++;
+        objectCounter.ReportResult(this, judgeResult);
+        objectCounter.NextTouch(sensor.Type);
+
         if (isFirework && judgeResult != JudgeType.Miss)
         {
             fireworkEffect.SetTrigger("Fire");
             firework.transform.position = transform.position;
         }
-        sensor.OnSensorStatusChange -= Check;
+        sensor.OnStatusChanged -= Check;
         manager.SetSensorOff(sensor.Type, guid);
     }
     void PlayJudgeEffect()

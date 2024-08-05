@@ -1,59 +1,11 @@
+using Assets.Scripts.IO;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Sensor : MonoBehaviour
 {
-    public bool IsJudging = false;
-    public enum SensorStatus
-    {
-        On,
-        Off
-    }
-    public enum SensorType
-    {
-        A1, 
-        A2,
-        A3,
-        A4,
-        A5,
-        A6,
-        A7,
-        A8,
-        B1,
-        B2,
-        B3,
-        B4,
-        B5,
-        B6,
-        B7,
-        B8,
-        C,
-        D1,
-        D2,
-        D3,
-        D4,
-        D5,
-        D6,
-        D7,
-        D8,
-        E1,
-        E2,
-        E3,
-        E4,
-        E5,
-        E6,
-        E7,
-        E8
-    }
-    public enum SensorGroup
-    {
-        A,
-        B,
-        C,
-        D,
-        E
-    }
+    public bool IsJudging { get; set; } = false;
     public SensorStatus Status = SensorStatus.Off;
     public SensorType Type;
     public SensorGroup Group 
@@ -74,8 +26,9 @@ public class Sensor : MonoBehaviour
         }
     }
 
-    public event Action<SensorType, SensorStatus, SensorStatus> OnSensorStatusChange;//oStatus nStatus
-    public List<Guid> tasks = new();
+    public event EventHandler<InputEventArgs> OnStatusChanged;//oStatus nStatus
+
+    List<Guid> tasks = new();
     public void SetOn(Guid id)
     {
         if (tasks.Contains(id))
@@ -89,9 +42,15 @@ public class Sensor : MonoBehaviour
             tasks.Add(id);
         if (oStatus != nStatus)
         {
-            if (OnSensorStatusChange != null)
+            if (OnStatusChanged != null)
             {
-                OnSensorStatusChange(Type, oStatus, nStatus);
+                OnStatusChanged(this,new InputEventArgs()
+                {
+                    IsButton = false,
+                    Type = Type,
+                    OldStatus = oStatus,
+                    Status = nStatus
+                });
                 IsJudging = false;
             }
             print($"Sensor:{Type} On");
@@ -107,8 +66,16 @@ public class Sensor : MonoBehaviour
         if(tasks.Count == 0)
         {
             var oStatus = Status;
-            if (OnSensorStatusChange != null)
-                OnSensorStatusChange(Type, oStatus, nStatus);
+            if (OnStatusChanged != null)
+            {
+                OnStatusChanged(this,new InputEventArgs()
+                {
+                    IsButton = false,
+                    Type = Type,
+                    OldStatus = oStatus,
+                    Status = nStatus
+                });
+            }
             Status = nStatus;
             print($"Sensor:{Type} Off");
         }
