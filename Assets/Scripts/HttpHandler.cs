@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class HttpHandler : MonoBehaviour
 {
+    public bool IsReloding { get; set; } = false;
     private readonly HttpListener http = new();
     private Task listen;
     private string request = "";
@@ -27,6 +28,7 @@ public class HttpHandler : MonoBehaviour
     private void Update()
     {
         if (request == "") return;
+        IsReloding = false;
         var data = JsonConvert.DeserializeObject<EditRequestjson>(request);
 
         var loader = GameObject.Find("DataLoader").GetComponent<JsonDataLoader>();
@@ -51,6 +53,7 @@ public class HttpHandler : MonoBehaviour
 
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
+            GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
         }
 
         if (data.control == EditorControlMethod.OpStart)
@@ -67,6 +70,7 @@ public class HttpHandler : MonoBehaviour
             bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
             bgManager.PlaySongDetail();
+            GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
         }
 
         if (data.control == EditorControlMethod.Record)
@@ -89,6 +93,7 @@ public class HttpHandler : MonoBehaviour
             bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
             bgManager.PlaySongDetail();
             GameObject.Find("CanvasButtons").SetActive(false);
+            GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
         }
 
         if (data.control == EditorControlMethod.Pause)
@@ -101,6 +106,7 @@ public class HttpHandler : MonoBehaviour
         {
             screenRecorder.StopRecording();
             timeProvider.ResetStartTime();
+            IsReloding = true;
             SceneManager.LoadScene(1);
         }
 
@@ -109,7 +115,7 @@ public class HttpHandler : MonoBehaviour
             timeProvider.SetStartTime(data.startAt, data.startTime, data.audioSpeed);
             bgManager.ContinueVideo(data.audioSpeed);
         }
-
+        
         request = "";
     }
 

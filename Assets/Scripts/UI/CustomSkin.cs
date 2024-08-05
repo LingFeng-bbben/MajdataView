@@ -26,15 +26,18 @@ public class CustomSkin : MonoBehaviour
 
     public Sprite Hold;
     public Sprite Hold_On;
+    public Sprite Hold_Off;
     public Sprite Hold_Each;
     public Sprite Hold_Each_On;
     public Sprite Hold_Ex;
     public Sprite Hold_Break;
     public Sprite Hold_Break_On;
 
-    public Sprite[] Just = new Sprite[6];
-    public Sprite JudgeText_Normal;
+    public Sprite[] Just = new Sprite[36];
+    public Sprite[] JudgeText = new Sprite[5];
     public Sprite JudgeText_Break;
+    public Sprite FastText;
+    public Sprite LateText;
 
     public Sprite Touch;
     public Sprite Touch_Each;
@@ -94,7 +97,7 @@ public class CustomSkin : MonoBehaviour
             Hold_On = SpriteLoader.LoadSpriteFromFile(path + "/hold_on.png", border);
         else
             Hold_On = Hold;
-
+        Hold_Off = SpriteLoader.LoadSpriteFromFile(path + "/hold_off.png", border);
         if (File.Exists(Path.Combine(path, "hold_each_on.png")))
             Hold_Each_On = SpriteLoader.LoadSpriteFromFile(path + "/hold_each_on.png", border);
         else
@@ -112,8 +115,50 @@ public class CustomSkin : MonoBehaviour
         Just[4] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_l.png");
         Just[5] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_d.png");
 
-        JudgeText_Normal = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_normal.png");
+        Just[6] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_r_fast_gr.png");
+        Just[7] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_r_fast_gr.png");
+        Just[8] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_u_fast_gr.png");
+        Just[9] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_l_fast_gr.png");
+        Just[10] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_l_fast_gr.png");
+        Just[11] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_d_fast_gr.png");
+
+        Just[12] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_r_fast_gd.png");
+        Just[13] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_r_fast_gd.png");
+        Just[14] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_u_fast_gd.png");
+        Just[15] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_l_fast_gd.png");
+        Just[16] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_l_fast_gd.png");
+        Just[17] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_d_fast_gd.png");
+
+        Just[18] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_r_late_gr.png");
+        Just[19] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_r_late_gr.png");
+        Just[20] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_u_late_gr.png");
+        Just[21] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_l_late_gr.png");
+        Just[22] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_l_late_gr.png");
+        Just[23] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_d_late_gr.png");
+
+        Just[24] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_r_late_gd.png");
+        Just[25] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_r_late_gd.png");
+        Just[26] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_u_late_gd.png");
+        Just[27] = SpriteLoader.LoadSpriteFromFile(path + "/just_curv_l_late_gd.png");
+        Just[28] = SpriteLoader.LoadSpriteFromFile(path + "/just_str_l_late_gd.png");
+        Just[29] = SpriteLoader.LoadSpriteFromFile(path + "/just_wifi_d_late_gd.png");
+
+        Just[30] = SpriteLoader.LoadSpriteFromFile(path + "/miss_curv_r.png");
+        Just[31] = SpriteLoader.LoadSpriteFromFile(path + "/miss_str_r.png");
+        Just[32] = SpriteLoader.LoadSpriteFromFile(path + "/miss_wifi_u.png");
+        Just[33] = SpriteLoader.LoadSpriteFromFile(path + "/miss_curv_l.png");
+        Just[34] = SpriteLoader.LoadSpriteFromFile(path + "/miss_str_l.png");
+        Just[35] = SpriteLoader.LoadSpriteFromFile(path + "/miss_wifi_d.png");
+
+        JudgeText[0] = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_miss.png");
+        JudgeText[1] = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_good.png");
+        JudgeText[2] = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_great.png");
+        JudgeText[3] = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_perfect.png");
+        JudgeText[4] = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_cPerfect.png");
         JudgeText_Break = SpriteLoader.LoadSpriteFromFile(path + "/judge_text_break.png");
+
+        FastText = SpriteLoader.LoadSpriteFromFile(path + "/fast.png");
+        LateText = SpriteLoader.LoadSpriteFromFile(path + "/late.png");
 
         Touch = SpriteLoader.LoadSpriteFromFile(path + "/touch.png");
         Touch_Each = SpriteLoader.LoadSpriteFromFile(path + "/touch_each.png");

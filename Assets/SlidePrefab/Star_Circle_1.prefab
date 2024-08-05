@@ -2437,6 +2437,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _0curv1str2wifi: 0
   indexOffset: 0
+  judgeOffset: 0
 --- !u!1 &4296850724627442354
 GameObject:
   m_ObjectHideFlags: 0

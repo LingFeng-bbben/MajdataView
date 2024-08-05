@@ -1,65 +1,24 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Notes;
+using UnityEngine;
 
-public class StarDrop : NoteDrop
+public class StarDrop : TapBase
 {
-    // Start is called before the first frame update
-    // public float time;
-    public int startPosition = 1;
-    public float speed = 1;
     public float rotateSpeed = 1f;
 
-    public bool isEach;
-    public bool isBreak;
     public bool isDouble;
-    public bool isEX;
     public bool isNoHead;
-
-    public Sprite tapSpr;
-    public Sprite eachSpr;
-    public Sprite breakSpr;
-    public Sprite exSpr;
+    public bool isFakeStar = false;
+    public bool isFakeStarRotate = false;
 
     public Sprite tapSpr_Double;
     public Sprite eachSpr_Double;
     public Sprite breakSpr_Double;
     public Sprite exSpr_Double;
 
-    public Sprite eachLine;
-    public Sprite breakLine;
-
-    public RuntimeAnimatorController BreakShine;
-
     public GameObject slide;
-    public GameObject tapLine;
-
-    public Color exEffectTap;
-    public Color exEffectEach;
-    public Color exEffectBreak;
-    private Animator animator;
-
-    private bool breakAnimStart;
-    private SpriteRenderer exSpriteRender;
-    private SpriteRenderer lineSpriteRender;
-
-    private ObjectCounter ObjectCounter;
-
-    private SpriteRenderer spriteRenderer;
-
-    private AudioTimeProvider timeProvider;
-
     private void Start()
     {
-        var notes = GameObject.Find("Notes").transform;
-        tapLine = Instantiate(tapLine, notes);
-        tapLine.SetActive(false);
-        lineSpriteRender = tapLine.GetComponent<SpriteRenderer>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-        ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
-
-        spriteRenderer.sortingOrder += noteSortOrder;
-        exSpriteRender.sortingOrder += noteSortOrder;
+        PreLoad();
 
         if (isDouble)
         {
@@ -78,10 +37,7 @@ public class StarDrop : NoteDrop
                 lineSpriteRender.sprite = breakLine;
                 spriteRenderer.sprite = breakSpr_Double;
                 if (isEX) exSpriteRender.color = exEffectBreak;
-                var anim = gameObject.AddComponent<Animator>(); // break star闪烁
-                anim.runtimeAnimatorController = BreakShine;
-                anim.enabled = false;
-                animator = anim;
+                spriteRenderer.material = breakMaterial;
             }
         }
         else
@@ -101,88 +57,60 @@ public class StarDrop : NoteDrop
                 lineSpriteRender.sprite = breakLine;
                 spriteRenderer.sprite = breakSpr;
                 if (isEX) exSpriteRender.color = exEffectBreak;
-                var anim = gameObject.AddComponent<Animator>(); // break star闪烁
-                anim.runtimeAnimatorController = BreakShine;
-                anim.enabled = false;
-                animator = anim;
+                spriteRenderer.material = breakMaterial;
             }
         }
 
         spriteRenderer.forceRenderingOff = true;
         exSpriteRender.forceRenderingOff = true;
-    }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        var timing = timeProvider.AudioTime - time;
-        var distance = timing * speed + 4.8f;
-        var destScale = distance * 0.4f + 0.51f;
-        var songSpeed = timeProvider.CurrentSpeed;
-        if (destScale < 0f)
+        if(!isNoHead)
         {
-            destScale = 0f;
+            sensor = GameObject.Find("Sensors")
+                                   .transform.GetChild(startPosition - 1)
+                                   .GetComponent<Sensor>();
+            manager = GameObject.Find("Sensors")
+                                    .GetComponent<SensorManager>();
+            inputManager = GameObject.Find("Input")
+                                 .GetComponent<InputManager>();
+            sensor.OnStatusChanged += Check;
+            inputManager.OnButtonStatusChanged += Check;
+        }
+    }
+    // Update is called once per frame
+    protected override void Update()
+    {
+        var songSpeed = timeProvider.CurrentSpeed;
+        var judgeTiming = GetJudgeTiming();
+        var distance = judgeTiming * speed + 4.8f;
+
+        if (judgeTiming > 0 && isNoHead)
+        {
+            Destroy(tapLine);
+            Destroy(gameObject);
             return;
         }
 
-        if (!isNoHead)
-        {
-            spriteRenderer.forceRenderingOff = false;
-            if (isEX) exSpriteRender.forceRenderingOff = false;
-        }
-
-        if (isBreak && !breakAnimStart)
-        {
-            breakAnimStart = true;
-            animator.enabled = true;
-            animator.Play("BreakShine", -1, 0.5f);
-        }
-
-        if (timing > 0)
-        {
-            if (!isNoHead)
-            {
-                GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>().PlayEffect(startPosition, isBreak);
-                if (isBreak) ObjectCounter.breakCount++;
-                else ObjectCounter.tapCount++;
-            }
-
-            Destroy(tapLine);
-            Destroy(gameObject);
-        }
-
-        if (timeProvider.isStart)
+        if (timeProvider.isStart && !isFakeStar)
             transform.Rotate(0f, 0f, -180f * Time.deltaTime * songSpeed / rotateSpeed);
-
-        tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
-
-        if (destScale > 0.3f && !isNoHead) tapLine.SetActive(true);
-
-        if (distance < 1.225f)
+        else if (isFakeStarRotate)
+            transform.Rotate(0f, 0f, 400f * Time.deltaTime);  
+        
+        base.Update();
+        if (isNoHead)
         {
-            transform.localScale = new Vector3(destScale, destScale);
-
-            distance = 1.225f;
-            var pos = getPositionFromDistance(distance);
-            transform.position = pos;
+            spriteRenderer.forceRenderingOff = true;
+            if (isEX) exSpriteRender.forceRenderingOff = true;
+            tapLine.SetActive(false);
         }
-        else
-        {
+        if (distance >= 1.225f && !isFakeStar)
             if (!slide.activeSelf) slide.SetActive(true);
-            var pos = getPositionFromDistance(distance);
-            transform.position = pos;
-            transform.localScale = new Vector3(1f, 1f);
-        }
-
-        var lineScale = Mathf.Abs(distance / 4.8f);
-        tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
-        //lineSpriteRender.color = new Color(1f, 1f, 1f, lineScale);
+        if (judgeTiming > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+            manager.SetSensorOn(sensor.Type, guid);
     }
-
-    private Vector3 getPositionFromDistance(float distance)
+    protected override void OnDestroy()
     {
-        return new Vector3(
-            distance * Mathf.Cos((startPosition * -2f + 5f) * 0.125f * Mathf.PI),
-            distance * Mathf.Sin((startPosition * -2f + 5f) * 0.125f * Mathf.PI));
+        if(!isNoHead || isFakeStar)
+            base.OnDestroy();
     }
 }

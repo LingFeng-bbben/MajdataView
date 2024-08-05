@@ -5,6 +5,7 @@ public class LoadJustSprite : MonoBehaviour
     public int _0curv1str2wifi;
 
     public int indexOffset;
+    public int judgeOffset = 0;
 
     // Start is called before the first frame update
     private void Start()
@@ -31,10 +32,34 @@ public class LoadJustSprite : MonoBehaviour
         refreshSprite();
         return _0curv1str2wifi;
     }
-
+    public void setFastGr()
+    {
+        judgeOffset = 6;
+        refreshSprite();
+    }
+    public void setFastGd()
+    {
+        judgeOffset = 12;
+        refreshSprite();
+    }
+    public void setLateGr()
+    {
+        judgeOffset = 18;
+        refreshSprite();
+    }
+    public void setLateGd()
+    {
+        judgeOffset = 24;
+        refreshSprite();
+    }
+    public void setMiss()
+    {
+        judgeOffset = 30;
+        refreshSprite();
+    }
     private void refreshSprite()
     {
         gameObject.GetComponent<SpriteRenderer>().sprite = GameObject.Find("Outline").GetComponent<CustomSkin>()
-            .Just[_0curv1str2wifi + indexOffset];
+            .Just[_0curv1str2wifi + indexOffset + judgeOffset];
     }
 }
