@@ -279,7 +279,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 22
 --- !u!1 &102157288
@@ -378,7 +377,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 11
 --- !u!1 &168172102
@@ -664,7 +662,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 4
 --- !u!1 &245428340
@@ -819,7 +816,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 26
 --- !u!1001 &282768869
@@ -1380,7 +1376,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 1
 --- !u!1 &327139454
@@ -2230,6 +2225,98 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 392650406}
   m_CullTransparentMesh: 1
+--- !u!1 &393224019
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 393224020}
+  - component: {fileID: 393224022}
+  - component: {fileID: 393224021}
+  m_Layer: 5
+  m_Name: JudgeResultCount
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &393224020
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393224019}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 616739454}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -61.2, y: -35.86}
+  m_SizeDelta: {x: 15.358, y: 33.7}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &393224021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393224019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: e330574b8b2e3fb48b915214d9946961, type: 3}
+    m_FontSize: 3
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 300
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: '0
+
+    0
+
+    0
+
+    0
+
+    0
+
+
+    0
+
+    0'
+--- !u!222 &393224022
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393224019}
+  m_CullTransparentMesh: 0
 --- !u!1 &406114713
 GameObject:
   m_ObjectHideFlags: 0
@@ -2521,7 +2608,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 17
 --- !u!1 &437313979
@@ -2656,7 +2742,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 0
 --- !u!1001 &452108545
@@ -4282,6 +4367,8 @@ RectTransform:
   - {fileID: 1311215481}
   - {fileID: 753237955}
   - {fileID: 1555395485}
+  - {fileID: 1678688327}
+  - {fileID: 393224020}
   - {fileID: 1846285904}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4688,7 +4775,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 12
 --- !u!1 &677151929
@@ -4748,7 +4834,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 24
 --- !u!1 &706356589
@@ -5058,7 +5143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 29
 --- !u!1 &781543823
@@ -5197,7 +5281,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 21
 --- !u!1 &824291542
@@ -5257,7 +5340,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 8
 --- !u!1 &898780136
@@ -6169,7 +6251,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 2
 --- !u!1 &999431042
@@ -6229,7 +6310,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 9
 --- !u!1001 &1005896043
@@ -6383,7 +6463,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 14
 --- !u!1 &1040656496
@@ -7340,7 +7419,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 31
 --- !u!1 &1279671792
@@ -7400,7 +7478,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 6
 --- !u!1 &1284908718
@@ -7460,7 +7537,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 3
 --- !u!1 &1290486492
@@ -7520,7 +7596,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 28
 --- !u!1 &1308235128
@@ -8042,7 +8117,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 5
 --- !u!1001 &1390988450
@@ -9567,7 +9641,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 7
 --- !u!1 &1538650388
@@ -9627,7 +9700,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 30
 --- !u!1 &1549459908
@@ -10079,7 +10151,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 23
 --- !u!1 &1604023387
@@ -10139,7 +10210,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 25
 --- !u!1 &1627284968
@@ -10344,7 +10414,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 18
 --- !u!1 &1656143587
@@ -10404,7 +10473,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 19
 --- !u!1001 &1670265736
@@ -10570,6 +10638,98 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1673765535}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1678688326
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1678688327}
+  - component: {fileID: 1678688329}
+  - component: {fileID: 1678688328}
+  m_Layer: 5
+  m_Name: JudgeResultText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1678688327
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678688326}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 616739454}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -77.116, y: -35.86}
+  m_SizeDelta: {x: 15.358, y: 33.7}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1678688328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678688326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: e330574b8b2e3fb48b915214d9946961, type: 3}
+    m_FontSize: 3
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 300
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'CriticalPf
+
+    Perfect
+
+    Great
+
+    Good
+
+    Miss
+
+
+    Fast
+
+    Late'
+--- !u!222 &1678688329
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678688326}
+  m_CullTransparentMesh: 0
 --- !u!1 &1741671572
 GameObject:
   m_ObjectHideFlags: 0
@@ -10702,7 +10862,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 15
 --- !u!1001 &1745714141
@@ -11276,7 +11435,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 16
 --- !u!1 &1846285903
@@ -11493,7 +11651,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 13
 --- !u!1 &1904206638
@@ -11783,7 +11940,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 32
 --- !u!1001 &1953456371
@@ -12159,7 +12315,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 20
 --- !u!1 &2010816216
@@ -12219,7 +12374,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 10
 --- !u!1 &2015046459
@@ -12523,7 +12677,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a4a08865169a434a98ce92424829b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsJudging: 0
   Status: 1
   Type: 27
 --- !u!1 &2033854459

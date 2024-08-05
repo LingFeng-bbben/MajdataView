@@ -47,6 +47,7 @@ public class HoldDrop : NoteLongDrop
     private void Start()
     {
         var notes = GameObject.Find("Notes").transform;
+        objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
         noteManager = notes.GetComponent<NoteManager>();
         holdEffect = Instantiate(holdEffect, notes);
         holdEffect.SetActive(false);
@@ -142,7 +143,7 @@ public class HoldDrop : NoteLongDrop
             sensor.OnStatusChanged -= Check;
             inputManager.OnButtonStatusChanged -= Check;
             isJudged = true;
-            GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
+            GameObject.Find("Notes").GetComponent<NoteManager>().noteIndex[startPosition]++;
         }
 
         if(autoPlay)
@@ -193,7 +194,7 @@ public class HoldDrop : NoteLongDrop
         {
             sensor.OnStatusChanged -= Check;
             inputManager.OnButtonStatusChanged -= Check;
-            GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
+            GameObject.Find("Notes").GetComponent<NoteManager>().noteIndex[startPosition]++;
         }
     }
     void Judge()
@@ -382,14 +383,14 @@ public class HoldDrop : NoteLongDrop
         effectManager.PlayEffect(startPosition, isBreak, result);
         effectManager.PlayFastLate(startPosition, result);
         print($"Hold: {MathF.Round(percent * 100,2)}%\nTotal Len : {MathF.Round(realityHT * 1000,2)}ms");
-        if (isBreak)
-            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-        else
-            GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
+
+        objectCounter.ReportResult(this, result, isBreak);
+        if (!isJudged)
+            objectCounter.NextNote(startPosition);
+
         if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
             manager.SetSensorOff(sensor.Type, guid);
-        if(!isJudged)
-            GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
+        
         sensor.OnStatusChanged -= Check;
         inputManager.OnButtonStatusChanged -= Check;
     }

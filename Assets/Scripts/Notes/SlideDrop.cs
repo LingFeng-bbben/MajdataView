@@ -84,7 +84,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             return;
         isInitialized = true;
         slideOK = transform.GetChild(transform.childCount - 1).gameObject; //slideok is the last one        
-
+        objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
 
         if (isMirror)
         {
@@ -683,10 +683,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         if (ConnectInfo.IsGroupPartEnd)
         {
             // 只有组内最后一个Slide完成 才会显示判定条并增加总数
-            if (isBreak)
-                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().breakCount++;
-            else
-                GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().slideCount++;
+            objectCounter.ReportResult(this, judgeResult, isBreak);
             if (isBreak && judgeResult == JudgeType.Perfect)
                 slideOK.GetComponent<Animator>().runtimeAnimatorController = judgeBreakShine;
             slideOK.SetActive(true);

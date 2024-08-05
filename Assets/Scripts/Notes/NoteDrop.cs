@@ -19,7 +19,7 @@ public class NoteDrop : MonoBehaviour
     protected Guid guid = Guid.NewGuid();
     protected bool isJudged = false;
     protected JudgeType judgeResult;
-
+    protected ObjectCounter objectCounter;
     /// <summary>
     /// 获取当前时刻距离正解帧的时间长度
     /// </summary>

@@ -31,8 +31,6 @@ namespace Assets.Scripts.Notes
         protected SpriteRenderer exSpriteRender;
         protected SpriteRenderer lineSpriteRender;
 
-        protected ObjectCounter ObjectCounter;
-
         protected SpriteRenderer spriteRenderer;
         protected InputManager inputManager;
 
@@ -46,7 +44,7 @@ namespace Assets.Scripts.Notes
             spriteRenderer = GetComponent<SpriteRenderer>();
             exSpriteRender = transform.GetChild(0).GetComponent<SpriteRenderer>();
             timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
-            ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
+            objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
 
             spriteRenderer.sortingOrder += noteSortOrder;
             exSpriteRender.sortingOrder += noteSortOrder;
@@ -198,9 +196,8 @@ namespace Assets.Scripts.Notes
             var effectManager = GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>();
             effectManager.PlayEffect(startPosition, isBreak, judgeResult);
             effectManager.PlayFastLate(startPosition, judgeResult);
-            if (isBreak) ObjectCounter.breakCount++;
-            else ObjectCounter.tapCount++;
-            GameObject.Find("Notes").GetComponent<NoteManager>().noteCount[startPosition]++;
+            objectCounter.NextNote(startPosition);
+            objectCounter.ReportResult(this, judgeResult,isBreak);
             if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
                 manager.SetSensorOff(sensor.Type, guid);
             sensor.OnStatusChanged -= Check;

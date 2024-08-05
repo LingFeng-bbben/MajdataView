@@ -6,10 +6,10 @@ public class NoteManager : MonoBehaviour
 {
     public List<GameObject> notes = new();
     public Dictionary<GameObject, int> noteOrder = new();
-    public Dictionary<int, int> noteCount = new();
+    public Dictionary<int, int> noteIndex = new();
 
     public Dictionary<GameObject, int> touchOrder = new();
-    public Dictionary<SensorType, int> touchCount = new();
+    public Dictionary<SensorType, int> touchIndex = new();
     // Start is called before the first frame update
     void Start()
     {
@@ -29,15 +29,15 @@ public class NoteManager : MonoBehaviour
             var touchHold = child.GetComponent<TouchHoldDrop>();
 
             if (tap != null)
-                noteOrder.Add(tap.gameObject, noteCount[tap.startPosition]++);
+                noteOrder.Add(tap.gameObject, noteIndex[tap.startPosition]++);
             else if (hold != null)
-                noteOrder.Add(hold.gameObject, noteCount[hold.startPosition]++);
+                noteOrder.Add(hold.gameObject, noteIndex[hold.startPosition]++);
             else if (star != null && !star.isNoHead)
-                noteOrder.Add(star.gameObject, noteCount[star.startPosition]++);
+                noteOrder.Add(star.gameObject, noteIndex[star.startPosition]++);
             else if (touch != null)
-                touchOrder.Add(touch.gameObject, touchCount[touch.GetSensor()]++);
+                touchOrder.Add(touch.gameObject, touchIndex[touch.GetSensor()]++);
             else if(touchHold != null)
-                touchOrder.Add(touchHold.gameObject, touchCount[SensorType.C]++);
+                touchOrder.Add(touchHold.gameObject, touchIndex[SensorType.C]++);
 
             notes.Add(child.gameObject);
         }
@@ -45,14 +45,14 @@ public class NoteManager : MonoBehaviour
     }
     void ResetCounter()
     {
-        noteCount.Clear();
-        touchCount.Clear();
+        noteIndex.Clear();
+        touchIndex.Clear();
         for (int i = 1; i < 9; i++)
-            noteCount.Add(i, 0);
+            noteIndex.Add(i, 0);
         var sensorParent = GameObject.Find("Sensors");
         var count = sensorParent.transform.childCount;
         for (int i = 0; i < count; i++)
-            touchCount.Add(sensorParent.transform
+            touchIndex.Add(sensorParent.transform
                                        .GetChild(i)
                                        .GetComponent<Sensor>().Type, 0);
     }
@@ -62,7 +62,7 @@ public class NoteManager : MonoBehaviour
         if (!noteOrder.ContainsKey(obj))
             return false;
         var index = noteOrder[obj];
-        var nowIndex = noteCount[pos];
+        var nowIndex = noteIndex[pos];
 
         return index <= nowIndex;
     }
@@ -72,7 +72,7 @@ public class NoteManager : MonoBehaviour
         if (!touchOrder.ContainsKey(obj))
             return false;
         var index = touchOrder[obj];
-        var nowIndex = touchCount[t];
+        var nowIndex = touchIndex[t];
 
         return index <= nowIndex;
     }

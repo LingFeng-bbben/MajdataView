@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.IO;
 using System;
+using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 using static NoteEffectManager;
 
@@ -35,6 +36,7 @@ public class TouchHoldDrop : NoteLongDrop
         moveDuration = 0.8f * wholeDuration;
         displayDuration = 0.2f * wholeDuration;
 
+        objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
         var notes = GameObject.Find("Notes").transform;
         noteManager = notes.GetComponent<NoteManager>();
         holdEffect = Instantiate(holdEffect, notes);
@@ -81,7 +83,7 @@ public class TouchHoldDrop : NoteLongDrop
             if (isJudged)
             {
                 sensor.OnStatusChanged -= Check;
-                GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[SensorType.C]++;
+                GameObject.Find("Notes").GetComponent<NoteManager>().touchIndex[SensorType.C]++;
             }
         }
     }
@@ -160,7 +162,7 @@ public class TouchHoldDrop : NoteLongDrop
             judgeResult = JudgeType.Miss;
             sensor.OnStatusChanged -= Check;
             isJudged = true;
-            GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[SensorType.C]++;
+            GameObject.Find("Notes").GetComponent<NoteManager>().touchIndex[SensorType.C]++;
         }
 
         if (autoPlay)
@@ -253,10 +255,10 @@ public class TouchHoldDrop : NoteLongDrop
             }
         }
         
-        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().holdCount++;
         print($"TouchHold: {MathF.Round(percent * 100, 2)}%\nTotal Len : {MathF.Round(realityHT * 1000, 2)}ms");
+        objectCounter.ReportResult(this, result);
         if (!isJudged)
-            GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[SensorType.C]++;
+            objectCounter.NextTouch(SensorType.C);
         if (isFirework && result != JudgeType.Miss)
         {
             fireworkEffect.SetTrigger("Fire");

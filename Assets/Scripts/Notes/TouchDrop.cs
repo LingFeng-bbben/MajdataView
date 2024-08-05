@@ -3,6 +3,7 @@ using Assets.Scripts.IO;
 using System;
 using UnityEngine;
 using static NoteEffectManager;
+using static UnityEngine.Networking.UnityWebRequest;
 
 public class TouchDrop : TouchBase
 {
@@ -46,7 +47,7 @@ public class TouchDrop : TouchBase
         noteManager = notes.GetComponent<NoteManager>();
         timeProvider = GameObject.Find("AudioTimeProvider").GetComponent<AudioTimeProvider>();
         multTouchHandler = GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>();
-
+        objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
         firework = GameObject.Find("FireworkEffect");
         fireworkEffect = firework.GetComponent<Animator>();
 
@@ -222,8 +223,9 @@ public class TouchDrop : TouchBase
         PlayJudgeEffect();
         if (GroupInfo is not null && judgeResult != JudgeType.Miss)
             GroupInfo.JudgeResult = judgeResult;
-        GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>().touchCount++;
-        GameObject.Find("Notes").GetComponent<NoteManager>().touchCount[sensor.Type]++;
+        objectCounter.ReportResult(this, judgeResult);
+        objectCounter.NextTouch(sensor.Type);
+
         if (isFirework && judgeResult != JudgeType.Miss)
         {
             fireworkEffect.SetTrigger("Fire");
