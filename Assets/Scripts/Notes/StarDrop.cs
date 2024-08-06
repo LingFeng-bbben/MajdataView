@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Notes;
+using Assets.Scripts.Types;
 using UnityEngine;
 #nullable enable
 public class StarDrop : TapBase
@@ -76,6 +77,7 @@ public class StarDrop : TapBase
             sensor.OnStatusChanged += Check;
             inputManager.OnButtonStatusChanged += Check;
         }
+        State = NoteStatus.Initialized;
     }
     // Update is called once per frame
     protected override void Update()
@@ -83,30 +85,75 @@ public class StarDrop : TapBase
         var songSpeed = timeProvider.CurrentSpeed;
         var judgeTiming = GetJudgeTiming();
         var distance = judgeTiming * speed + 4.8f;
+        var destScale = distance * 0.4f + 0.51f;
 
-        if (judgeTiming > 0 && isNoHead)
+        switch (State)
         {
-            Destroy(tapLine);
-            Destroy(gameObject);
-            return;
+            case NoteStatus.Initialized:
+                if (destScale >= 0f)
+                {
+
+                    if(!isNoHead)
+                        tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
+                    State = NoteStatus.Pending;
+                    goto case NoteStatus.Pending;
+                }
+                else
+                    transform.localScale = new Vector3(0, 0);
+                return;
+            case NoteStatus.Pending:
+                {
+                    if (destScale > 0.3f && !isNoHead)
+                        tapLine.SetActive(true);
+                    if (distance < 1.225f)
+                    {
+                        transform.localScale = new Vector3(destScale, destScale);
+                        transform.position = getPositionFromDistance(1.225f);
+                        var lineScale = Mathf.Abs(1.225f / 4.8f);
+                        tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+                    }
+                    else
+                    {
+                        if (!isFakeStar && !slide.activeSelf)
+                        {
+                            slide.SetActive(true);
+                            if(isNoHead)
+                            {
+                                Destroy(tapLine);
+                                Destroy(gameObject);
+                                return;
+                            }
+                        }
+                        State = NoteStatus.Running;
+                        goto case NoteStatus.Running;
+                    }
+                }
+                break;
+            case NoteStatus.Running:
+                {
+                    transform.position = getPositionFromDistance(distance);
+                    transform.localScale = new Vector3(1f, 1f);
+                    var lineScale = Mathf.Abs(distance / 4.8f);
+                    tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+                }
+                break;
+        }
+
+        if (isNoHead)
+        {
+            spriteRenderer.forceRenderingOff = true;
+            if (isEX) exSpriteRender.forceRenderingOff = true;
+        }
+        else
+        {
+            spriteRenderer.forceRenderingOff = false;
+            if (isEX) exSpriteRender.forceRenderingOff = false;
         }
 
         if (timeProvider.isStart && !isFakeStar)
             transform.Rotate(0f, 0f, -180f * Time.deltaTime * songSpeed / rotateSpeed);
         else if (isFakeStarRotate)
             transform.Rotate(0f, 0f, 400f * Time.deltaTime);  
-        
-        base.Update();
-        if (isNoHead)
-        {
-            spriteRenderer.forceRenderingOff = true;
-            if (isEX) exSpriteRender.forceRenderingOff = true;
-            tapLine.SetActive(false);
-        }
-        if (distance >= 1.225f && !isFakeStar)
-            if (!slide.activeSelf) slide.SetActive(true);
-        if (judgeTiming > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-            manager.SetSensorOn(sensor.Type, guid);
     }
     protected override void OnDestroy()
     {

@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Notes;
+using Assets.Scripts.Types;
 using UnityEngine;
 #nullable enable
 public class TapDrop : TapBase
@@ -37,5 +38,6 @@ public class TapDrop : TapBase
                                  .GetComponent<InputManager>();
         sensor.OnStatusChanged += Check;
         inputManager.OnButtonStatusChanged += Check;
+        State = NoteStatus.Initialized;
     }
 }

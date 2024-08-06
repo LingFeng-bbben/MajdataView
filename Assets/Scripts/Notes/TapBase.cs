@@ -47,6 +47,8 @@ namespace Assets.Scripts.Notes
 
             spriteRenderer.sortingOrder += noteSortOrder;
             exSpriteRender.sortingOrder += noteSortOrder;
+
+            
         }
         protected void FixedUpdate()
         {
@@ -77,41 +79,54 @@ namespace Assets.Scripts.Notes
             var timing = GetJudgeTiming();
             var distance = timing * speed + 4.8f;
             var destScale = distance * 0.4f + 0.51f;
-            if (destScale < 0f)
+
+            switch(State)
             {
-                destScale = 0f;
-                return;
+                case NoteStatus.Initialized:
+                    if (destScale >= 0f)
+                    {
+                        tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
+                        State = NoteStatus.Pending;
+                        goto case NoteStatus.Pending;
+                    }
+                    else
+                        transform.localScale = new Vector3(0, 0);
+                    return;
+                case NoteStatus.Pending:
+                    {
+                        if (destScale > 0.3f)
+                            tapLine.SetActive(true);
+                        if (distance < 1.225f)
+                        {
+                            transform.localScale = new Vector3(destScale, destScale);
+                            transform.position = getPositionFromDistance(1.225f);
+                            var lineScale = Mathf.Abs(1.225f / 4.8f);
+                            tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+                        }
+                        else
+                        {
+                            State = NoteStatus.Running;
+                            goto case NoteStatus.Running;
+                        }
+                    }
+                    break;
+                case NoteStatus.Running:
+                    {
+                        transform.position = getPositionFromDistance(distance);
+                        transform.localScale = new Vector3(1f, 1f);
+                        var lineScale = Mathf.Abs(distance / 4.8f);
+                        tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+                    }
+                    break;
             }
 
             spriteRenderer.forceRenderingOff = false;
             if (isEX) exSpriteRender.forceRenderingOff = false;
-
             if (isBreak)
             {
                 var extra = Math.Max(Mathf.Sin(timeProvider.GetFrame() * 0.17f) * 0.5f, 0);
                 spriteRenderer.material.SetFloat("_Brightness", 0.95f + extra);
             }
-
-            tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
-            if (destScale > 0.3f) tapLine.SetActive(true);
-
-            if (distance < 1.225f)
-            {
-                transform.localScale = new Vector3(destScale, destScale);
-
-                distance = 1.225f;
-                var pos = getPositionFromDistance(distance);
-                transform.position = pos;
-            }
-            else
-            {
-                var pos = getPositionFromDistance(distance);
-                transform.position = pos;
-                transform.localScale = new Vector3(1f, 1f);
-            }
-
-            var lineScale = Mathf.Abs(distance / 4.8f);
-            tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
         }
         protected void Check(object sender, InputEventArgs arg)
         {
