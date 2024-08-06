@@ -375,13 +375,10 @@ public class SlideDrop : NoteLongDrop, IFlasher
         switch (State)
         {
             case NoteStatus.Initialized:
-                if (startTiming <= 0f)
+                if (fadeInAnimator != null && startTiming >= fadeInTime)
                 {
-                    if (fadeInAnimator != null && startTiming >= fadeInTime)
-                    {
-                        fadeInAnimator.enabled = true;
-                        State = NoteStatus.Pending;
-                    }
+                    fadeInAnimator.enabled = true;
+                    State = NoteStatus.Pending;
                 }
                 break;
             case NoteStatus.Pending:
