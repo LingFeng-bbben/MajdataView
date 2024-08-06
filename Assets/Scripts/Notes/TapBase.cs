@@ -1,8 +1,7 @@
-﻿using Assets.Scripts.IO;
+﻿using Assets.Scripts.Types;
 using System;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 namespace Assets.Scripts.Notes
 {
     public class TapBase: NoteDrop

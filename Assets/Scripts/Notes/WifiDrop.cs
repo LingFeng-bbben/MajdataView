@@ -1,12 +1,11 @@
 ﻿using Assets.Scripts.Interfaces;
-using Assets.Scripts.IO;
+using Assets.Scripts.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 public class WifiDrop : NoteLongDrop,IFlasher
 {
     // Start is called before the first frame update

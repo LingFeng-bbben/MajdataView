@@ -1,5 +1,4 @@
-﻿
-namespace Assets.Scripts.IO
+﻿namespace Assets.Scripts.Types
 {
     public enum SensorStatus
     {
@@ -50,17 +49,21 @@ namespace Assets.Scripts.IO
         D,
         E
     }
-    public interface IIOComponent
+    public enum JudgeType
     {
-
-    }
-    public struct InputEventArgs
-    {
-        public SensorType Type {  get; set; }
-        public SensorStatus OldStatus { get; set; }
-        public SensorStatus Status { get; set; }
-        public bool IsButton { get; set; }
-        public bool IsClick => OldStatus == SensorStatus.Off && Status == SensorStatus.On;
-
+        Miss,
+        LateGood,
+        LateGreat2,
+        LateGreat1,
+        LateGreat,
+        LatePerfect2,
+        LatePerfect1,
+        Perfect,
+        FastPerfect1,
+        FastPerfect2,
+        FastGreat,
+        FastGreat1,
+        FastGreat2,
+        FastGood
     }
 }

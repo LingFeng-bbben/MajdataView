@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+#nullable enable
 public class PlayAllPerfect : MonoBehaviour
 {
     private GameObject Allperfect;

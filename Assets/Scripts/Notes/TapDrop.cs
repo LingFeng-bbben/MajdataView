@@ -1,6 +1,6 @@
 ﻿using Assets.Scripts.Notes;
 using UnityEngine;
-
+#nullable enable
 public class TapDrop : TapBase
 {
     

@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.IO;
+﻿using Assets.Scripts.Types;
 using Assets.Scripts.Notes;
 using Newtonsoft.Json;
 using System;

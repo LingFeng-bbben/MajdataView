@@ -1,12 +1,10 @@
 ﻿using Assets.Scripts.Interfaces;
-using Assets.Scripts.IO;
-using Assets.Scripts.Notes;
+using Assets.Scripts.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 public class SlideDrop : NoteLongDrop, IFlasher
 {
     // Start is called before the first frame update

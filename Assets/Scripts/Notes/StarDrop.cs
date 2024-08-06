@@ -1,6 +1,6 @@
 ﻿using Assets.Scripts.Notes;
 using UnityEngine;
-
+#nullable enable
 public class StarDrop : TapBase
 {
     public float rotateSpeed = 1f;

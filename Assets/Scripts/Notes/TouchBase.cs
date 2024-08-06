@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using Assets.Scripts.Notes;
-using Assets.Scripts.IO;
-
+using Assets.Scripts.Types;
+#nullable enable
 namespace Assets.Scripts
 {
     public class TouchBase : NoteDrop

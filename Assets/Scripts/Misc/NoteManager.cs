@@ -1,7 +1,7 @@
-using Assets.Scripts.IO;
+using Assets.Scripts.Types;
 using System.Collections.Generic;
 using UnityEngine;
-
+#nullable enable
 public class NoteManager : MonoBehaviour
 {
     public List<GameObject> notes = new();

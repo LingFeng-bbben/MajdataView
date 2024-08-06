@@ -1,9 +1,7 @@
-﻿using Assets.Scripts.IO;
+﻿using Assets.Scripts.Types;
 using System;
-using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 public class TouchHoldDrop : NoteLongDrop
 {
     public bool isFirework;
@@ -119,61 +117,57 @@ public class TouchHoldDrop : NoteLongDrop
             judgeDiff = 0;
         else
             judgeDiff = diff;
-        if (!userHold.IsRunning)
-            userHold.Start();
+
         judgeResult = result;
-        PlayHoldEffect();
         isJudged = true;
+        PlayHoldEffect();
     }
     private void FixedUpdate()
     {
         var autoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
-
-        var timing = timeProvider.AudioTime - time;
+        var remainingTime = GetRemainingTime();
+        var timing = GetJudgeTiming();
         var holdTime = timing - LastFor;
+        var on = sensor.Status == SensorStatus.On;
 
-        if (GetRemainingTime() == 0 && isJudged)
+        if (remainingTime == 0 && isJudged)
         {
-            userHold.Stop();
             Destroy(holdEffect);
             Destroy(gameObject);
         }
         else if (isJudged)
         {
-            if (sensor.Status == SensorStatus.On)
-                PlayHoldEffect();
-            if (GetJudgeTiming() < 0.25f || (GetRemainingTime() < 0.2f && GetRemainingTime() != 0))
+            if (remainingTime < 0.2f && remainingTime != 0)
                 return;
-            if (sensor.Status == SensorStatus.On)
+            else if (timing > 0.25f)
             {
-                if (!userHold.IsRunning)
-                    userHold.Start();
-            }
-            else if (sensor.Status == SensorStatus.Off)
-            {
-                if (userHold.IsRunning)
-                    userHold.Stop();
-                StopHoldEffect();
+                if(on)
+                {
+                    userHoldTime += Time.fixedDeltaTime;
+                    PlayHoldEffect();
+                }
+                else
+                    StopHoldEffect();
             }
         }
-        else if (GetJudgeTiming() > 0.316667f)
+        else if (timing > 0.316667f)
         {
             judgeDiff = 316.667f;
             judgeResult = JudgeType.Miss;
             sensor.OnStatusChanged -= Check;
             isJudged = true;
-            GameObject.Find("Notes").GetComponent<NoteManager>().touchIndex[SensorType.C]++;
+            objectCounter.NextTouch(SensorType.C);
         }
 
         if (autoPlay)
         {
-            if (GetJudgeTiming() > 0 && !isJudged ||
-                isJudged && GetRemainingTime() > 0)
+            if (timing > 0 && !isJudged ||
+                isJudged && remainingTime > 0)
             {
                 manager.SetSensorOn(sensor.Type, guid);
                 isAutoTrigger = true;
             }
-            else if (GetRemainingTime() == 0)
+            else if (timing == 0)
                 manager.SetSensorOff(sensor.Type, guid);
         }
         else if (isAutoTrigger)
@@ -186,13 +180,9 @@ public class TouchHoldDrop : NoteLongDrop
     // Update is called once per frame
     private void Update()
     {
-        var timing = timeProvider.AudioTime - time;
-        //var pow = Mathf.Pow(-timing * speed, 0.1f) - 0.4f;
+        var timing = GetJudgeTiming();
         var pow = -Mathf.Exp(8 * (timing * 0.4f / moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
-        var isAutoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
-        if (timing > 0 && isAutoPlay)
-            PlayHoldEffect();
 
         if (-timing <= wholeDuration && -timing > moveDuration)
         {
@@ -209,8 +199,7 @@ public class TouchHoldDrop : NoteLongDrop
         }
 
         if (float.IsNaN(distance)) distance = 0f;
-        if (distance == 0f && isAutoPlay)
-            PlayHoldEffect();
+
         for (var i = 0; i < 4; i++)
         {
             var pos = (0.226f + distance) * GetAngle(i);
@@ -222,7 +211,7 @@ public class TouchHoldDrop : NoteLongDrop
         if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
             return;
         var realityHT = LastFor - 0.45f - (judgeDiff / 1000f);
-        var percent = MathF.Min(1, (userHold.ElapsedMilliseconds / 1000f) / realityHT);
+        var percent = MathF.Min(1, userHoldTime / realityHT);
         JudgeType result = judgeResult;
         if (realityHT > 0)
         {

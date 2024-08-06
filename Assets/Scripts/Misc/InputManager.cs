@@ -1,10 +1,9 @@
-using Assets.Scripts.IO;
+using Assets.Scripts.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
-
+#nullable enable
 public class InputManager : MonoBehaviour
 {
     public Camera mainCamera;
@@ -12,7 +11,7 @@ public class InputManager : MonoBehaviour
     public Dictionary<int,List<Sensor>> triggerSensors = new();
 
     //public event EventHandler<InputEventArgs> OnSensorStatusChanged;
-    public event EventHandler<InputEventArgs> OnButtonStatusChanged;
+    public event EventHandler<InputEventArgs>? OnButtonStatusChanged;
 
     Guid guid = Guid.NewGuid();
     

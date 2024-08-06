@@ -1,10 +1,8 @@
 ﻿using Assets.Scripts;
-using Assets.Scripts.IO;
+using Assets.Scripts.Types;
 using System;
 using UnityEngine;
-using static NoteEffectManager;
-using static UnityEngine.Networking.UnityWebRequest;
-
+#nullable enable
 public class TouchDrop : TouchBase
 {
     public GameObject justEffect;

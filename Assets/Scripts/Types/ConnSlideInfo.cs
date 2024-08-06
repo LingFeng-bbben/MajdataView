@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-
-namespace Assets.Scripts.Notes
+#nullable enable
+namespace Assets.Scripts.Types
 {
     public class ConnSlideInfo
     {
@@ -9,19 +9,19 @@ namespace Assets.Scripts.Notes
         public bool IsGroupPartHead { get; set; }
         public bool IsGroupPart { get; set; }
         public bool IsGroupPartEnd { get; set; }
-        public GameObject Parent { get; set; } = null;
-        public bool DestroyAfterJudge 
+        public GameObject? Parent { get; set; } = null;
+        public bool DestroyAfterJudge
         {
             get => IsGroupPartEnd;
         }
         public bool IsConnSlide { get => IsGroupPart; }
-        public bool ParentFinished 
+        public bool ParentFinished
         {
             get
             {
                 if (Parent == null)
                     return true;
-                else 
+                else
                     return Parent.GetComponent<SlideDrop>().isFinished;
             }
         }
@@ -35,7 +35,6 @@ namespace Assets.Scripts.Notes
                     return Parent.GetComponent<SlideDrop>().isPendingFinish;
             }
         }
-
 
     }
 }

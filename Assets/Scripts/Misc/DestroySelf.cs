@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+#nullable enable
 public class DestroySelf : MonoBehaviour
 {
     public bool ifDestroy;

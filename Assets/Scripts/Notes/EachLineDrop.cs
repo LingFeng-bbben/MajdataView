@@ -1,11 +1,14 @@
 using UnityEngine;
-
+#nullable enable
 public class EachLineDrop : MonoBehaviour
 {
     public float time;
     public int startPosition = 1;
     public int curvLength = 1;
     public float speed = 1;
+
+    public GameObject obj1;
+    public GameObject obj2;
 
     public Sprite[] curvSprites;
     private SpriteRenderer sr;

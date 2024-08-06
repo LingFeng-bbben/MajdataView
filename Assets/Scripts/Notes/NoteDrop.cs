@@ -1,8 +1,8 @@
+using Assets.Scripts.Types;
 using System;
 using System.Diagnostics;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 public class NoteDrop : MonoBehaviour
 {
     public int startPosition;
@@ -42,6 +42,7 @@ public class NoteLongDrop : NoteDrop
     public float LastFor = 1f;
     public GameObject holdEffect;
 
+    protected float userHoldTime = 0;
     protected Stopwatch userHold = new();
     protected float judgeDiff = -1;
 
