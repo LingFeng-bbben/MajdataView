@@ -13,6 +13,7 @@ public class NoteDrop : MonoBehaviour
 
     protected AudioTimeProvider timeProvider;
 
+    public NoteStatus State { get; protected set; } = NoteStatus.Start;
     protected Sensor sensor;
     protected SensorManager manager;
     protected NoteManager noteManager;
@@ -20,6 +21,7 @@ public class NoteDrop : MonoBehaviour
     protected bool isJudged = false;
     protected JudgeType judgeResult;
     protected ObjectCounter objectCounter;
+    
     /// <summary>
     /// 获取当前时刻距离正解帧的时间长度
     /// </summary>

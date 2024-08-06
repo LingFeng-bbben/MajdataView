@@ -3,7 +3,6 @@ using UnityEngine;
 #nullable enable
 public class TapDrop : TapBase
 {
-    
     private void Start()
     {
         PreLoad();
@@ -39,6 +38,4 @@ public class TapDrop : TapBase
         sensor.OnStatusChanged += Check;
         inputManager.OnButtonStatusChanged += Check;
     }
-
-    
 }

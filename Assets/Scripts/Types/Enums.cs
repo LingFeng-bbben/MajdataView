@@ -66,4 +66,16 @@
         FastGreat2,
         FastGood
     }
+    public enum NoteStatus
+    {
+        Start,
+        Initialized,
+        Pending,
+        Prepared,
+        Running,
+        WaitForJudge,
+        Judged,
+        Finished,
+        Destroyed
+    }
 }

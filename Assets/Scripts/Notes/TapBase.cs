@@ -50,7 +50,8 @@ namespace Assets.Scripts.Notes
         }
         protected void FixedUpdate()
         {
-            if (!isJudged && GetJudgeTiming() > 0.15f)
+            var timing = GetJudgeTiming();
+            if (!isJudged && timing > 0.15f)
             {
                 judgeResult = JudgeType.Miss;
                 isJudged = true;
@@ -62,11 +63,18 @@ namespace Assets.Scripts.Notes
                 Destroy(tapLine);
                 Destroy(gameObject);
             }
+            else if (timing >= -0.01f && 
+                GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+            {
+                manager.SetSensorOn(sensor.Type, guid);
+                //manager.SetSensorOff(sensor.Type, guid);
+            }
+
         }
         // Update is called once per frame
         protected virtual void Update()
         {
-            var timing = timeProvider.AudioTime - time;
+            var timing = GetJudgeTiming();
             var distance = timing * speed + 4.8f;
             var destScale = distance * 0.4f + 0.51f;
             if (destScale < 0f)
@@ -83,9 +91,6 @@ namespace Assets.Scripts.Notes
                 var extra = Math.Max(Mathf.Sin(timeProvider.GetFrame() * 0.17f) * 0.5f, 0);
                 spriteRenderer.material.SetFloat("_Brightness", 0.95f + extra);
             }
-
-            if (timing > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-                manager.SetSensorOn(sensor.Type, guid);
 
             tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
             if (destScale > 0.3f) tapLine.SetActive(true);
@@ -107,8 +112,6 @@ namespace Assets.Scripts.Notes
 
             var lineScale = Mathf.Abs(distance / 4.8f);
             tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
-
-
         }
         protected void Check(object sender, InputEventArgs arg)
         {
