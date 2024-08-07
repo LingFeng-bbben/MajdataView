@@ -167,7 +167,7 @@ public class TouchDrop : TouchBase
         var pow = -Mathf.Exp(8 * (timing * 0.4f / moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
-        if (timing >= 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+        if (timing >= 0 && InputManager.AutoPlay)
         {
             manager.SetSensorOn(sensor.Type, guid);
         }
@@ -215,7 +215,7 @@ public class TouchDrop : TouchBase
     }
     private void OnDestroy()
     {
-        if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+        if (HttpHandler.IsReloding)
             return;
         multTouchHandler.cancelTouch(this);
         PlayJudgeEffect();

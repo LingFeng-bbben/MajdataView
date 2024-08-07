@@ -7,7 +7,7 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public Camera mainCamera;
-    public bool AutoPlay = false;
+    public static bool AutoPlay { get; set; } = true;
     public Dictionary<int,List<Sensor>> triggerSensors = new();
 
     //public event EventHandler<InputEventArgs> OnSensorStatusChanged;

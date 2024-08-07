@@ -61,7 +61,7 @@ public class NoteLongDrop : NoteDrop
 
     protected virtual void PlayHoldEffect()
     {
-        if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+        if (InputManager.AutoPlay)
             manager.SetSensorOn(sensor.Type, guid);
         if (timeProvider.AudioTime - time < 0)
             return;

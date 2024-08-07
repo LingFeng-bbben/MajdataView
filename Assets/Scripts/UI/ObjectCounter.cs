@@ -519,7 +519,7 @@ public class ObjectCounter : MonoBehaviour
             tapSum, holdSum, slideSum, touchSum, breakSum,
             comboN,
             tapSum + holdSum + slideSum + touchSum + breakSum,
-            inputManager.AutoPlay ? "Enable" : "Disable"
+            InputManager.AutoPlay ? "Enable" : "Disable"
         );
 
         rate.text = string.Format(

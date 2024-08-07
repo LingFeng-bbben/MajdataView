@@ -107,7 +107,7 @@ public class HoldDrop : NoteLongDrop
     }
     private void FixedUpdate()
     {
-        var autoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
+        var autoPlay = InputManager.AutoPlay;
         var timing = GetJudgeTiming();
         var remainingTime = GetRemainingTime();
 
@@ -335,7 +335,7 @@ public class HoldDrop : NoteLongDrop
     }
     private void OnDestroy()
     {
-        if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+        if (HttpHandler.IsReloding)
             return;
         var realityHT = LastFor - 0.3f - (judgeDiff / 1000f);
         var percent = MathF.Min(1, userHoldTime / realityHT);
@@ -386,7 +386,7 @@ public class HoldDrop : NoteLongDrop
         if (!isJudged)
             objectCounter.NextNote(startPosition);
 
-        if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+        if (InputManager.AutoPlay)
             manager.SetSensorOff(sensor.Type, guid);
         
         sensor.OnStatusChanged -= Check;

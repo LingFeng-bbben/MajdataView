@@ -65,8 +65,7 @@ namespace Assets.Scripts.Notes
                 Destroy(tapLine);
                 Destroy(gameObject);
             }
-            else if (timing >= -0.01f && 
-                GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+            else if (timing >= -0.01f && InputManager.AutoPlay)
             {
                 manager.SetSensorOn(sensor.Type, guid);
                 //manager.SetSensorOff(sensor.Type, guid);
@@ -208,14 +207,14 @@ namespace Assets.Scripts.Notes
         }
         protected virtual void OnDestroy()
         {
-            if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+            if (HttpHandler.IsReloding)
                 return;
             var effectManager = GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>();
             effectManager.PlayEffect(startPosition, isBreak, judgeResult);
             effectManager.PlayFastLate(startPosition, judgeResult);
             objectCounter.NextNote(startPosition);
             objectCounter.ReportResult(this, judgeResult,isBreak);
-            if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+            if (InputManager.AutoPlay)
                 manager.SetSensorOff(sensor.Type, guid);
             sensor.OnStatusChanged -= Check;
             inputManager.OnButtonStatusChanged -= Check;

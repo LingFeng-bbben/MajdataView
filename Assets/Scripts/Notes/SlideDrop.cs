@@ -486,7 +486,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
     /// </summary>
     void Running()
     {
-        if (star_slide == null || !GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+        if (star_slide == null || !InputManager.AutoPlay)
             return;
 
         var starRadius = 0.763736616f;
@@ -672,7 +672,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
     }
     void OnDestroy()
     {
-        if (isDestroying || GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+        if (isDestroying || HttpHandler.IsReloding)
             return;
         if (ConnectInfo.Parent != null)
             Destroy(ConnectInfo.Parent);

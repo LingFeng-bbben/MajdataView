@@ -124,7 +124,7 @@ public class TouchHoldDrop : NoteLongDrop
     }
     private void FixedUpdate()
     {
-        var autoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
+        var autoPlay = InputManager.AutoPlay;
         var remainingTime = GetRemainingTime();
         var timing = GetJudgeTiming();
         var holdTime = timing - LastFor;
@@ -208,7 +208,7 @@ public class TouchHoldDrop : NoteLongDrop
     }
     private void OnDestroy()
     {
-        if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+        if (HttpHandler.IsReloding)
             return;
         var realityHT = LastFor - 0.45f - (judgeDiff / 1000f);
         var percent = MathF.Min(1, userHoldTime / realityHT);

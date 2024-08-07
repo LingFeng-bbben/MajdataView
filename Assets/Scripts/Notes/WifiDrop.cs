@@ -384,7 +384,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
     }
     void Running()
     {
-        if (!GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+        if (!InputManager.AutoPlay)
             return;
         foreach(var star in star_slide)
         {
@@ -507,7 +507,7 @@ public class WifiDrop : NoteLongDrop,IFlasher
     }
     void OnDestroy()
     {
-        if (isDestroying || GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+        if (isDestroying || HttpHandler.IsReloding)
             return;
 
         objectCounter.ReportResult(this, judgeResult, isBreak);

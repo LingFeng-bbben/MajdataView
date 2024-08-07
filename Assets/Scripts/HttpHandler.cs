@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class HttpHandler : MonoBehaviour
 {
-    public bool IsReloding { get; set; } = false;
+    public static bool IsReloding { get; set; } = false;
     private readonly HttpListener http = new();
     private Task listen;
     private string request = "";
