@@ -15,7 +15,11 @@ namespace Assets.Scripts.Types
         /// <summary>
         /// 指示该Slide是否位于Group的头部
         /// </summary>
-        public bool IsGroupPartHead { get; set; }
+        public bool IsGroupPartHead 
+        {
+            get => IsConnSlide && _isGroupPartHead;
+            set => _isGroupPartHead = value;
+        }
         /// <summary>
         /// 指示该Slide是否位于Group内
         /// </summary>
@@ -23,7 +27,11 @@ namespace Assets.Scripts.Types
         /// <summary>
         /// 指示该Slide是否位于Group的尾部
         /// </summary>
-        public bool IsGroupPartEnd { get; set; }
+        public bool IsGroupPartEnd 
+        {
+            get => IsConnSlide && _isGroupPartEnd;
+            set => _isGroupPartEnd = value;
+        }
         /// <summary>
         /// 获取位于该Slide前方的Slide的GameObject对象
         /// </summary>
@@ -65,6 +73,8 @@ namespace Assets.Scripts.Types
                     return Parent.GetComponent<SlideDrop>().isPendingFinish;
             }
         }
+        bool _isGroupPartEnd = false;
+        bool _isGroupPartHead = false;
 
     }
 }

@@ -14,6 +14,7 @@ public class NoteDrop : MonoBehaviour
     protected AudioTimeProvider timeProvider;
 
     public NoteStatus State { get; protected set; } = NoteStatus.Start;
+    protected SensorType sensorPos;
     protected Sensor sensor;
     protected SensorManager manager;
     protected NoteManager noteManager;
@@ -63,8 +64,6 @@ public class NoteLongDrop : NoteDrop
     {
         if (InputManager.AutoPlay)
             manager.SetSensorOn(sensor.Type, guid);
-        if (timeProvider.AudioTime - time < 0)
-            return;
         var material = holdEffect.GetComponent<ParticleSystemRenderer>().material;
         switch (judgeResult)
         {

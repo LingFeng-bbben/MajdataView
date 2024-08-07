@@ -102,8 +102,8 @@ public class HoldDrop : NoteLongDrop
                                 .GetComponent<SensorManager>();
         inputManager = GameObject.Find("Input")
                                  .GetComponent<InputManager>();
-        sensor.OnStatusChanged += Check;
-        inputManager.OnButtonStatusChanged += Check;
+        sensorPos = (SensorType)(startPosition - 1);
+        inputManager.BindArea(Check, sensorPos);
     }
     private void FixedUpdate()
     {
@@ -119,7 +119,7 @@ public class HoldDrop : NoteLongDrop
         }
         else if (isJudged) // 头部判定完成后开始累计按压时长
         {
-            var on = inputManager.CheckSensorStatus(sensor.Type, SensorStatus.On) || inputManager.CheckButtonStatus(sensor.Type, SensorStatus.On);
+            var on = inputManager.CheckAreaStatus(sensorPos,SensorStatus.On);
             
             if (remainingTime < 0.2f && remainingTime != 0)
                 return;
@@ -138,10 +138,9 @@ public class HoldDrop : NoteLongDrop
         {
             judgeDiff = 150;
             judgeResult = JudgeType.Miss;
-            sensor.OnStatusChanged -= Check;
-            inputManager.OnButtonStatusChanged -= Check;
+            objectCounter.NextNote(startPosition);
             isJudged = true;
-            GameObject.Find("Notes").GetComponent<NoteManager>().noteIndex[startPosition]++;
+            objectCounter.NextNote(startPosition);
         }
 
         // AutoPlay相关
@@ -170,30 +169,16 @@ public class HoldDrop : NoteLongDrop
             return;
         if (arg.IsClick)
         {
-            var isJudging = false;
-
-            if (arg.IsButton)
-                isJudging = inputManager.IsBusying(arg.Type);
-            else
-                isJudging = sensor.IsJudging;
-
-            if (isJudging)
+            if (!inputManager.IsIdle(arg))
                 return;
             else
+                inputManager.SetBusy(arg);
+            Judge();
+            if (isJudged)
             {
-                if (arg.IsButton)
-                    inputManager.SetBusying(arg.Type, true);
-                else
-                    sensor.IsJudging = true;
+                inputManager.UnbindArea(Check, sensorPos);
+                objectCounter.NextNote(startPosition);
             }
-            Judge(); 
-        }
-
-        if(isJudged)
-        {
-            sensor.OnStatusChanged -= Check;
-            inputManager.OnButtonStatusChanged -= Check;
-            GameObject.Find("Notes").GetComponent<NoteManager>().noteIndex[startPosition]++;
         }
     }
     void Judge()
@@ -388,9 +373,8 @@ public class HoldDrop : NoteLongDrop
 
         if (InputManager.AutoPlay)
             manager.SetSensorOff(sensor.Type, guid);
-        
-        sensor.OnStatusChanged -= Check;
-        inputManager.OnButtonStatusChanged -= Check;
+
+        inputManager.UnbindArea(Check, sensorPos);
     }
     protected override void PlayHoldEffect()
     {

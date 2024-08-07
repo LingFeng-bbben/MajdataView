@@ -44,12 +44,12 @@ public class SlideDrop : NoteLongDrop, IFlasher
     List<JudgeArea> judgeQueue = new(); // 判定队列
     List<JudgeArea> _judgeQueue = new(); // 判定队列
 
-    public ConnSlideInfo ConnectInfo { get; set; }
+    public ConnSlideInfo ConnectInfo { get; set; } = new();
     public bool isFinished { get => judgeQueue.Count == 0; }
     public bool isPendingFinish { get => judgeQueue.Count == 1; }
-    bool canShine = false;
+    
 
-    Animator fadeInAnimator = null;
+    Animator fadeInAnimator;
 
 
     private readonly List<GameObject> slideBars = new();
@@ -65,10 +65,11 @@ public class SlideDrop : NoteLongDrop, IFlasher
     List<GameObject> sensors = new();
     SensorManager sManager;
 
-    bool canCheck = false;
+    
     List<Sensor> registerSensors = new();
-    
-    
+
+    bool canShine = false;
+    bool canCheck = false;
     float judgeTiming; // 正解帧
     bool isInitialized = false; //防止重复初始化
     bool isDestroying = false; // 防止重复销毁
@@ -314,7 +315,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
         if (ConnectInfo.IsGroupPart)
         {
-            if (ConnectInfo.IsGroupPartHead && startTiming >= -0.040f)
+            if (ConnectInfo.IsGroupPartHead && startTiming >= -0.050f)
                 canCheck = true;
             else if (!ConnectInfo.IsGroupPartHead)
                 canCheck = ConnectInfo.ParentFinished || ConnectInfo.ParentPendingFinish;
@@ -425,7 +426,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 return;
 
             var first = judgeQueue.First();
-            JudgeArea second = null;
+            JudgeArea? second = null;
 
             if (judgeQueue.Count >= 2)
                 second = judgeQueue[1];
@@ -678,7 +679,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
             Destroy(ConnectInfo.Parent);
         if(star_slide != null)
             Destroy(star_slide);
-        if (ConnectInfo.IsGroupPartEnd)
+        if (ConnectInfo.IsGroupPartEnd || !ConnectInfo.IsConnSlide)
         {
             // 只有组内最后一个Slide完成 才会显示判定条并增加总数
             objectCounter.ReportResult(this, judgeResult, isBreak);

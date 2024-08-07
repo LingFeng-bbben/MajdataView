@@ -66,10 +66,7 @@ namespace Assets.Scripts.Notes
                 Destroy(gameObject);
             }
             else if (timing >= -0.01f && InputManager.AutoPlay)
-            {
-                manager.SetSensorOn(sensor.Type, guid);
-                //manager.SetSensorOff(sensor.Type, guid);
-            }
+                inputManager.ClickSensor(sensorPos);
 
         }
         // Update is called once per frame
@@ -135,22 +132,11 @@ namespace Assets.Scripts.Notes
                 return;
             if (arg.IsClick)
             {
-                var isJudging = false;
-
-                if (arg.IsButton)
-                    isJudging = inputManager.IsBusying(arg.Type);
-                else
-                    isJudging = sensor.IsJudging;
-
-                if (isJudging)
+                if (!inputManager.IsIdle(arg))
                     return;
                 else
-                {
-                    if (arg.IsButton)
-                        inputManager.SetBusying(arg.Type, true);
-                    else
-                        sensor.IsJudging = true;
-                }
+                    inputManager.SetBusy(arg);
+
                 Judge();
                 if (isJudged)
                 {
@@ -214,10 +200,7 @@ namespace Assets.Scripts.Notes
             effectManager.PlayFastLate(startPosition, judgeResult);
             objectCounter.NextNote(startPosition);
             objectCounter.ReportResult(this, judgeResult,isBreak);
-            if (InputManager.AutoPlay)
-                manager.SetSensorOff(sensor.Type, guid);
-            sensor.OnStatusChanged -= Check;
-            inputManager.OnButtonStatusChanged -= Check;
+            inputManager.UnbindArea(Check, sensorPos);
         }
     }
 }

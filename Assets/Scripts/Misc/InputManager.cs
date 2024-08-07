@@ -15,39 +15,34 @@ public class InputManager : MonoBehaviour
 
     Guid guid = Guid.NewGuid();
     
-    List<GameObject> sensors = new();
+    List<GameObject> sensorObjs = new();
+    List<Sensor> sensors = new();
+    List<Button> buttons = new();
     SensorManager sManager;
-    Dictionary<KeyCode, SensorType> keyMap = new()
-    {
-        { KeyCode.W,SensorType.A1 },
-        { KeyCode.E,SensorType.A2 },
-        { KeyCode.D,SensorType.A3 },
-        { KeyCode.C,SensorType.A4 },
-        { KeyCode.X,SensorType.A5 },
-        { KeyCode.Z,SensorType.A6 },
-        { KeyCode.A,SensorType.A7 },
-        { KeyCode.Q,SensorType.A8 },
-    };
-    Dictionary<KeyCode, (SensorStatus,bool)> keyStatus = new()
-    {
-        { KeyCode.W,(SensorStatus.Off,false) },
-        { KeyCode.E,(SensorStatus.Off,false) },
-        { KeyCode.D,(SensorStatus.Off,false) },
-        { KeyCode.C,(SensorStatus.Off,false) },
-        { KeyCode.X,(SensorStatus.Off,false) },
-        { KeyCode.Z,(SensorStatus.Off,false) },
-        { KeyCode.A,(SensorStatus.Off,false) },
-        { KeyCode.Q,(SensorStatus.Off,false) },
-    };
+
     // Start is called before the first frame update
     void Start()
     {
         var sManagerObj = GameObject.Find("Sensors");
         var count = sManagerObj.transform.childCount;
         for (int i = 0; i < count; i++)
-            sensors.Add(sManagerObj.transform.GetChild(i).gameObject);
+        {
+            var obj = sManagerObj.transform.GetChild(i).gameObject;
+            sensorObjs.Add(obj);
+            sensors.Add(obj.GetComponent<Sensor>());
+        }
         sManager = sManagerObj.GetComponent<SensorManager>();
-
+        buttons = new(new Button[] 
+        {
+            new Button(KeyCode.W,SensorType.A1),
+            new Button(KeyCode.E,SensorType.A2),
+            new Button(KeyCode.D,SensorType.A3),
+            new Button(KeyCode.C,SensorType.A4),
+            new Button(KeyCode.X,SensorType.A5),
+            new Button(KeyCode.Z,SensorType.A6),
+            new Button(KeyCode.A,SensorType.A7),
+            new Button(KeyCode.Q,SensorType.A8),
+        });
     }
 
     // Update is called once per frame
@@ -82,34 +77,153 @@ public class InputManager : MonoBehaviour
         }
 
     }
+    public void BindSensor(EventHandler<InputEventArgs> checker, SensorType sType)
+    {
+        var sensor = sensors.Find(x => x.Type == sType);
+        if (sensor == null)
+            throw new Exception($"{sType} Sensor not found.");
+        sensor.OnStatusChanged += checker;
+    }
+    public void UnbindSensor(EventHandler<InputEventArgs> checker, SensorType sType)
+    {
+        var sensor = sensors.Find(x => x.Type == sType);
+        if (sensor == null)
+            throw new Exception($"{sType} Sensor not found.");
+        sensor.OnStatusChanged -= checker;
+    }
+    public void BindArea(EventHandler<InputEventArgs> checker,SensorType sType)
+    {
+        var sensor = sensors.Find(x => x.Type == sType);
+        var button = buttons.Find(x => x.Type == sType);
+        if (sensor == null || button is null)
+            throw new Exception($"{sType} Sensor or Button not found.");
+
+        sensor.OnStatusChanged += checker;
+        button.OnStatusChanged += checker;
+    }
+    public void UnbindArea(EventHandler<InputEventArgs> checker, SensorType sType)
+    {
+        var sensor = sensors.Find(x => x.Type == sType);
+        var button = buttons.Find(x => x.Type == sType);
+        if (sensor == null || button is null)
+            throw new Exception($"{sType} Sensor or Button not found.");
+
+        sensor.OnStatusChanged -= checker;
+        button.OnStatusChanged -= checker;
+    }
+    public bool CheckAreaStatus(SensorType sType,SensorStatus targetStatus)
+    {
+        var sensor = sensors.Find(x => x.Type == sType);
+        var button = buttons.Find(x => x.Type == sType);
+
+        if (sensor == null || button is null)
+            throw new Exception($"{sType} Sensor or Button not found.");
+
+        return sensor.Status == targetStatus || button.Status == targetStatus; 
+    }
     public bool CheckSensorStatus(SensorType target,SensorStatus targetStatus)
     {
-        var sensor = sensors[(int)target].GetComponent<Sensor>();
+        if (target > SensorType.A8)
+            throw new InvalidOperationException("Button index cannot greater than A8");
+
+        var sensor = sensorObjs[(int)target].GetComponent<Sensor>();
         return sensor.Status == targetStatus;
     }
     public bool CheckButtonStatus(SensorType target, SensorStatus targetStatus)
     {
         if (target > SensorType.A8)
             throw new InvalidOperationException("Button index cannot greater than A8");
-        var _ = keyMap.ToDictionary(x => x.Value,y => y.Key);
-        var (buttonStatus, _) = keyStatus[_[target]];
-        return buttonStatus == targetStatus;
+        var button = buttons.Find(x => x.Type == target);
+
+        return button.Status == targetStatus;
     }
+    public void ClickSensor(SensorType target)
+    {
+        var sensor = GetSensor(target);
+        if (sensor is null)
+            throw new Exception($"{target} Sensor not found.");
+        sensor.Click();
+    }
+
+    public void SetBusy(InputEventArgs args)
+    {
+        var type = args.Type;
+        if(args.IsButton)
+        {
+            var button = GetButton(type);
+            if(button is null)
+                throw new Exception($"{type} Button not found.");
+
+            button.IsJudging = true;
+        }
+        else
+        {
+            var sensor = GetSensor(type);
+            if (sensor is null)
+                throw new Exception($"{type} Sensor not found.");
+
+            sensor.IsJudging = true;
+        }
+    }
+    public void SetIdle(InputEventArgs args)
+    {
+        var type = args.Type;
+        if (args.IsButton)
+        {
+            var button = GetButton(type);
+            if (button is null)
+                throw new Exception($"{type} Button not found.");
+
+            button.IsJudging = false;
+        }
+        else
+        {
+            var sensor = GetSensor(type);
+            if (sensor is null)
+                throw new Exception($"{type} Sensor not found.");
+
+            sensor.IsJudging = false;
+        }
+    }
+    public bool IsIdle(InputEventArgs args)
+    {
+        bool isIdle = false;
+        var type = args.Type;
+        if (args.IsButton)
+        {
+            var button = GetButton(type);
+            if (button is null)
+                throw new Exception($"{type} Button not found.");
+
+            isIdle = !button.IsJudging;
+        }
+        else
+        {
+            var sensor = GetSensor(type);
+            if (sensor is null)
+                throw new Exception($"{type} Sensor not found.");
+
+            isIdle = !sensor.IsJudging;
+        }
+        return isIdle;
+    }
+
+    public Button? GetButton(SensorType type) => buttons.Find(x => x.Type == type);
+    public Sensor? GetSensor(SensorType type) => sensors.Find(x => x.Type == type);
+
     public void SetBusying(SensorType target,bool isJudging)
     {
         if (target > SensorType.A8)
             throw new InvalidOperationException("Button index cannot greater than A8");
-        var _ = keyMap.ToDictionary(x => x.Value, y => y.Key);
-        var (x, y) = keyStatus[_[target]];
-        keyStatus[_[target]] = (x, isJudging);
+        var button = buttons.Find(x => x.Type == target);
+        button.IsJudging = isJudging;
     }
     public bool IsBusying(SensorType target)
     {
         if (target > SensorType.A8)
             throw new InvalidOperationException("Button index cannot greater than A8");
-        var _ = keyMap.ToDictionary(x => x.Value, y => y.Key);
-        var (x, y) = keyStatus[_[target]];
-        return y;
+        var button = buttons.Find(x => x.Type == target);
+        return button.IsJudging;
     }
     void Untrigger(int id)
     {
@@ -131,24 +245,22 @@ public class InputManager : MonoBehaviour
     }
     void CheckButton()
     {
-        var keys = keyMap.ToDictionary(x => x.Key, y => Input.GetKey(y.Key) ? SensorStatus.On: SensorStatus.Off);
-        foreach(var keyPair in keys)
+        foreach(var button in buttons)
         {
-            var (oldStatus, busying) = keyStatus[keyPair.Key];
-            if(oldStatus != keyPair.Value)
+            var nStatus = Input.GetKey(button.BindingKey) ? SensorStatus.On : SensorStatus.Off;
+            var oStatus = button.Status;
+            if(oStatus != nStatus)
             {
-                print($"Key \"{keyPair.Key}\": {keyPair.Value}");
-                if(OnButtonStatusChanged is not null)
+                print($"Key \"{button.BindingKey}\": {nStatus}");
+                button.PushEvent(new InputEventArgs()
                 {
-                    OnButtonStatusChanged(this, new InputEventArgs()
-                    {
-                        Type = keyMap[keyPair.Key],
-                        OldStatus = oldStatus,
-                        Status = keyPair.Value,
-                        IsButton = true
-                    });
-                }
-                keyStatus[keyPair.Key] = (keyPair.Value, false);
+                    Type = button.Type,
+                    OldStatus = oStatus,
+                    Status = nStatus,
+                    IsButton = true
+                });
+                button.Status = nStatus;
+                button.IsJudging = false;
             }
         }
     }
@@ -158,7 +270,7 @@ public class InputManager : MonoBehaviour
         var starPos = pos;
         var oldList = new List<Sensor>(triggerSensors[id]);
         triggerSensors[id].Clear();
-        foreach (var s in sensors.Select(x => x.GetComponent<RectTransform>()))
+        foreach (var s in sensorObjs.Select(x => x.GetComponent<RectTransform>()))
         {
             var sensor = s.GetComponent<Sensor>();
 
