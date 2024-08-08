@@ -41,7 +41,6 @@ public class HoldDrop : NoteLongDrop
 
     private SpriteRenderer spriteRenderer;
 
-    InputManager inputManager;
 
     private void Start()
     {

@@ -8,6 +8,7 @@ namespace Assets.Scripts.Notes
     {
         public bool isBreak;
         public bool isEX;
+        bool isTriggered = false;
 
         public Sprite tapSpr;
         public Sprite eachSpr;
@@ -31,8 +32,6 @@ namespace Assets.Scripts.Notes
         protected SpriteRenderer lineSpriteRender;
 
         protected SpriteRenderer spriteRenderer;
-        protected InputManager inputManager;
-
         protected void PreLoad()
         {
             var notes = GameObject.Find("Notes").transform;
@@ -66,7 +65,12 @@ namespace Assets.Scripts.Notes
                 Destroy(gameObject);
             }
             else if (timing >= -0.01f && InputManager.AutoPlay)
+            {
+                if (isTriggered)
+                    return;
                 inputManager.ClickSensor(sensorPos);
+                isTriggered = true;
+            }
 
         }
         // Update is called once per frame

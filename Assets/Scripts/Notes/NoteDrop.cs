@@ -17,6 +17,7 @@ public class NoteDrop : MonoBehaviour
     protected SensorType sensorPos;
     protected Sensor sensor;
     protected SensorManager manager;
+    protected InputManager inputManager;
     protected NoteManager noteManager;
     protected Guid guid = Guid.NewGuid();
     protected bool isJudged = false;

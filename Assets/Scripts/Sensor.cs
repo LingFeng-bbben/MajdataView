@@ -86,6 +86,7 @@ public class Sensor : MonoBehaviour
             return;
         else if (OnStatusChanged != null)
         {
+            Status = SensorStatus.On;
             OnStatusChanged(this, new InputEventArgs()
             {
                 IsButton = false,
@@ -95,6 +96,7 @@ public class Sensor : MonoBehaviour
             });
             IsJudging = false;
             print($"Sensor:{Type} Click");
+            Status = SensorStatus.Off;
         }
     }
     // Start is called before the first frame update

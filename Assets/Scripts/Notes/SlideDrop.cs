@@ -39,6 +39,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
     public Material breakMaterial;
     public string slideType;
 
+    List<SensorType> boundSensors = new();
     List<Sensor> judgeSensors = new();
     List<Sensor> triggerSensors = new(); // AutoPlay; 标记已触发的Sensor 
     List<JudgeArea> judgeQueue = new(); // 判定队列
@@ -64,12 +65,12 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
     List<GameObject> sensors = new();
     SensorManager sManager;
-
     
     List<Sensor> registerSensors = new();
 
     bool canShine = false;
     bool canCheck = false;
+    bool isChecking = false;
     float judgeTiming; // 正解帧
     bool isInitialized = false; //防止重复初始化
     bool isDestroying = false; // 防止重复销毁
@@ -266,11 +267,18 @@ public class SlideDrop : NoteLongDrop, IFlasher
             LastFor = (ConnectInfo.TotalLength / ConnectInfo.TotalSlideLen) * GetSlideLength();
             if(!ConnectInfo.IsGroupPartHead)
             {
-                var parent = ConnectInfo.Parent.GetComponent<SlideDrop>();
+                var parent = ConnectInfo.Parent!.GetComponent<SlideDrop>();
                 time = parent.time + parent.LastFor;
                 judgeTiming = time + LastFor * CalJudgeTiming();
             }
         }
+        var allSensors = judgeQueue.SelectMany(x => x.GetSensorTypes())
+                                   .GroupBy(x => x)
+                                   .Select(x => x.Key);
+        inputManager = GameObject.Find("Input").GetComponent<InputManager>();
+        boundSensors.AddRange(allSensors);
+        foreach (var sensor in allSensors)
+            inputManager.BindSensor(Check, sensor);
     }
     void GetSensors(RectTransform[] sensors)
     {
@@ -349,7 +357,6 @@ public class SlideDrop : NoteLongDrop, IFlasher
     // Update is called once per frame
     private void Update()
     {
-        Check();
         if (star_slide == null)
         {
             if (isFinished)
@@ -393,7 +400,6 @@ public class SlideDrop : NoteLongDrop, IFlasher
             UpdateStar();
             Running();
         }
-
         Check();
     }
     public float GetSlideLength()
@@ -407,6 +413,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         }
         return len;
     }
+    public void Check(object sender, InputEventArgs arg) => Check();
     /// <summary>
     /// 判定队列检查
     /// </summary>
@@ -414,22 +421,20 @@ public class SlideDrop : NoteLongDrop, IFlasher
     {
         if (isFinished || !canCheck)
             return;
-
+        else if (isChecking)
+            return;
+        isChecking = true;
         if (ConnectInfo.Parent != null && judgeQueue.Count < _judgeQueue.Count)
         {
             if(!ConnectInfo.ParentFinished)
                 ConnectInfo.Parent.GetComponent<SlideDrop>().ForceFinish();
         }
-        try
-        {
-            if (judgeQueue.Count == 0)
-                return;
 
-            var first = judgeQueue.First();
-            JudgeArea? second = null;
+        var first = judgeQueue.First();
+        JudgeArea? second = null;
 
-            if (judgeQueue.Count >= 2)
-                second = judgeQueue[1];
+        if (judgeQueue.Count >= 2)
+            second = judgeQueue[1];
             var fType = first.GetSensorTypes();
             foreach (var t in fType)
             {
@@ -437,8 +442,8 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 first.Judge(t, sensor.Status);
             }
 
-            if (second is not null && (first.CanSkip || first.On))
-            {
+        if (second is not null && (first.CanSkip || first.On))
+        {
                 var sType = second.GetSensorTypes();
                 foreach (var t in sType)
                 {
@@ -446,31 +451,30 @@ public class SlideDrop : NoteLongDrop, IFlasher
                     second.Judge(t, sensor.Status);
                 }
 
-                if (second.IsFinished)
-                {
-                    HideBar(first.SlideIndex);
-                    judgeQueue = judgeQueue.Skip(2).ToList();
-                    return;
-                }
-                else if (second.On)
-                {
-                    HideBar(first.SlideIndex);
-                    judgeQueue = judgeQueue.Skip(1).ToList();
-                    return;
-                }
+            if (second.IsFinished)
+            {
+                HideBar(first.SlideIndex);
+                judgeQueue = judgeQueue.Skip(2).ToList();
+                isChecking = false;
+                return;
             }
-
-            if (first.IsFinished)
+            else if (second.On)
             {
                 HideBar(first.SlideIndex);
                 judgeQueue = judgeQueue.Skip(1).ToList();
+                isChecking = false;
                 return;
             }
         }
-        catch(Exception e)
+
+        if (first.IsFinished)
         {
-            print(e);
+            HideBar(first.SlideIndex);
+            judgeQueue = judgeQueue.Skip(1).ToList();
+            isChecking = false;
+            return;
         }
+        isChecking = false;
     }
     void HideBar(int endIndex)
     {
@@ -692,6 +696,8 @@ public class SlideDrop : NoteLongDrop, IFlasher
             // 如果不是组内最后一个 那么也要将判定条删掉
             Destroy(slideOK);
         }
+        foreach (var sensor in boundSensors)
+            inputManager.UnbindSensor(Check, sensor);
         ClearTriggeredSensor();
         isDestroying = true;
     }
