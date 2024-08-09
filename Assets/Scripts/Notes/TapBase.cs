@@ -64,12 +64,25 @@ namespace Assets.Scripts.Notes
                 Destroy(tapLine);
                 Destroy(gameObject);
             }
-            else if (timing >= -0.01f && InputManager.AutoPlay)
+            else if (timing >= -0.01f)
             {
-                if (isTriggered)
-                    return;
-                inputManager.ClickSensor(sensorPos);
-                isTriggered = true;
+                switch(InputManager.Mode)
+                {
+                    case AutoPlayMode.Enable:
+                        judgeResult = JudgeType.Perfect;
+                        isJudged = true;
+                        break;
+                    case AutoPlayMode.Random:
+                        judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                        isJudged = true;
+                        break;
+                    case AutoPlayMode.DJAuto:
+                        if (isTriggered)
+                            return;
+                        inputManager.ClickSensor(sensorPos);
+                        isTriggered = true;
+                        break;
+                }
             }
 
         }
@@ -132,8 +145,11 @@ namespace Assets.Scripts.Notes
         {
             if (arg.Type != sensor.Type)
                 return;
-            if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
+            else if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
                 return;
+            else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
+                return;
+
             if (arg.IsClick)
             {
                 if (!inputManager.IsIdle(arg))

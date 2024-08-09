@@ -314,6 +314,9 @@ public class SlideDrop : NoteLongDrop, IFlasher
     }
     private void FixedUpdate()
     {
+        if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
+            return;
+
         /// time      是Slide启动的时间点
         /// timeStart 是Slide完全显示但未启动
         /// LastFor   是Slide的时值
@@ -323,12 +326,12 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
         if (ConnectInfo.IsGroupPart)
         {
-            if (ConnectInfo.IsGroupPartHead && startTiming >= -0.050f)
+            if (ConnectInfo.IsGroupPartHead && startTiming >= -0.05f)
                 canCheck = true;
             else if (!ConnectInfo.IsGroupPartHead)
                 canCheck = ConnectInfo.ParentFinished || ConnectInfo.ParentPendingFinish;
         }
-        else if (startTiming >= -0.050f)
+        else if (startTiming >= -0.05f)
             canCheck = true;
 
         if (timing > 0)
@@ -367,9 +370,15 @@ public class SlideDrop : NoteLongDrop, IFlasher
         var startiming = timeProvider.AudioTime - timeStart;
         if (startiming <= 0f)
         {
-            if (!fadeInAnimator.enabled && startiming >= fadeInTime)
+            if (startiming >= -0.05f)
+            {
+                fadeInAnimator.enabled = false;
+                setSlideBarAlpha(1f);
+            }
+            else if (!fadeInAnimator.enabled && startiming >= fadeInTime)
                 fadeInAnimator.enabled = true;
             return;
+            
         }
         fadeInAnimator.enabled = false;
         setSlideBarAlpha(1f);
@@ -422,6 +431,8 @@ public class SlideDrop : NoteLongDrop, IFlasher
         if (isFinished || !canCheck)
             return;
         else if (isChecking)
+            return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
             return;
         isChecking = true;
         if (ConnectInfo.Parent != null && judgeQueue.Count < _judgeQueue.Count)
@@ -491,7 +502,9 @@ public class SlideDrop : NoteLongDrop, IFlasher
     /// </summary>
     void Running()
     {
-        if (star_slide == null || !InputManager.AutoPlay)
+        if (star_slide == null)
+            return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random or AutoPlayMode.Disable)
             return;
 
         var starRadius = 0.763736616f;
@@ -571,31 +584,38 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 else
                     judge = JudgeType.Perfect;
             }            
-
-            switch (judge)
-            {
-                case JudgeType.FastGreat:
-                    slideOK.GetComponent<LoadJustSprite>().setFastGr();
-                    break;
-                case JudgeType.FastGood:
-                    slideOK.GetComponent<LoadJustSprite>().setFastGd();
-                    break;
-                case JudgeType.LateGood:
-                    slideOK.GetComponent<LoadJustSprite>().setLateGd();
-                    break;
-                case JudgeType.LateGreat:
-                    slideOK.GetComponent<LoadJustSprite>().setLateGr();
-                    break;
-                    
-            }
             print($"Slide diff : {MathF.Round(diff * 1000,2)} ms");
             judgeResult = judge ?? JudgeType.Miss;
+            SetJust();
             isJudged = true;
         }
         else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.8)
             DestroySelf();
         else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.8)
             DestroySelf();
+    }
+    void SetJust()
+    {
+        switch (judgeResult)
+        {
+            case JudgeType.FastGreat2:
+            case JudgeType.FastGreat1:
+            case JudgeType.FastGreat:
+                slideOK.GetComponent<LoadJustSprite>().setFastGr();
+                break;
+            case JudgeType.FastGood:
+                slideOK.GetComponent<LoadJustSprite>().setFastGd();
+                break;
+            case JudgeType.LateGood:
+                slideOK.GetComponent<LoadJustSprite>().setLateGd();
+                break;
+            case JudgeType.LateGreat1:
+            case JudgeType.LateGreat2:
+            case JudgeType.LateGreat:
+                slideOK.GetComponent<LoadJustSprite>().setLateGr();
+                break;
+
+        }
     }
     /// <summary>
     /// 计算引导Star进入最后一个判定区的时机
@@ -685,6 +705,17 @@ public class SlideDrop : NoteLongDrop, IFlasher
             Destroy(star_slide);
         if (ConnectInfo.IsGroupPartEnd || !ConnectInfo.IsConnSlide)
         {
+            switch(InputManager.Mode)
+            {
+                case AutoPlayMode.Enable:
+                    judgeResult = JudgeType.Perfect;
+                    SetJust();
+                    break;
+                case AutoPlayMode.Random:
+                    judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                    SetJust();
+                    break;
+            }
             // 只有组内最后一个Slide完成 才会显示判定条并增加总数
             objectCounter.ReportResult(this, judgeResult, isBreak);
             if (isBreak && judgeResult == JudgeType.Perfect)
@@ -717,6 +748,16 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
         if(process == 1)
         {
+            switch (InputManager.Mode)
+            {
+                case AutoPlayMode.Enable:
+                case AutoPlayMode.Random:
+                    var barIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+                    HideBar(barIndex);
+                    DestroySelf();
+                    judgeQueue.Clear();
+                    return;
+            }
             star_slide.transform.position = slidePositions.LastOrDefault();
             applyStarRotation(slideRotations.LastOrDefault());
             if (ConnectInfo.IsConnSlide && !ConnectInfo.IsGroupPartEnd)
@@ -743,6 +784,15 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 applyStarRotation(newRotation);
             }
         } 
+        switch(InputManager.Mode)
+        {
+            case AutoPlayMode.Enable:
+            case AutoPlayMode.Random:
+                var barIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+                judgeQueue = judgeQueue.Skip((int)(process * (judgeQueue.Count - 1))).ToList();
+                HideBar(barIndex);
+                break;
+        }
     }
    
     private void setSlideBarAlpha(float alpha)

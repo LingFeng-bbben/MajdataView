@@ -7,11 +7,8 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public Camera mainCamera;
-    public static bool AutoPlay { get; set; } = true;
+    public static AutoPlayMode Mode { get; private set; } = AutoPlayMode.DJAuto;
     public Dictionary<int,List<Sensor>> triggerSensors = new();
-
-    //public event EventHandler<InputEventArgs> OnSensorStatusChanged;
-    public event EventHandler<InputEventArgs>? OnButtonStatusChanged;
 
     Guid guid = Guid.NewGuid();
     
@@ -52,7 +49,12 @@ public class InputManager : MonoBehaviour
         CheckButton();
 
         if (Input.GetKeyDown(KeyCode.Home))
-            AutoPlay = !AutoPlay;
+        {
+            if (Mode == AutoPlayMode.Disable)
+                Mode = AutoPlayMode.Enable;
+            else
+                Mode++;
+        }
         if (Input.GetMouseButton(0))
             PositionHandle(-1, Input.mousePosition);
         else
@@ -123,9 +125,6 @@ public class InputManager : MonoBehaviour
     }
     public bool CheckSensorStatus(SensorType target,SensorStatus targetStatus)
     {
-        if (target > SensorType.A8)
-            throw new InvalidOperationException("Button index cannot greater than A8");
-
         var sensor = sensorObjs[(int)target].GetComponent<Sensor>();
         return sensor.Status == targetStatus;
     }

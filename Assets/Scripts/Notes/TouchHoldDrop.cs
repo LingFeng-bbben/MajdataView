@@ -63,25 +63,29 @@ public class TouchHoldDrop : NoteLongDrop
                                    .GetComponent<Sensor>();
         manager = GameObject.Find("Sensors")
                                 .GetComponent<SensorManager>();
+        inputManager = GameObject.Find("Input")
+                                 .GetComponent<InputManager>();
         var customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
         judgeText = customSkin.JudgeText;
-        sensor.OnStatusChanged += Check;
+        inputManager.BindSensor(Check, SensorType.C);
     }
     void Check(object sender, InputEventArgs arg)
     {
         if (isJudged || !noteManager.CanJudge(gameObject, sensor.Type))
             return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
+            return;
         else if (arg.IsClick)
         {
-            if (sensor.IsJudging)
+            if (!inputManager.IsIdle(arg))
                 return;
             else
-                sensor.IsJudging = true;
+                inputManager.SetBusy(arg);
             Judge();
             if (isJudged)
             {
-                sensor.OnStatusChanged -= Check;
-                GameObject.Find("Notes").GetComponent<NoteManager>().touchIndex[SensorType.C]++;
+                inputManager.UnbindSensor(Check, SensorType.C);
+                objectCounter.NextTouch(SensorType.C);
             }
         }
     }
@@ -124,58 +128,65 @@ public class TouchHoldDrop : NoteLongDrop
     }
     private void FixedUpdate()
     {
-        var autoPlay = InputManager.AutoPlay;
         var remainingTime = GetRemainingTime();
         var timing = GetJudgeTiming();
         var holdTime = timing - LastFor;
-        var on = sensor.Status == SensorStatus.On;
 
         if (remainingTime == 0 && isJudged)
         {
             Destroy(holdEffect);
             Destroy(gameObject);
         }
-        else if (isJudged)
+        else if (timing >= -0.01f)
         {
-            if (remainingTime < 0.2f && remainingTime != 0)
-                return;
-            else if (timing > 0.25f)
+            // AutoPlay相关
+            switch (InputManager.Mode)
             {
-                if(on)
-                {
-                    userHoldTime += Time.fixedDeltaTime;
+                case AutoPlayMode.Enable:
+                    if (!isJudged)
+                        objectCounter.NextTouch(SensorType.C);
+                    judgeResult = JudgeType.Perfect;
+                    isJudged = true;
                     PlayHoldEffect();
-                }
-                else
-                    StopHoldEffect();
+                    return;
+                case AutoPlayMode.DJAuto:
+                    if (!isJudged)
+                        manager.SetSensorOn(sensor.Type, guid);
+                    break;
+                case AutoPlayMode.Random:
+                    if (!isJudged)
+                    {
+                        objectCounter.NextTouch(SensorType.C);
+                        judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                        isJudged = true;
+                    }
+                    PlayHoldEffect();
+                    return;
+                case AutoPlayMode.Disable:
+                    manager.SetSensorOff(sensor.Type, guid);
+                    break;
             }
+        }
+
+        if (isJudged)
+        {
+            var on = inputManager.CheckSensorStatus(SensorType.C, SensorStatus.On);
+            if (on)
+            {
+                userHoldTime += Time.fixedDeltaTime;
+                PlayHoldEffect();
+            }
+            else
+                StopHoldEffect();
         }
         else if (timing > 0.316667f)
         {
             judgeDiff = 316.667f;
             judgeResult = JudgeType.Miss;
-            sensor.OnStatusChanged -= Check;
+            inputManager.UnbindSensor(Check, SensorType.C);
             isJudged = true;
             objectCounter.NextTouch(SensorType.C);
         }
-
-        if (autoPlay)
-        {
-            if (timing > 0 && !isJudged ||
-                isJudged && remainingTime > 0)
-            {
-                manager.SetSensorOn(sensor.Type, guid);
-                isAutoTrigger = true;
-            }
-            else if (timing == 0)
-                manager.SetSensorOff(sensor.Type, guid);
-        }
-        else if (isAutoTrigger)
-        {
-            manager.SetSensorOff(sensor.Type, guid);
-            isAutoTrigger = false;
-        }
-
     }
     // Update is called once per frame
     private void Update()
@@ -211,7 +222,7 @@ public class TouchHoldDrop : NoteLongDrop
         if (HttpHandler.IsReloding)
             return;
         var realityHT = LastFor - 0.45f - (judgeDiff / 1000f);
-        var percent = MathF.Min(1, userHoldTime / realityHT);
+        var percent = MathF.Min(1, (userHoldTime - 0.45f) / realityHT);
         JudgeType result = judgeResult;
         if (realityHT > 0)
         {
@@ -243,7 +254,20 @@ public class TouchHoldDrop : NoteLongDrop
                     result = (int)judgeResult < 7 ? JudgeType.LateGood : JudgeType.FastGood;
             }
         }
-        
+
+        switch (InputManager.Mode)
+        {
+            case AutoPlayMode.Enable:
+                result = JudgeType.Perfect;
+                break;
+            case AutoPlayMode.Random:
+                result = (JudgeType)UnityEngine.Random.Range(1, 14);
+                break;
+            case AutoPlayMode.DJAuto:
+            case AutoPlayMode.Disable:
+                break;
+        }
+
         print($"TouchHold: {MathF.Round(percent * 100, 2)}%\nTotal Len : {MathF.Round(realityHT * 1000, 2)}ms");
         objectCounter.ReportResult(this, result);
         if (!isJudged)
@@ -253,6 +277,7 @@ public class TouchHoldDrop : NoteLongDrop
             fireworkEffect.SetTrigger("Fire");
             firework.transform.position = transform.position;
         }
+        inputManager.UnbindSensor(Check, SensorType.C);
         manager.SetSensorOff(sensor.Type, guid);
         PlayJudgeEffect(result);
     }

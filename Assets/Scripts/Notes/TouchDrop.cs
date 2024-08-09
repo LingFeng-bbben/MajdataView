@@ -93,7 +93,9 @@ public class TouchDrop : TouchBase
         var type = GetSensor();
         if (arg.Type != type)
             return;
-        if (isJudged || !noteManager.CanJudge(gameObject, type))
+        else if (isJudged || !noteManager.CanJudge(gameObject, type))
+            return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
             return;
         else if (arg.IsClick)
         {
@@ -131,12 +133,26 @@ public class TouchDrop : TouchBase
         else if (isJudged)
             Destroy(gameObject);
 
-        if (GetJudgeTiming() >= 0 && InputManager.AutoPlay)
+        if (GetJudgeTiming() >= 0)
         {
-            if (isTriggered)
-                return;
-            inputManager.ClickSensor(GetSensor());
-            isTriggered = true;
+            switch (InputManager.Mode)
+            {
+                case AutoPlayMode.Enable:
+                    judgeResult = JudgeType.Perfect;
+                    isJudged = true;
+                    break;
+                case AutoPlayMode.Random:
+                    judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                    isJudged = true;
+                    break;
+                case AutoPlayMode.DJAuto:
+                    if (isTriggered)
+                        return;
+                    inputManager.ClickSensor(GetSensor());
+                    isTriggered = true;
+                    break;
+            }
+            
         }
     }
     void Judge()

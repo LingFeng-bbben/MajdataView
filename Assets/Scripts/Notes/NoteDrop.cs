@@ -63,8 +63,6 @@ public class NoteLongDrop : NoteDrop
 
     protected virtual void PlayHoldEffect()
     {
-        if (InputManager.AutoPlay)
-            manager.SetSensorOn(sensor.Type, guid);
         var material = holdEffect.GetComponent<ParticleSystemRenderer>().material;
         switch (judgeResult)
         {

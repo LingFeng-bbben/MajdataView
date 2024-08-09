@@ -38,10 +38,14 @@ public class ObjectCounter : MonoBehaviour
     InputManager inputManager;
     NoteManager notes;
 
-    long judgedScore = 0;
-    long judgedClassicScore = 0;
-    long lostScore = 0;
-    long lostClassicScore = 0;
+    double[] accRate = new double[5]
+    {
+        0.00,    // classic acc (+)
+        100.00,  // classic acc (-)
+        101.0000,// acc 101(-)
+        100.0000,// acc 100(-)
+        0.0000,  // acc (+)
+    };
 
     long cPerfectCount = 0;
     long perfectCount = 0;
@@ -211,137 +215,169 @@ public class ObjectCounter : MonoBehaviour
         if (FiSumScore() == 0) return;
         UpdateSideOutput();
     }
-    void CalNoteScore(SimaiNoteType noteType, JudgeType result, bool isBreak)
+    NoteScore GetNoteScoreSum()
     {
-        int lost = 0;
-        int lostClassic = 0;
-        int judged = 0;
-        int judgedClassic = 0;
+        Dictionary<JudgeType, int> collection = null;
+        long score = 0;
+        long lostScore = 0;
+        long extraScore = 0;
+        long extraScoreClassic = 0;
+        long lostExtraScore = 0;
+        long lostExtraScoreClassic = 0;
+        int baseScore = 500;
 
-        if(isBreak)
+        foreach(var type in new SimaiNoteType[] { SimaiNoteType.Tap, SimaiNoteType.Slide, SimaiNoteType.Hold, SimaiNoteType.Touch })
         {
-            switch (result)
+            switch (type)
+            {
+                case SimaiNoteType.Tap:
+                    collection = judgedTapCount;
+                    baseScore = 500;
+                    break;
+                case SimaiNoteType.Slide:
+                    collection = judgedSlideCount;
+                    baseScore = 1500;
+                    break;
+                case SimaiNoteType.TouchHold:
+                case SimaiNoteType.Hold:
+                    collection = judgedHoldCount;
+                    baseScore = 1000;
+                    break;
+                case SimaiNoteType.Touch:
+                    collection = judgedTouchCount;
+                    baseScore = 500;
+                    break;
+            }
+
+            foreach (var judgeResult in collection)
+            {
+                var count = judgeResult.Value;
+                switch (judgeResult.Key)
+                {
+                    case JudgeType.LatePerfect2:
+                    case JudgeType.LatePerfect1:
+                    case JudgeType.Perfect:
+                    case JudgeType.FastPerfect1:
+                    case JudgeType.FastPerfect2:
+                        score += baseScore * 1 * count;
+                        break;
+                    case JudgeType.LateGreat2:
+                    case JudgeType.LateGreat1:
+                    case JudgeType.LateGreat:
+                    case JudgeType.FastGreat:
+                    case JudgeType.FastGreat1:
+                    case JudgeType.FastGreat2:
+                        score += (long)(baseScore * 0.8) * count;
+                        lostScore += (long)(baseScore * 0.2) * count;
+                        break;
+                    case JudgeType.LateGood:
+                    case JudgeType.FastGood:
+                        score += (long)(baseScore * 0.5) * count;
+                        lostScore += (long)(baseScore * 0.5) * count;
+                        break;
+                    case JudgeType.Miss:
+                        lostScore += baseScore * count;
+                        break;
+                }
+            }
+        }
+        foreach (var judgeResult in judgedBreakCount)
+        {
+            var count = judgeResult.Value;
+            switch (judgeResult.Key)
             {
                 case JudgeType.Perfect:
-                    judged = judgedClassic = 2600;
-                    lost = lostClassic = 0;
+                    score += 2500 * count;
+                    extraScore += 100 * count;
+                    extraScoreClassic += 100 * count;
                     break;
-                case JudgeType.LatePerfect1:
+                case JudgeType.LatePerfect1:  
                 case JudgeType.FastPerfect1:
-                    judged = 2575;
-                    judgedClassic = 2550;
-                    lost = 25;
-                    lostClassic = 50;
+                    score += 2500 * count;
+                    extraScore += 75 * count;
+                    extraScoreClassic += 50 * count;
+                    lostExtraScore += 25 * count;
+                    lostExtraScoreClassic += 50 * count;
                     break;
                 case JudgeType.LatePerfect2:
                 case JudgeType.FastPerfect2:
-                    judged = 2550;
-                    judgedClassic = 2500;
-                    lost = 50;
-                    lostClassic = 100;
+                    score += 2500 * count;
+                    extraScore += 50 * count;
+                    extraScoreClassic += 0 * count;
+                    lostExtraScore += 50 * count;
+                    lostExtraScoreClassic += 100 * count;
                     break;
                 case JudgeType.LateGreat:
                 case JudgeType.FastGreat:
-                    judged = 2040;
-                    judgedClassic = 2000;
-                    lost = 510;
-                    lostClassic = 600;
+                    score += 2000 * count;
+                    extraScore += 40 * count;
+                    extraScoreClassic += 0 * count;
+                    lostScore += 500 * count;
+                    lostExtraScore += 60 * count;
+                    lostExtraScoreClassic += 100 * count;
                     break;
                 case JudgeType.LateGreat1:
                 case JudgeType.FastGreat1:
-                    judged = 1540;
-                    judgedClassic = 1500;
-                    lost = 1010;
-                    lostClassic = 1100;
+                    score += 1500 * count;
+                    extraScore += 40 * count;
+                    extraScoreClassic += 0 * count;
+                    lostScore += 1000 * count;
+                    lostExtraScore += 60 * count;
+                    lostExtraScoreClassic += 100 * count;
                     break;
                 case JudgeType.LateGreat2:
                 case JudgeType.FastGreat2:
-                    judged = 1290;
-                    judgedClassic = 1250;
-                    lost = 1310;
-                    lostClassic = 1350;
+                    score += 1250 * count;
+                    extraScore += 40 * count;
+                    extraScoreClassic += 0 * count;
+                    lostScore += 1250 * count;
+                    lostExtraScore += 60 * count;
+                    lostExtraScoreClassic += 100 * count;
                     break;
                 case JudgeType.LateGood:
                 case JudgeType.FastGood:
-                    judged = 1030;
-                    judgedClassic = 1000;
-                    lost = 1570;
-                    lostClassic = 1600;
+                    score += 1000 * count;
+                    extraScore += 30 * count;
+                    extraScoreClassic += 0 * count;
+                    lostScore += 1500 * count;
+                    lostExtraScore += 70 * count;
+                    lostExtraScoreClassic += 100 * count;
                     break;
                 case JudgeType.Miss:
-                    judged = judgedClassic = 0;
-                    lost = lostClassic = 2600;
+                    score += 0 * count;
+                    extraScore += 0 * count;
+                    extraScoreClassic += 0 * count;
+                    lostScore += 2500 * count;
+                    lostExtraScore += 100 * count;
+                    lostExtraScoreClassic += 100 * count;
                     break;
             }
         }
-        else if(noteType is SimaiNoteType.Tap or SimaiNoteType.Touch)
+        return new NoteScore()
         {
-            switch(result)
-            {
-                case JudgeType.LatePerfect2:
-                case JudgeType.LatePerfect1:
-                case JudgeType.Perfect:
-                case JudgeType.FastPerfect1:
-                case JudgeType.FastPerfect2:
-                    judged = judgedClassic = 500;
-                    lost = lostClassic = 0;
-                    break;
-                case JudgeType.LateGreat2:
-                case JudgeType.LateGreat1:
-                case JudgeType.LateGreat:
-                case JudgeType.FastGreat:
-                case JudgeType.FastGreat1:
-                case JudgeType.FastGreat2:
-                    judged = judgedClassic = 400;
-                    lost = lostClassic = 100;
-                    break;
-                case JudgeType.LateGood:
-                case JudgeType.FastGood:
-                    judged = judgedClassic = 250;
-                    lost = lostClassic = 250;
-                    break;
-                case JudgeType.Miss:
-                    judged = judgedClassic = 0;
-                    lost = lostClassic = 500;
-                    break;
-            }
-        }
-        else if(noteType is SimaiNoteType.Hold or SimaiNoteType.TouchHold)
-        {
-            switch (result)
-            {
-                case JudgeType.LatePerfect2:
-                case JudgeType.LatePerfect1:
-                case JudgeType.Perfect:
-                case JudgeType.FastPerfect1:
-                case JudgeType.FastPerfect2:
-                    judged = judgedClassic = 1000;
-                    lost = lostClassic = 0;
-                    break;
-                case JudgeType.LateGreat2:
-                case JudgeType.LateGreat1:
-                case JudgeType.LateGreat:
-                case JudgeType.FastGreat:
-                case JudgeType.FastGreat1:
-                case JudgeType.FastGreat2:
-                    judged = judgedClassic = 800;
-                    lost = lostClassic = 200;
-                    break;
-                case JudgeType.LateGood:
-                case JudgeType.FastGood:
-                    judged = judgedClassic = 500;
-                    lost = lostClassic = 500;
-                    break;
-                case JudgeType.Miss:
-                    judged = judgedClassic = 0;
-                    lost = lostClassic = 500;
-                    break;
-            }
-        }
-        judgedScore += judged;
-        judgedClassicScore += judgedClassic;
-        lostScore += lost;
-        lostClassicScore += lostClassic;
+            TotalScore = score,
+            TotalExtraScore = extraScore,
+            TotalExtraScoreClassic = extraScoreClassic,
+            LostScore = lostScore,
+            LostExtraScore = lostExtraScore,
+            LostExtraScoreClassic = lostExtraScoreClassic
+        };
+    }
+    void CalAccRate()
+    {
+        long totalScore = 0;
+        long totalExtraScore = 0;
+
+        var currentNoteScore = GetNoteScoreSum();
+
+        totalScore = (tapSum + touchSum) * 500 + holdSum * 1000 + slideSum * 1500 + breakSum * 2500;
+        totalExtraScore = breakSum * 100;
+
+        accRate[0] = ((currentNoteScore.TotalScore + currentNoteScore.TotalExtraScoreClassic) / (double)totalScore) * 100;
+        accRate[1] = ((totalScore + currentNoteScore.TotalExtraScoreClassic - currentNoteScore.LostScore) / (double)totalScore) * 100;
+        accRate[2] = ((totalScore - currentNoteScore.LostScore) / (double)totalScore) * 100 + ((totalExtraScore - currentNoteScore.LostExtraScore) / (double)totalExtraScore);
+        accRate[3] = ((totalScore - currentNoteScore.LostScore) / (double)totalScore) * 100 + (currentNoteScore.TotalExtraScore / (double)totalExtraScore);
+        accRate[4] = (currentNoteScore.TotalScore / (double)totalScore) * 100 + (currentNoteScore.TotalExtraScore / (double)totalExtraScore);
     }
     internal void ReportResult(NoteDrop note, JudgeType result,bool isBreak = false)
     {
@@ -395,7 +431,6 @@ public class ObjectCounter : MonoBehaviour
 
         }
         totalJudgedCount[result]++;
-        CalNoteScore(noteType, result, isBreak);
         if(result != 0)
             combo++;
         switch (result)
@@ -426,6 +461,7 @@ public class ObjectCounter : MonoBehaviour
                 goodCount++;
                 break;
         }
+        CalAccRate();
     }
     internal void NextNote(int pos) => notes.noteIndex[pos]++;
     internal void NextTouch(SensorType pos) => notes.touchIndex[pos]++;
@@ -462,20 +498,24 @@ public class ObjectCounter : MonoBehaviour
                 statusScore.text = string.Format("{0:#,##0}", scoreValues[0]);
                 break;
             case EditorComboIndicator.AchievementClassic: // Achievement (+) Classic
-                UpdateAchievementColor(accValues[0]);
-                statusAchievement.text = string.Format("{0,6:0.00}%", Math.Truncate(accValues[0] * 100) / 100);
+                UpdateAchievementColor(accRate[0]);
+                //statusAchievement.text = string.Format("{0,6:0.00}%", Math.Truncate(accValues[0] * 100) / 100);
+                statusAchievement.text = string.Format("{0,6:0.00}%", accRate[0]);
                 break;
             case EditorComboIndicator.AchievementDownClassic: // Achievement (-) Classic (from 100%)
-                UpdateAchievementColor(accValues[1]);
-                statusAchievement.text = string.Format("{0,6:0.00}%", Math.Truncate(accValues[1] * 100) / 100);
+                UpdateAchievementColor(accRate[1]);
+                //statusAchievement.text = string.Format("{0,6:0.00}%", Math.Truncate(accValues[1] * 100) / 100);
+                statusAchievement.text = string.Format("{0,6:0.00}%", accRate[1]);
                 break;
             case EditorComboIndicator.AchievementDeluxe: // Achievement (+) Deluxe
-                UpdateAchievementColor(accValues[2]);
-                statusAchievement.text = string.Format("{0,8:0.0000}%", Math.Truncate(accValues[2] * 10000) / 10000);
+                UpdateAchievementColor(accRate[4]);
+                //statusAchievement.text = string.Format("{0,8:0.0000}%", Math.Truncate(accValues[2] * 10000) / 10000);
+                statusAchievement.text = string.Format("{0,8:0.0000}%", accRate[4]);
                 break;
             case EditorComboIndicator.AchievementDownDeluxe: // Achievement (-) Deluxe (from 100%)
-                UpdateAchievementColor(accValues[3]);
-                statusAchievement.text = string.Format("{0,8:0.0000}%", Math.Truncate(accValues[3] * 10000) / 10000);
+                UpdateAchievementColor(accRate[3]);
+                //statusAchievement.text = string.Format("{0,8:0.0000}%", Math.Truncate(accValues[3] * 10000) / 10000);
+                statusAchievement.text = string.Format("{0,8:0.0000}%", accRate[3]);
                 break;
             case EditorComboIndicator.ScoreDeluxe: // DX Score (+)
                 statusDXScore.text = DxExNowScore().ToString();
@@ -514,12 +554,12 @@ public class ObjectCounter : MonoBehaviour
             "TOH: {3} / {8}\n" +
             "BRK: {4} / {9}\n" +
             "ALL: {10} / {11}\n" +
-            "AutoPlay: {12}",
+            "MOD: {12}",
             tapCount, holdCount, slideCount, touchCount, breakCount,
             tapSum, holdSum, slideSum, touchSum, breakSum,
             comboN,
             tapSum + holdSum + slideSum + touchSum + breakSum,
-            InputManager.AutoPlay ? "Enable" : "Disable"
+            InputManager.Mode
         );
 
         rate.text = string.Format(
@@ -551,15 +591,15 @@ public class ObjectCounter : MonoBehaviour
 #endif
     }
 
-    private void UpdateAchievementColor(float achievementRate)
+    private void UpdateAchievementColor(double achievementRate)
     {
-        var newColor = AchievementDudColor;
-        if (achievementRate >= 100f)
-            newColor = AchievementGoldColor;
-        else if (achievementRate >= 97f)
-            newColor = AchievementSilverColor;
-        else if (achievementRate >= 80f)
-            newColor = AchievementBronzeColor;
+        var newColor = achievementRate switch
+        {
+            >= 100 => AchievementGoldColor,
+            >= 97f => AchievementSilverColor,
+            >= 80f => AchievementBronzeColor,
+            _ => AchievementDudColor
+        };
 
         var textElements = statusAchievement.gameObject.GetComponentsInChildren<Text>();
 

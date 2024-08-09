@@ -78,4 +78,11 @@
         Finished,
         Destroyed
     }
+    public enum AutoPlayMode
+    {
+        Enable,
+        DJAuto,
+        Random,
+        Disable
+    }
 }

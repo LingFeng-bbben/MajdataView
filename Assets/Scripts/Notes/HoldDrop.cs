@@ -106,7 +106,6 @@ public class HoldDrop : NoteLongDrop
     }
     private void FixedUpdate()
     {
-        var autoPlay = InputManager.AutoPlay;
         var timing = GetJudgeTiming();
         var remainingTime = GetRemainingTime();
 
@@ -116,22 +115,47 @@ public class HoldDrop : NoteLongDrop
             Destroy(holdEffect);
             Destroy(gameObject);
         }
-        else if (isJudged) // 头部判定完成后开始累计按压时长
+        else if(timing >= -0.01f)
+        {
+            // AutoPlay相关
+            switch (InputManager.Mode)
+            {
+                case AutoPlayMode.Enable:
+                    if(!isJudged)
+                        objectCounter.NextNote(startPosition);
+                    judgeResult = JudgeType.Perfect;
+                    isJudged = true;
+                    PlayHoldEffect();
+                    return;
+                case AutoPlayMode.DJAuto:
+                    if (!isJudged)
+                        manager.SetSensorOn(sensor.Type, guid);
+                    break;
+                case AutoPlayMode.Random:
+                    if (!isJudged)
+                    {
+                        objectCounter.NextNote(startPosition);
+                        judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                        isJudged = true;
+                    }
+                    PlayHoldEffect();
+                    return;
+                case AutoPlayMode.Disable:
+                    manager.SetSensorOff(sensor.Type, guid);
+                    break;
+            }
+        }
+
+        if (isJudged) // 头部判定完成后开始累计按压时长
         {
             var on = inputManager.CheckAreaStatus(sensorPos,SensorStatus.On);
-            
-            if (remainingTime < 0.2f && remainingTime != 0)
-                return;
-            else if(timing > 0.1f)
+            if (on)
             {
-                if (on)
-                {
-                    userHoldTime += Time.fixedDeltaTime;
-                    PlayHoldEffect();
-                }
-                else
-                    StopHoldEffect();
+                userHoldTime += Time.fixedDeltaTime;
+                PlayHoldEffect();
             }
+            else
+                StopHoldEffect();
         }
         else if (timing > 0.15f) // 头部Miss
         {
@@ -141,30 +165,14 @@ public class HoldDrop : NoteLongDrop
             isJudged = true;
             objectCounter.NextNote(startPosition);
         }
-
-        // AutoPlay相关
-        if(autoPlay)
-        {
-            if(timing > 0 && !isJudged ||
-                isJudged && remainingTime > 0)
-            {
-                manager.SetSensorOn(sensor.Type, guid);
-                isAutoTrigger = true;
-            }
-            else if(remainingTime == 0)
-                manager.SetSensorOff(sensor.Type, guid);
-        }
-        else if(isAutoTrigger)
-        {
-            manager.SetSensorOff(sensor.Type, guid);
-            isAutoTrigger = false;
-        }
     }
     void Check(object sender, InputEventArgs arg)
     {
         if (arg.Type != sensor.Type)
             return;
-        if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
+        else if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
+            return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
             return;
         if (arg.IsClick)
         {
@@ -322,7 +330,7 @@ public class HoldDrop : NoteLongDrop
         if (HttpHandler.IsReloding)
             return;
         var realityHT = LastFor - 0.3f - (judgeDiff / 1000f);
-        var percent = MathF.Min(1, userHoldTime / realityHT);
+        var percent = MathF.Min(1, (userHoldTime - 0.3f) / realityHT);
         JudgeType result = judgeResult;
         if(realityHT > 0)
         {
@@ -361,6 +369,19 @@ public class HoldDrop : NoteLongDrop
                     result = (int)judgeResult < 7 ? JudgeType.LateGood : JudgeType.FastGood;
             }
         }
+
+        switch (InputManager.Mode)
+        {
+            case AutoPlayMode.Enable:
+                result = JudgeType.Perfect;
+                break;
+            case AutoPlayMode.Random:
+                result = (JudgeType)UnityEngine.Random.Range(1, 14);
+                break;
+            case AutoPlayMode.DJAuto:
+            case AutoPlayMode.Disable:
+                break;
+        }
         var effectManager = GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>();
         effectManager.PlayEffect(startPosition, isBreak, result);
         effectManager.PlayFastLate(startPosition, result);
@@ -370,9 +391,7 @@ public class HoldDrop : NoteLongDrop
         if (!isJudged)
             objectCounter.NextNote(startPosition);
 
-        if (InputManager.AutoPlay)
-            manager.SetSensorOff(sensor.Type, guid);
-
+        manager.SetSensorOff(sensor.Type, guid);
         inputManager.UnbindArea(Check, sensorPos);
     }
     protected override void PlayHoldEffect()
