@@ -1,0 +1,88 @@
+﻿namespace Assets.Scripts.Types
+{
+    public enum SensorStatus
+    {
+        On,
+        Off
+    }
+    public enum SensorType
+    {
+        A1,
+        A2,
+        A3,
+        A4,
+        A5,
+        A6,
+        A7,
+        A8,
+        B1,
+        B2,
+        B3,
+        B4,
+        B5,
+        B6,
+        B7,
+        B8,
+        C,
+        D1,
+        D2,
+        D3,
+        D4,
+        D5,
+        D6,
+        D7,
+        D8,
+        E1,
+        E2,
+        E3,
+        E4,
+        E5,
+        E6,
+        E7,
+        E8
+    }
+    public enum SensorGroup
+    {
+        A,
+        B,
+        C,
+        D,
+        E
+    }
+    public enum JudgeType
+    {
+        Miss,
+        LateGood,
+        LateGreat2,
+        LateGreat1,
+        LateGreat,
+        LatePerfect2,
+        LatePerfect1,
+        Perfect,
+        FastPerfect1,
+        FastPerfect2,
+        FastGreat,
+        FastGreat1,
+        FastGreat2,
+        FastGood
+    }
+    public enum NoteStatus
+    {
+        Start,
+        Initialized,
+        Pending,
+        Prepared,
+        Running,
+        WaitForJudge,
+        Judged,
+        Finished,
+        Destroyed
+    }
+    public enum AutoPlayMode
+    {
+        Enable,
+        DJAuto,
+        Random,
+        Disable
+    }
+}

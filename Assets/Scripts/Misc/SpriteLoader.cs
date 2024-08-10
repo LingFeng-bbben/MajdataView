@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using UnityEngine;
-
+#nullable enable
 public static class SpriteLoader
 {
     public static Sprite LoadSpriteFromFile(string path)

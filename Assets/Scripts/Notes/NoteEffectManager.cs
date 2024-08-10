@@ -1,24 +1,9 @@
-﻿using UnityEngine;
-
+﻿using Assets.Scripts.Types;
+using UnityEngine;
+#nullable enable
 public class NoteEffectManager : MonoBehaviour
 {
-    public enum JudgeType
-    {
-        Miss,
-        LateGood,
-        LateGreat2,
-        LateGreat1,
-        LateGreat,
-        LatePerfect2,
-        LatePerfect1,
-        Perfect,
-        FastPerfect1,
-        FastPerfect2,
-        FastGreat,
-        FastGreat1,
-        FastGreat2,
-        FastGood
-    }
+    
     public Sprite hex;
     public Sprite star;
     private readonly Animator[] judgeAnimators = new Animator[8];

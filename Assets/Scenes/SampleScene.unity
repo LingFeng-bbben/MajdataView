@@ -2259,7 +2259,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -61.2, y: -35.86}
+  m_AnchoredPosition: {x: -61.2, y: -31.4}
   m_SizeDelta: {x: 15.358, y: 33.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &393224021
@@ -4245,7 +4245,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 519420031}
-  AutoPlay: 1
 --- !u!224 &601344169
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10672,7 +10671,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -77.116, y: -35.86}
+  m_AnchoredPosition: {x: -77.116, y: -31.4}
   m_SizeDelta: {x: 15.358, y: 33.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1678688328

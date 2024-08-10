@@ -1,10 +1,9 @@
 ﻿using Assets.Scripts;
-using Assets.Scripts.IO;
+using Assets.Scripts.Types;
 using System;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
-using static NoteEffectManager;
-using static UnityEngine.Networking.UnityWebRequest;
-
+#nullable enable
 public class TouchDrop : TouchBase
 {
     public GameObject justEffect;
@@ -32,6 +31,7 @@ public class TouchDrop : TouchBase
     private bool isStarted;
     private int layer;
     private float moveDuration;
+    bool isTriggered = false;
     private MultTouchHandler multTouchHandler;
 
     private float wholeDuration;
@@ -82,40 +82,46 @@ public class TouchDrop : TouchBase
                                    .GetComponent<Sensor>();
         manager = GameObject.Find("Sensors")
                                 .GetComponent<SensorManager>();
-
+        inputManager = GameObject.Find("Input")
+                                 .GetComponent<InputManager>();
         var customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
         judgeText = customSkin.JudgeText;
-        sensor.OnStatusChanged += Check;
+        inputManager.BindSensor(Check, GetSensor());
     }
-    void Check(object sender,InputEventArgs inputInfo)
+    void Check(object sender,InputEventArgs arg)
     {
-        if (isJudged || !noteManager.CanJudge(gameObject, sensor.Type))
+        var type = GetSensor();
+        if (arg.Type != type)
             return;
-        else if (inputInfo.IsClick)
+        else if (isJudged || !noteManager.CanJudge(gameObject, type))
+            return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
+            return;
+        else if (arg.IsClick)
         {
-            if (sensor.IsJudging)
+            if (!inputManager.IsIdle(arg))
                 return;
             else
-                sensor.IsJudging = true;
+                inputManager.SetBusy(arg);
             Judge();
             if (isJudged)
             {
-                sensor.OnStatusChanged -= Check;
                 Destroy(gameObject);
             }
         }
     }
     private void FixedUpdate()
     {
-        if(!isJudged && GetJudgeTiming() <= 0.316667f)
+        if (!isJudged && GetJudgeTiming() <= 0.316667f)
         {
-            if (GroupInfo is null)
-                return;
-            if (GroupInfo.Percent > 0.5f && GroupInfo.JudgeResult != null)
+            if (GroupInfo is not null)
             {
-                isJudged = true;
-                judgeResult = (JudgeType)GroupInfo.JudgeResult;
-                Destroy(gameObject);
+                if (GroupInfo.Percent > 0.5f && GroupInfo.JudgeResult != null)
+                {
+                    isJudged = true;
+                    judgeResult = (JudgeType)GroupInfo.JudgeResult;
+                    Destroy(gameObject);
+                }
             }
         }
         else if (!isJudged)
@@ -126,6 +132,28 @@ public class TouchDrop : TouchBase
         }
         else if (isJudged)
             Destroy(gameObject);
+
+        if (GetJudgeTiming() >= 0)
+        {
+            switch (InputManager.Mode)
+            {
+                case AutoPlayMode.Enable:
+                    judgeResult = JudgeType.Perfect;
+                    isJudged = true;
+                    break;
+                case AutoPlayMode.Random:
+                    judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                    isJudged = true;
+                    break;
+                case AutoPlayMode.DJAuto:
+                    if (isTriggered)
+                        return;
+                    inputManager.ClickSensor(GetSensor());
+                    isTriggered = true;
+                    break;
+            }
+            
+        }
     }
     void Judge()
     {
@@ -169,11 +197,7 @@ public class TouchDrop : TouchBase
         var pow = -Mathf.Exp(8 * (timing * 0.4f / moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
 
-        if (timing >= 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-        {
-            manager.SetSensorOn(sensor.Type, guid);
-        }
-        else if (timing >= 0)
+        if (timing >= 0)
         {
             var _pow = -Mathf.Exp(- 0.85f) + 0.42f;
             var _distance = Mathf.Clamp(_pow, 0f, 0.4f);
@@ -217,7 +241,7 @@ public class TouchDrop : TouchBase
     }
     private void OnDestroy()
     {
-        if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+        if (HttpHandler.IsReloding)
             return;
         multTouchHandler.cancelTouch(this);
         PlayJudgeEffect();
@@ -231,8 +255,7 @@ public class TouchDrop : TouchBase
             fireworkEffect.SetTrigger("Fire");
             firework.transform.position = transform.position;
         }
-        sensor.OnStatusChanged -= Check;
-        manager.SetSensorOff(sensor.Type, guid);
+        inputManager.UnbindSensor(Check, GetSensor());
     }
     void PlayJudgeEffect()
     {

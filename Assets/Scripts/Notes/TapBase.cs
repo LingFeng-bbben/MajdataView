@@ -1,14 +1,14 @@
-﻿using Assets.Scripts.IO;
+﻿using Assets.Scripts.Types;
 using System;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 namespace Assets.Scripts.Notes
 {
     public class TapBase: NoteDrop
     {
         public bool isBreak;
         public bool isEX;
+        bool isTriggered = false;
 
         public Sprite tapSpr;
         public Sprite eachSpr;
@@ -32,8 +32,6 @@ namespace Assets.Scripts.Notes
         protected SpriteRenderer lineSpriteRender;
 
         protected SpriteRenderer spriteRenderer;
-        protected InputManager inputManager;
-
         protected void PreLoad()
         {
             var notes = GameObject.Find("Notes").transform;
@@ -48,10 +46,13 @@ namespace Assets.Scripts.Notes
 
             spriteRenderer.sortingOrder += noteSortOrder;
             exSpriteRender.sortingOrder += noteSortOrder;
+
+            
         }
         protected void FixedUpdate()
         {
-            if (!isJudged && GetJudgeTiming() > 0.15f)
+            var timing = GetJudgeTiming();
+            if (!isJudged && timing > 0.15f)
             {
                 judgeResult = JudgeType.Miss;
                 isJudged = true;
@@ -63,78 +64,99 @@ namespace Assets.Scripts.Notes
                 Destroy(tapLine);
                 Destroy(gameObject);
             }
+            else if (timing >= -0.01f)
+            {
+                switch(InputManager.Mode)
+                {
+                    case AutoPlayMode.Enable:
+                        judgeResult = JudgeType.Perfect;
+                        isJudged = true;
+                        break;
+                    case AutoPlayMode.Random:
+                        judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                        isJudged = true;
+                        break;
+                    case AutoPlayMode.DJAuto:
+                        if (isTriggered)
+                            return;
+                        inputManager.ClickSensor(sensorPos);
+                        isTriggered = true;
+                        break;
+                }
+            }
+
         }
         // Update is called once per frame
         protected virtual void Update()
         {
-            var timing = timeProvider.AudioTime - time;
+            var timing = GetJudgeTiming();
             var distance = timing * speed + 4.8f;
             var destScale = distance * 0.4f + 0.51f;
-            if (destScale < 0f)
+
+            switch(State)
             {
-                destScale = 0f;
-                return;
+                case NoteStatus.Initialized:
+                    if (destScale >= 0f)
+                    {
+                        tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
+                        State = NoteStatus.Pending;
+                        goto case NoteStatus.Pending;
+                    }
+                    else
+                        transform.localScale = new Vector3(0, 0);
+                    return;
+                case NoteStatus.Pending:
+                    {
+                        if (destScale > 0.3f)
+                            tapLine.SetActive(true);
+                        if (distance < 1.225f)
+                        {
+                            transform.localScale = new Vector3(destScale, destScale);
+                            transform.position = getPositionFromDistance(1.225f);
+                            var lineScale = Mathf.Abs(1.225f / 4.8f);
+                            tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+                        }
+                        else
+                        {
+                            State = NoteStatus.Running;
+                            goto case NoteStatus.Running;
+                        }
+                    }
+                    break;
+                case NoteStatus.Running:
+                    {
+                        transform.position = getPositionFromDistance(distance);
+                        transform.localScale = new Vector3(1f, 1f);
+                        var lineScale = Mathf.Abs(distance / 4.8f);
+                        tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
+                    }
+                    break;
             }
 
             spriteRenderer.forceRenderingOff = false;
             if (isEX) exSpriteRender.forceRenderingOff = false;
-
             if (isBreak)
             {
                 var extra = Math.Max(Mathf.Sin(timeProvider.GetFrame() * 0.17f) * 0.5f, 0);
                 spriteRenderer.material.SetFloat("_Brightness", 0.95f + extra);
             }
-
-            if (timing > 0 && GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-                manager.SetSensorOn(sensor.Type, guid);
-
-            tapLine.transform.rotation = Quaternion.Euler(0, 0, -22.5f + -45f * (startPosition - 1));
-            if (destScale > 0.3f) tapLine.SetActive(true);
-
-            if (distance < 1.225f)
-            {
-                transform.localScale = new Vector3(destScale, destScale);
-
-                distance = 1.225f;
-                var pos = getPositionFromDistance(distance);
-                transform.position = pos;
-            }
-            else
-            {
-                var pos = getPositionFromDistance(distance);
-                transform.position = pos;
-                transform.localScale = new Vector3(1f, 1f);
-            }
-
-            var lineScale = Mathf.Abs(distance / 4.8f);
-            tapLine.transform.localScale = new Vector3(lineScale, lineScale, 1f);
-
-
         }
         protected void Check(object sender, InputEventArgs arg)
         {
             if (arg.Type != sensor.Type)
                 return;
-            if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
+            else if (isJudged || !noteManager.CanJudge(gameObject, startPosition))
                 return;
+            else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
+                return;
+
             if (arg.IsClick)
             {
-                var isJudging = false;
-
-                if (arg.IsButton)
-                    isJudging = inputManager.IsBusying(arg.Type);
-                else
-                    isJudging = sensor.IsJudging;
-
-                if (isJudging)
+                if (!inputManager.IsIdle(arg))
                     return;
                 else
-                {
-                    if (arg.IsButton)
-                        inputManager.SetBusying(arg.Type, true);
-                    else
-                        sensor.IsJudging = true;
-                }
+                    inputManager.SetBusy(arg);
+
                 Judge();
                 if (isJudged)
                 {
@@ -191,17 +213,14 @@ namespace Assets.Scripts.Notes
         }
         protected virtual void OnDestroy()
         {
-            if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+            if (HttpHandler.IsReloding)
                 return;
             var effectManager = GameObject.Find("NoteEffects").GetComponent<NoteEffectManager>();
             effectManager.PlayEffect(startPosition, isBreak, judgeResult);
             effectManager.PlayFastLate(startPosition, judgeResult);
             objectCounter.NextNote(startPosition);
             objectCounter.ReportResult(this, judgeResult,isBreak);
-            if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-                manager.SetSensorOff(sensor.Type, guid);
-            sensor.OnStatusChanged -= Check;
-            inputManager.OnButtonStatusChanged -= Check;
+            inputManager.UnbindArea(Check, sensorPos);
         }
     }
 }

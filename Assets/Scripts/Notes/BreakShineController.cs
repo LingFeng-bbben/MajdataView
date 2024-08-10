@@ -1,10 +1,10 @@
 using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
-
+#nullable enable
 public class BreakShineController : MonoBehaviour
 {
-    public IFlasher parent;
+    public IFlasher? parent = null;
 
     SpriteRenderer spriteRenderer;
     AudioTimeProvider timeProvider;

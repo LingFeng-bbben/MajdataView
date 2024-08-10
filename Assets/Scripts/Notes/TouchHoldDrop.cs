@@ -1,9 +1,7 @@
-﻿using Assets.Scripts.IO;
+﻿using Assets.Scripts.Types;
 using System;
-using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 public class TouchHoldDrop : NoteLongDrop
 {
     public bool isFirework;
@@ -65,25 +63,29 @@ public class TouchHoldDrop : NoteLongDrop
                                    .GetComponent<Sensor>();
         manager = GameObject.Find("Sensors")
                                 .GetComponent<SensorManager>();
+        inputManager = GameObject.Find("Input")
+                                 .GetComponent<InputManager>();
         var customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
         judgeText = customSkin.JudgeText;
-        sensor.OnStatusChanged += Check;
+        inputManager.BindSensor(Check, SensorType.C);
     }
     void Check(object sender, InputEventArgs arg)
     {
         if (isJudged || !noteManager.CanJudge(gameObject, sensor.Type))
             return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
+            return;
         else if (arg.IsClick)
         {
-            if (sensor.IsJudging)
+            if (!inputManager.IsIdle(arg))
                 return;
             else
-                sensor.IsJudging = true;
+                inputManager.SetBusy(arg);
             Judge();
             if (isJudged)
             {
-                sensor.OnStatusChanged -= Check;
-                GameObject.Find("Notes").GetComponent<NoteManager>().touchIndex[SensorType.C]++;
+                inputManager.UnbindSensor(Check, SensorType.C);
+                objectCounter.NextTouch(SensorType.C);
             }
         }
     }
@@ -119,80 +121,79 @@ public class TouchHoldDrop : NoteLongDrop
             judgeDiff = 0;
         else
             judgeDiff = diff;
-        if (!userHold.IsRunning)
-            userHold.Start();
+
         judgeResult = result;
-        PlayHoldEffect();
         isJudged = true;
+        PlayHoldEffect();
     }
     private void FixedUpdate()
     {
-        var autoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
-
-        var timing = timeProvider.AudioTime - time;
+        var remainingTime = GetRemainingTime();
+        var timing = GetJudgeTiming();
         var holdTime = timing - LastFor;
 
-        if (GetRemainingTime() == 0 && isJudged)
+        if (remainingTime == 0 && isJudged)
         {
-            userHold.Stop();
             Destroy(holdEffect);
             Destroy(gameObject);
         }
-        else if (isJudged)
+        else if (timing >= -0.01f)
         {
-            if (sensor.Status == SensorStatus.On)
-                PlayHoldEffect();
-            if (GetJudgeTiming() < 0.25f || (GetRemainingTime() < 0.2f && GetRemainingTime() != 0))
-                return;
-            if (sensor.Status == SensorStatus.On)
+            // AutoPlay相关
+            switch (InputManager.Mode)
             {
-                if (!userHold.IsRunning)
-                    userHold.Start();
-            }
-            else if (sensor.Status == SensorStatus.Off)
-            {
-                if (userHold.IsRunning)
-                    userHold.Stop();
-                StopHoldEffect();
+                case AutoPlayMode.Enable:
+                    if (!isJudged)
+                        objectCounter.NextTouch(SensorType.C);
+                    judgeResult = JudgeType.Perfect;
+                    isJudged = true;
+                    PlayHoldEffect();
+                    return;
+                case AutoPlayMode.DJAuto:
+                    if (!isJudged)
+                        manager.SetSensorOn(sensor.Type, guid);
+                    break;
+                case AutoPlayMode.Random:
+                    if (!isJudged)
+                    {
+                        objectCounter.NextTouch(SensorType.C);
+                        judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                        isJudged = true;
+                    }
+                    PlayHoldEffect();
+                    return;
+                case AutoPlayMode.Disable:
+                    manager.SetSensorOff(sensor.Type, guid);
+                    break;
             }
         }
-        else if (GetJudgeTiming() > 0.316667f)
+
+        if (isJudged)
+        {
+            var on = inputManager.CheckSensorStatus(SensorType.C, SensorStatus.On);
+            if (on)
+            {
+                userHoldTime += Time.fixedDeltaTime;
+                PlayHoldEffect();
+            }
+            else
+                StopHoldEffect();
+        }
+        else if (timing > 0.316667f)
         {
             judgeDiff = 316.667f;
             judgeResult = JudgeType.Miss;
-            sensor.OnStatusChanged -= Check;
+            inputManager.UnbindSensor(Check, SensorType.C);
             isJudged = true;
-            GameObject.Find("Notes").GetComponent<NoteManager>().touchIndex[SensorType.C]++;
+            objectCounter.NextTouch(SensorType.C);
         }
-
-        if (autoPlay)
-        {
-            if (GetJudgeTiming() > 0 && !isJudged ||
-                isJudged && GetRemainingTime() > 0)
-            {
-                manager.SetSensorOn(sensor.Type, guid);
-                isAutoTrigger = true;
-            }
-            else if (GetRemainingTime() == 0)
-                manager.SetSensorOff(sensor.Type, guid);
-        }
-        else if (isAutoTrigger)
-        {
-            manager.SetSensorOff(sensor.Type, guid);
-            isAutoTrigger = false;
-        }
-
     }
     // Update is called once per frame
     private void Update()
     {
-        var timing = timeProvider.AudioTime - time;
-        //var pow = Mathf.Pow(-timing * speed, 0.1f) - 0.4f;
+        var timing = GetJudgeTiming();
         var pow = -Mathf.Exp(8 * (timing * 0.4f / moveDuration) - 0.85f) + 0.42f;
         var distance = Mathf.Clamp(pow, 0f, 0.4f);
-        var isAutoPlay = GameObject.Find("Input").GetComponent<InputManager>().AutoPlay;
-        if (timing > 0 && isAutoPlay)
-            PlayHoldEffect();
 
         if (-timing <= wholeDuration && -timing > moveDuration)
         {
@@ -209,8 +210,7 @@ public class TouchHoldDrop : NoteLongDrop
         }
 
         if (float.IsNaN(distance)) distance = 0f;
-        if (distance == 0f && isAutoPlay)
-            PlayHoldEffect();
+
         for (var i = 0; i < 4; i++)
         {
             var pos = (0.226f + distance) * GetAngle(i);
@@ -219,10 +219,10 @@ public class TouchHoldDrop : NoteLongDrop
     }
     private void OnDestroy()
     {
-        if (GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+        if (HttpHandler.IsReloding)
             return;
         var realityHT = LastFor - 0.45f - (judgeDiff / 1000f);
-        var percent = MathF.Min(1, (userHold.ElapsedMilliseconds / 1000f) / realityHT);
+        var percent = MathF.Min(1, (userHoldTime - 0.45f) / realityHT);
         JudgeType result = judgeResult;
         if (realityHT > 0)
         {
@@ -254,7 +254,20 @@ public class TouchHoldDrop : NoteLongDrop
                     result = (int)judgeResult < 7 ? JudgeType.LateGood : JudgeType.FastGood;
             }
         }
-        
+
+        switch (InputManager.Mode)
+        {
+            case AutoPlayMode.Enable:
+                result = JudgeType.Perfect;
+                break;
+            case AutoPlayMode.Random:
+                result = (JudgeType)UnityEngine.Random.Range(1, 14);
+                break;
+            case AutoPlayMode.DJAuto:
+            case AutoPlayMode.Disable:
+                break;
+        }
+
         print($"TouchHold: {MathF.Round(percent * 100, 2)}%\nTotal Len : {MathF.Round(realityHT * 1000, 2)}ms");
         objectCounter.ReportResult(this, result);
         if (!isJudged)
@@ -264,6 +277,7 @@ public class TouchHoldDrop : NoteLongDrop
             fireworkEffect.SetTrigger("Fire");
             firework.transform.position = transform.position;
         }
+        inputManager.UnbindSensor(Check, SensorType.C);
         manager.SetSensorOff(sensor.Type, guid);
         PlayJudgeEffect(result);
     }

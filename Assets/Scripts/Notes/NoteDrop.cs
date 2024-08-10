@@ -1,8 +1,8 @@
+using Assets.Scripts.Types;
 using System;
 using System.Diagnostics;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 public class NoteDrop : MonoBehaviour
 {
     public int startPosition;
@@ -13,13 +13,17 @@ public class NoteDrop : MonoBehaviour
 
     protected AudioTimeProvider timeProvider;
 
+    public NoteStatus State { get; protected set; } = NoteStatus.Start;
+    protected SensorType sensorPos;
     protected Sensor sensor;
     protected SensorManager manager;
+    protected InputManager inputManager;
     protected NoteManager noteManager;
     protected Guid guid = Guid.NewGuid();
     protected bool isJudged = false;
     protected JudgeType judgeResult;
     protected ObjectCounter objectCounter;
+    
     /// <summary>
     /// 获取当前时刻距离正解帧的时间长度
     /// </summary>
@@ -42,6 +46,7 @@ public class NoteLongDrop : NoteDrop
     public float LastFor = 1f;
     public GameObject holdEffect;
 
+    protected float userHoldTime = 0;
     protected Stopwatch userHold = new();
     protected float judgeDiff = -1;
 
@@ -58,10 +63,6 @@ public class NoteLongDrop : NoteDrop
 
     protected virtual void PlayHoldEffect()
     {
-        if (GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
-            manager.SetSensorOn(sensor.Type, guid);
-        if (timeProvider.AudioTime - time < 0)
-            return;
         var material = holdEffect.GetComponent<ParticleSystemRenderer>().material;
         switch (judgeResult)
         {

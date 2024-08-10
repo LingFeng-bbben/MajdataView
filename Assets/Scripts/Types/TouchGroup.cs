@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
-using static NoteEffectManager;
-
-namespace Assets.Scripts.Notes
+#nullable enable
+namespace Assets.Scripts.Types
 {
     public class TouchGroup
     {
-        public float Percent 
-        { 
+        public float Percent
+        {
             get
             {
                 if (Members.Length == 0)
@@ -16,9 +15,9 @@ namespace Assets.Scripts.Notes
                 return finished.Count() / (float)Members.Length;
             }
         }
-        public JudgeType? JudgeResult 
-        { 
-            get => _judgeResult; 
+        public JudgeType? JudgeResult
+        {
+            get => _judgeResult;
             set
             {
                 if (Percent > 0.5f)

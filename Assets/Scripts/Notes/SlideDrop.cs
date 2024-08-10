@@ -1,12 +1,10 @@
 ﻿using Assets.Scripts.Interfaces;
-using Assets.Scripts.IO;
-using Assets.Scripts.Notes;
+using Assets.Scripts.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static NoteEffectManager;
-
+#nullable enable
 public class SlideDrop : NoteLongDrop, IFlasher
 {
     // Start is called before the first frame update
@@ -41,17 +39,18 @@ public class SlideDrop : NoteLongDrop, IFlasher
     public Material breakMaterial;
     public string slideType;
 
+    List<SensorType> boundSensors = new();
     List<Sensor> judgeSensors = new();
     List<Sensor> triggerSensors = new(); // AutoPlay; 标记已触发的Sensor 
     List<JudgeArea> judgeQueue = new(); // 判定队列
     List<JudgeArea> _judgeQueue = new(); // 判定队列
 
-    public ConnSlideInfo ConnectInfo { get; set; }
+    public ConnSlideInfo ConnectInfo { get; set; } = new();
     public bool isFinished { get => judgeQueue.Count == 0; }
     public bool isPendingFinish { get => judgeQueue.Count == 1; }
-    bool canShine = false;
+    
 
-    Animator fadeInAnimator = null;
+    Animator fadeInAnimator;
 
 
     private readonly List<GameObject> slideBars = new();
@@ -66,11 +65,12 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
     List<GameObject> sensors = new();
     SensorManager sManager;
-
-    bool canCheck = false;
+    
     List<Sensor> registerSensors = new();
-    
-    
+
+    bool canShine = false;
+    bool canCheck = false;
+    bool isChecking = false;
     float judgeTiming; // 正解帧
     bool isInitialized = false; //防止重复初始化
     bool isDestroying = false; // 防止重复销毁
@@ -267,11 +267,18 @@ public class SlideDrop : NoteLongDrop, IFlasher
             LastFor = (ConnectInfo.TotalLength / ConnectInfo.TotalSlideLen) * GetSlideLength();
             if(!ConnectInfo.IsGroupPartHead)
             {
-                var parent = ConnectInfo.Parent.GetComponent<SlideDrop>();
+                var parent = ConnectInfo.Parent!.GetComponent<SlideDrop>();
                 time = parent.time + parent.LastFor;
                 judgeTiming = time + LastFor * CalJudgeTiming();
             }
         }
+        var allSensors = judgeQueue.SelectMany(x => x.GetSensorTypes())
+                                   .GroupBy(x => x)
+                                   .Select(x => x.Key);
+        inputManager = GameObject.Find("Input").GetComponent<InputManager>();
+        boundSensors.AddRange(allSensors);
+        foreach (var sensor in allSensors)
+            inputManager.BindSensor(Check, sensor);
     }
     void GetSensors(RectTransform[] sensors)
     {
@@ -307,6 +314,9 @@ public class SlideDrop : NoteLongDrop, IFlasher
     }
     private void FixedUpdate()
     {
+        if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
+            return;
+
         /// time      是Slide启动的时间点
         /// timeStart 是Slide完全显示但未启动
         /// LastFor   是Slide的时值
@@ -316,12 +326,12 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
         if (ConnectInfo.IsGroupPart)
         {
-            if (ConnectInfo.IsGroupPartHead && startTiming >= -0.040f)
+            if (ConnectInfo.IsGroupPartHead && startTiming >= -0.05f)
                 canCheck = true;
             else if (!ConnectInfo.IsGroupPartHead)
                 canCheck = ConnectInfo.ParentFinished || ConnectInfo.ParentPendingFinish;
         }
-        else if (startTiming >= -0.050f)
+        else if (startTiming >= -0.05f)
             canCheck = true;
 
         if (timing > 0)
@@ -350,7 +360,6 @@ public class SlideDrop : NoteLongDrop, IFlasher
     // Update is called once per frame
     private void Update()
     {
-        Check();
         if (star_slide == null)
         {
             if (isFinished)
@@ -361,9 +370,15 @@ public class SlideDrop : NoteLongDrop, IFlasher
         var startiming = timeProvider.AudioTime - timeStart;
         if (startiming <= 0f)
         {
-            if (!fadeInAnimator.enabled && startiming >= fadeInTime)
+            if (startiming >= -0.05f)
+            {
+                fadeInAnimator.enabled = false;
+                setSlideBarAlpha(1f);
+            }
+            else if (!fadeInAnimator.enabled && startiming >= fadeInTime)
                 fadeInAnimator.enabled = true;
             return;
+            
         }
         fadeInAnimator.enabled = false;
         setSlideBarAlpha(1f);
@@ -394,7 +409,6 @@ public class SlideDrop : NoteLongDrop, IFlasher
             UpdateStar();
             Running();
         }
-
         Check();
     }
     public float GetSlideLength()
@@ -408,6 +422,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         }
         return len;
     }
+    public void Check(object sender, InputEventArgs arg) => Check();
     /// <summary>
     /// 判定队列检查
     /// </summary>
@@ -415,22 +430,22 @@ public class SlideDrop : NoteLongDrop, IFlasher
     {
         if (isFinished || !canCheck)
             return;
-
+        else if (isChecking)
+            return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random)
+            return;
+        isChecking = true;
         if (ConnectInfo.Parent != null && judgeQueue.Count < _judgeQueue.Count)
         {
             if(!ConnectInfo.ParentFinished)
                 ConnectInfo.Parent.GetComponent<SlideDrop>().ForceFinish();
         }
-        try
-        {
-            if (judgeQueue.Count == 0)
-                return;
 
-            var first = judgeQueue.First();
-            JudgeArea second = null;
+        var first = judgeQueue.First();
+        JudgeArea? second = null;
 
-            if (judgeQueue.Count >= 2)
-                second = judgeQueue[1];
+        if (judgeQueue.Count >= 2)
+            second = judgeQueue[1];
             var fType = first.GetSensorTypes();
             foreach (var t in fType)
             {
@@ -438,8 +453,8 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 first.Judge(t, sensor.Status);
             }
 
-            if (second is not null && (first.CanSkip || first.On))
-            {
+        if (second is not null && (first.CanSkip || first.On))
+        {
                 var sType = second.GetSensorTypes();
                 foreach (var t in sType)
                 {
@@ -447,31 +462,30 @@ public class SlideDrop : NoteLongDrop, IFlasher
                     second.Judge(t, sensor.Status);
                 }
 
-                if (second.IsFinished)
-                {
-                    HideBar(first.SlideIndex);
-                    judgeQueue = judgeQueue.Skip(2).ToList();
-                    return;
-                }
-                else if (second.On)
-                {
-                    HideBar(first.SlideIndex);
-                    judgeQueue = judgeQueue.Skip(1).ToList();
-                    return;
-                }
+            if (second.IsFinished)
+            {
+                HideBar(first.SlideIndex);
+                judgeQueue = judgeQueue.Skip(2).ToList();
+                isChecking = false;
+                return;
             }
-
-            if (first.IsFinished)
+            else if (second.On)
             {
                 HideBar(first.SlideIndex);
                 judgeQueue = judgeQueue.Skip(1).ToList();
+                isChecking = false;
                 return;
             }
         }
-        catch(Exception e)
+
+        if (first.IsFinished)
         {
-            print(e);
+            HideBar(first.SlideIndex);
+            judgeQueue = judgeQueue.Skip(1).ToList();
+            isChecking = false;
+            return;
         }
+        isChecking = false;
     }
     void HideBar(int endIndex)
     {
@@ -488,7 +502,9 @@ public class SlideDrop : NoteLongDrop, IFlasher
     /// </summary>
     void Running()
     {
-        if (star_slide == null || !GameObject.Find("Input").GetComponent<InputManager>().AutoPlay)
+        if (star_slide == null)
+            return;
+        else if (InputManager.Mode is AutoPlayMode.Enable or AutoPlayMode.Random or AutoPlayMode.Disable)
             return;
 
         var starRadius = 0.763736616f;
@@ -568,31 +584,38 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 else
                     judge = JudgeType.Perfect;
             }            
-
-            switch (judge)
-            {
-                case JudgeType.FastGreat:
-                    slideOK.GetComponent<LoadJustSprite>().setFastGr();
-                    break;
-                case JudgeType.FastGood:
-                    slideOK.GetComponent<LoadJustSprite>().setFastGd();
-                    break;
-                case JudgeType.LateGood:
-                    slideOK.GetComponent<LoadJustSprite>().setLateGd();
-                    break;
-                case JudgeType.LateGreat:
-                    slideOK.GetComponent<LoadJustSprite>().setLateGr();
-                    break;
-                    
-            }
             print($"Slide diff : {MathF.Round(diff * 1000,2)} ms");
             judgeResult = judge ?? JudgeType.Miss;
+            SetJust();
             isJudged = true;
         }
         else if (arriveTime < starTiming && timeProvider.AudioTime >= starTiming + stayTime * 0.8)
             DestroySelf();
         else if (arriveTime >= starTiming && timeProvider.AudioTime >= arriveTime + stayTime * 0.8)
             DestroySelf();
+    }
+    void SetJust()
+    {
+        switch (judgeResult)
+        {
+            case JudgeType.FastGreat2:
+            case JudgeType.FastGreat1:
+            case JudgeType.FastGreat:
+                slideOK.GetComponent<LoadJustSprite>().setFastGr();
+                break;
+            case JudgeType.FastGood:
+                slideOK.GetComponent<LoadJustSprite>().setFastGd();
+                break;
+            case JudgeType.LateGood:
+                slideOK.GetComponent<LoadJustSprite>().setLateGd();
+                break;
+            case JudgeType.LateGreat1:
+            case JudgeType.LateGreat2:
+            case JudgeType.LateGreat:
+                slideOK.GetComponent<LoadJustSprite>().setLateGr();
+                break;
+
+        }
     }
     /// <summary>
     /// 计算引导Star进入最后一个判定区的时机
@@ -674,14 +697,25 @@ public class SlideDrop : NoteLongDrop, IFlasher
     }
     void OnDestroy()
     {
-        if (isDestroying || GameObject.Find("Server").GetComponent<HttpHandler>().IsReloding)
+        if (isDestroying || HttpHandler.IsReloding)
             return;
         if (ConnectInfo.Parent != null)
             Destroy(ConnectInfo.Parent);
         if(star_slide != null)
             Destroy(star_slide);
-        if (ConnectInfo.IsGroupPartEnd)
+        if (ConnectInfo.IsGroupPartEnd || !ConnectInfo.IsConnSlide)
         {
+            switch(InputManager.Mode)
+            {
+                case AutoPlayMode.Enable:
+                    judgeResult = JudgeType.Perfect;
+                    SetJust();
+                    break;
+                case AutoPlayMode.Random:
+                    judgeResult = (JudgeType)UnityEngine.Random.Range(1, 14);
+                    SetJust();
+                    break;
+            }
             // 只有组内最后一个Slide完成 才会显示判定条并增加总数
             objectCounter.ReportResult(this, judgeResult, isBreak);
             if (isBreak && judgeResult == JudgeType.Perfect)
@@ -693,6 +727,8 @@ public class SlideDrop : NoteLongDrop, IFlasher
             // 如果不是组内最后一个 那么也要将判定条删掉
             Destroy(slideOK);
         }
+        foreach (var sensor in boundSensors)
+            inputManager.UnbindSensor(Check, sensor);
         ClearTriggeredSensor();
         isDestroying = true;
     }
@@ -712,6 +748,16 @@ public class SlideDrop : NoteLongDrop, IFlasher
 
         if(process == 1)
         {
+            switch (InputManager.Mode)
+            {
+                case AutoPlayMode.Enable:
+                case AutoPlayMode.Random:
+                    var barIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+                    HideBar(barIndex);
+                    DestroySelf();
+                    judgeQueue.Clear();
+                    return;
+            }
             star_slide.transform.position = slidePositions.LastOrDefault();
             applyStarRotation(slideRotations.LastOrDefault());
             if (ConnectInfo.IsConnSlide && !ConnectInfo.IsGroupPartEnd)
@@ -738,6 +784,15 @@ public class SlideDrop : NoteLongDrop, IFlasher
                 applyStarRotation(newRotation);
             }
         } 
+        switch(InputManager.Mode)
+        {
+            case AutoPlayMode.Enable:
+            case AutoPlayMode.Random:
+                var barIndex = areaStep[(int)(process * (areaStep.Count - 1))];
+                judgeQueue = judgeQueue.Skip((int)(process * (judgeQueue.Count - 1))).ToList();
+                HideBar(barIndex);
+                break;
+        }
     }
    
     private void setSlideBarAlpha(float alpha)

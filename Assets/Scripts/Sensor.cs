@@ -1,4 +1,4 @@
-using Assets.Scripts.IO;
+using Assets.Scripts.Types;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -78,6 +78,25 @@ public class Sensor : MonoBehaviour
             }
             Status = nStatus;
             print($"Sensor:{Type} Off");
+        }
+    }
+    public void Click()
+    {
+        if (Status == SensorStatus.On)
+            return;
+        else if (OnStatusChanged != null)
+        {
+            Status = SensorStatus.On;
+            OnStatusChanged(this, new InputEventArgs()
+            {
+                IsButton = false,
+                Type = Type,
+                OldStatus = SensorStatus.Off,
+                Status = SensorStatus.On
+            });
+            IsJudging = false;
+            print($"Sensor:{Type} Click");
+            Status = SensorStatus.Off;
         }
     }
     // Start is called before the first frame update
