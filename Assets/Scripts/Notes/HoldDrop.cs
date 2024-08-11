@@ -148,14 +148,20 @@ public class HoldDrop : NoteLongDrop
 
         if (isJudged) // 头部判定完成后开始累计按压时长
         {
+            if (timing <= 0.1f) // 忽略头部6帧
+                return;
+            else if (remainingTime <= 0.2f) // 忽略尾部12帧
+                return;
+            else if (!timeProvider.isStart) // 忽略暂停
+                return;
             var on = inputManager.CheckAreaStatus(sensorPos,SensorStatus.On);
             if (on)
-            {
-                userHoldTime += Time.fixedDeltaTime;
                 PlayHoldEffect();
-            }
             else
+            {
+                playerIdleTime += Time.fixedDeltaTime;
                 StopHoldEffect();
+            }
         }
         else if (timing > 0.15f) // 头部Miss
         {
@@ -330,11 +336,11 @@ public class HoldDrop : NoteLongDrop
         if (HttpHandler.IsReloding)
             return;
         var realityHT = LastFor - 0.3f - (judgeDiff / 1000f);
-        var percent = MathF.Min(1, (userHoldTime - 0.3f) / realityHT);
+        var percent = MathF.Min(1, (realityHT - playerIdleTime) / realityHT);
         JudgeType result = judgeResult;
         if(realityHT > 0)
         {
-            if (percent >= 0.95f)
+            if (percent >= 1f)
             {
                 if(judgeResult == JudgeType.Miss)
                     result = JudgeType.LateGood;
