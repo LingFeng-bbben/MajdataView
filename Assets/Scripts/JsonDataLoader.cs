@@ -6,6 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading.Tasks;
+using System.Collections;
+using System.Diagnostics;
+using Assets.Scripts;
 
 public class JsonDataLoader : MonoBehaviour
 {
@@ -27,6 +31,15 @@ public class JsonDataLoader : MonoBehaviour
     public RuntimeAnimatorController BreakShine;
     public RuntimeAnimatorController JudgeBreakShine;
     public RuntimeAnimatorController HoldShine;
+
+    public NoteLoaderStatus State { get; private set; } = NoteLoaderStatus.Idle;
+    NoteManager noteManager;
+    Task<Majson> jsonLoaderTask = null;
+    Majson loadedData = null;
+    float ignoreOffset = 0;
+    Coroutine noteParserTask = null;
+    Dictionary<int, int> noteIndex = new();
+        Dictionary<SensorType, int> touchIndex = new();
 
     public Text diffText;
     public Text levelText;
@@ -446,30 +459,62 @@ public class JsonDataLoader : MonoBehaviour
         Application.targetFrameRate = 120;
         ObjectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
         customSkin = GameObject.Find("Outline").GetComponent<CustomSkin>();
+        noteManager = GameObject.Find("Notes").GetComponent<NoteManager>();
     }
 
     // Update is called once per frame
     private void Update()
     {
-    }
-
-    public void LoadJson(string json, float ignoreOffset)
-    {
-        var loadedData = JsonConvert.DeserializeObject<Majson>(json);
-
-        diffText.text = loadedData.difficulty;
-        levelText.text = loadedData.level;
-        titleText.text = loadedData.title;
-        artistText.text = loadedData.artist;
-        designText.text = loadedData.designer;
-        cardImage.color = diffColors[loadedData.diffNum];
-
-        CountNoteSum(loadedData);
-
-        var lastNoteTime = loadedData.timingList.Last().time;
-
-        foreach (var timing in loadedData.timingList)
+        switch(State)
         {
+            case NoteLoaderStatus.LodingJson:
+                if (jsonLoaderTask is null || !jsonLoaderTask.IsCompleted)
+                    return;
+                loadedData = jsonLoaderTask.Result;
+                diffText.text = loadedData.difficulty;
+                levelText.text = loadedData.level;
+                titleText.text = loadedData.title;
+                artistText.text = loadedData.artist;
+                designText.text = loadedData.designer;
+                cardImage.color = diffColors[loadedData.diffNum];
+
+                CountNoteSum(loadedData);
+                var lastNoteTime = loadedData.timingList.Last().time;
+
+                noteParserTask = StartCoroutine(LoadNotes(loadedData.timingList, ignoreOffset, lastNoteTime));
+
+                State = NoteLoaderStatus.ParsingNote;
+                break;
+            case NoteLoaderStatus.ParsingNote:
+                if (noteParserTask == null)
+                {
+                    State = NoteLoaderStatus.Finished;
+                    //noteManager.Refresh();
+                    return;
+                }
+                break;
+        }
+
+    }
+    IEnumerator LoadNotes(IEnumerable<SimaiTimingPoint> timingList, float ignoreOffset, double lastNoteTime)
+    {
+        noteManager.Refresh();
+        noteIndex.Clear();
+        touchIndex.Clear();
+        for (int i = 1; i < 9; i++)
+            noteIndex.Add(i, 0);
+        for (int i = 0; i < 33; i++)
+            touchIndex.Add((SensorType)i, 0);
+
+        Stopwatch sw = new();
+        sw.Start();
+        foreach (var timing in timingList)
+        {
+            if (sw.ElapsedMilliseconds >= 2)
+            {
+                yield return 0;
+                sw.Restart();
+            }
             try
             {
                 if (timing.time < ignoreOffset)
@@ -485,7 +530,7 @@ public class JsonDataLoader : MonoBehaviour
                     {
                         GameObject GOnote = null;
                         TapBase NDCompo = null;
-
+                        
                         if (note.isForceStar)
                         {
                             GOnote = Instantiate(starPrefab, notes.transform);
@@ -509,7 +554,7 @@ public class JsonDataLoader : MonoBehaviour
                             NDCompo.eachSpr = customSkin.Tap_Each;
                             NDCompo.exSpr = customSkin.Tap_Ex;
                         }
-
+                        noteManager.AddNote(GOnote, noteIndex[note.startPosition]++);
                         // note的图层顺序
                         NDCompo.noteSortOrder = noteSortOrder;
                         noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
@@ -526,6 +571,7 @@ public class JsonDataLoader : MonoBehaviour
                     else if (note.noteType == SimaiNoteType.Hold)
                     {
                         var GOnote = Instantiate(holdPrefab, notes.transform);
+                        noteManager.AddNote(GOnote, noteIndex[note.startPosition]++);
                         var NDCompo = GOnote.GetComponent<HoldDrop>();
 
                         // note的图层顺序
@@ -555,6 +601,7 @@ public class JsonDataLoader : MonoBehaviour
                     else if (note.noteType == SimaiNoteType.TouchHold)
                     {
                         var GOnote = Instantiate(touchHoldPrefab, notes.transform);
+                        noteManager.AddTouch(GOnote, touchIndex[SensorType.C]++);
                         var NDCompo = GOnote.GetComponent<TouchHoldDrop>();
 
                         // note的图层顺序
@@ -572,6 +619,7 @@ public class JsonDataLoader : MonoBehaviour
                     else if (note.noteType == SimaiNoteType.Touch)
                     {
                         var GOnote = Instantiate(touchPrefab, notes.transform);
+                        noteManager.AddTouch(GOnote, touchIndex[TouchBase.GetSensor(note.touchArea, note.startPosition)]++);
                         var NDCompo = GOnote.GetComponent<TouchDrop>();
 
                         // note的图层顺序
@@ -688,6 +736,14 @@ public class JsonDataLoader : MonoBehaviour
                     "在第" + (timing.rawTextPositionY + 1) + "行发现问题：\n" + e.Message;
             }
         }
+        noteParserTask = null;
+        yield break;
+    }
+    public void LoadJson(string json, float ignoreOffset)
+    {
+        jsonLoaderTask = Task.Run(() => JsonConvert.DeserializeObject<Majson>(json));
+        State = NoteLoaderStatus.LodingJson;
+        this.ignoreOffset = ignoreOffset;
     }
 
 
@@ -980,7 +1036,7 @@ public class JsonDataLoader : MonoBehaviour
 
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
-
+        noteManager.AddNote(GOnote, noteIndex[note.startPosition]++);
 
 
         // note的图层顺序
@@ -1069,7 +1125,8 @@ public class JsonDataLoader : MonoBehaviour
     {
         var GOnote = Instantiate(starPrefab, notes.transform);
         var NDCompo = GOnote.GetComponent<StarDrop>();
-
+        if(!note.isSlideNoHead)
+            noteManager.AddNote(GOnote, noteIndex[note.startPosition]++);
         // note的图层顺序
         NDCompo.noteSortOrder = noteSortOrder;
         noteSortOrder -= NOTE_LAYER_COUNT[note.noteType];
@@ -1121,9 +1178,7 @@ public class JsonDataLoader : MonoBehaviour
         if (timing.noteList.Count > 1)
         {
             NDCompo.isEach = true;
-            if (timing.noteList.FindAll(
-                    o => o.noteType == SimaiNoteType.Slide).Count
-                > 1)
+            if (timing.noteList.FindAll(o => o.noteType == SimaiNoteType.Slide).Count > 1)
             {
                 SliCompo.isEach = true;
                 slide_star.GetComponent<SpriteRenderer>().sprite = customSkin.Star_Each;

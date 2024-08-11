@@ -15,10 +15,18 @@ public class NoteManager : MonoBehaviour
     {
         Application.targetFrameRate = 30;
     }
+    public void Clear()
+    {
+        ResetIndex();
+        noteOrder.Clear();
+        touchOrder.Clear();
+    }
+    public void AddNote(GameObject obj,int index) => noteOrder.Add(obj, index);
+    public void AddTouch(GameObject obj,int index) => touchOrder.Add(obj, index);
     public void Refresh()
     {
         var count = transform.childCount;
-        ResetCounter();
+        ResetIndex();
         for (int i = 0; i < count; i++)
         {
             var child = transform.GetChild(i);
@@ -41,9 +49,9 @@ public class NoteManager : MonoBehaviour
 
             notes.Add(child.gameObject);
         }
-        ResetCounter();
+        ResetIndex();
     }
-    void ResetCounter()
+    void ResetIndex()
     {
         noteIndex.Clear();
         touchIndex.Clear();

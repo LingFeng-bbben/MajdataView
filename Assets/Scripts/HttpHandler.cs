@@ -56,7 +56,7 @@ public class HttpHandler : MonoBehaviour
 
                     bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
                     bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
-                    GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
+                    //GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
                 }
                 break;
             case EditorControlMethod.OpStart:
@@ -72,7 +72,7 @@ public class HttpHandler : MonoBehaviour
                     bgManager.LoadBGFromPath(new FileInfo(data.jsonPath).DirectoryName, data.audioSpeed);
                     bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
                     bgManager.PlaySongDetail();
-                    GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
+                    //GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
                 }
                 break;
             case EditorControlMethod.Record:
@@ -94,7 +94,7 @@ public class HttpHandler : MonoBehaviour
                     bgCover.color = new Color(0f, 0f, 0f, data.backgroundCover);
                     bgManager.PlaySongDetail();
                     GameObject.Find("CanvasButtons").SetActive(false);
-                    GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
+                    //GameObject.Find("Notes").GetComponent<NoteManager>().Refresh();
                 }
                 break;
             case EditorControlMethod.Pause:

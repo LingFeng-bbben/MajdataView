@@ -233,8 +233,15 @@ public class TouchHoldDrop : NoteLongDrop
         JudgeType result = judgeResult;
         if (realityHT > 0)
         {
-            if (percent >= 0.95f)
-                result = judgeResult;
+            if (percent >= 1f)
+            {
+                if (judgeResult == JudgeType.Miss)
+                    result = JudgeType.LateGood;
+                else if (MathF.Abs((int)judgeResult - 7) == 6)
+                    result = (int)judgeResult < 7 ? JudgeType.LateGreat : JudgeType.FastGreat;
+                else
+                    result = judgeResult;
+            }
             else if (percent >= 0.67f)
             {
                 if (judgeResult == JudgeType.Miss)

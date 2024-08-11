@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.IO.MemoryMappedFiles;
+using UnityEditor;
+using UnityEngine;
 #nullable enable
 public class DestroySelf : MonoBehaviour
 {
@@ -8,6 +10,7 @@ public class DestroySelf : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+
     }
 
     // Update is called once per frame

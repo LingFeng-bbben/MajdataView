@@ -163,11 +163,10 @@ public class HoldDrop : NoteLongDrop
                 StopHoldEffect();
             }
         }
-        else if (timing > 0.15f) // 头部Miss
+        else if (timing > 0.15f && !isJudged) // 头部Miss
         {
             judgeDiff = 150;
             judgeResult = JudgeType.Miss;
-            objectCounter.NextNote(startPosition);
             isJudged = true;
             objectCounter.NextNote(startPosition);
         }

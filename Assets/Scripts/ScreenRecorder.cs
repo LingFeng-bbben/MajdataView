@@ -1,3 +1,4 @@
+using Assets.Scripts.Types;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
@@ -8,18 +9,29 @@ using UnityEngine.UI;
 public class ScreenRecorder : MonoBehaviour
 {
     public float CutoffTime;
-
+    public GameObject APObj;
+    JsonDataLoader loader;
+    ObjectCounter counter;
 
     private bool isRecording;
 
     // Start is called before the first frame update
     private void Start()
     {
+        loader = FindAnyObjectByType<JsonDataLoader>();
+        counter = FindAnyObjectByType<ObjectCounter>();
     }
 
     // Update is called once per frame
     private void Update()
     {
+        if(isRecording)
+        {
+            if (loader.State is not (NoteLoaderStatus.Idle or NoteLoaderStatus.Finished))
+                return;
+            else if(counter.AllFinished && APObj == null)
+                isRecording = false;
+        }
     }
 
     public void StartRecording(string maidata_path)
@@ -50,8 +62,7 @@ public class ScreenRecorder : MonoBehaviour
 
         byte[] data;
         var texture = new Texture2D(0, 0);
-        using (var pipeServer =
-               new NamedPipeServerStream("majdataRec", PipeDirection.Out))
+        using (var pipeServer = new NamedPipeServerStream("majdataRec", PipeDirection.Out))
         {
             var wavpath = "out.wav";
             var outputfile = "out.mp4";
@@ -60,7 +71,7 @@ public class ScreenRecorder : MonoBehaviour
                 File.ReadAllText(Application.streamingAssetsPath + "\\ffarguments.txt").Trim(),
                 Screen.width, Screen.height,
                 wavpath, outputfile,
-                CutoffTime
+                int.MaxValue
             );
             var startinfo = new ProcessStartInfo(Application.streamingAssetsPath + "\\ffmpeg.exe", arguments);
             startinfo.UseShellExecute = false;
