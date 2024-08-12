@@ -13,6 +13,12 @@ public class ObjectCounter : MonoBehaviour
     public Color AchievementSilverColor; // = new Color32(160, 160, 160, 255);
     public Color AchievementGoldColor; // = new Color32(224, 191, 127, 255);
 
+    public bool AllFinished => tapCount == tapSum && 
+        holdCount == holdSum && 
+        slideCount == slideSum && 
+        touchCount == touchSum && 
+        breakCount == breakSum;
+
     public int tapCount;
     public int holdCount;
     public int slideCount;
@@ -463,7 +469,10 @@ public class ObjectCounter : MonoBehaviour
         }
         CalAccRate();
     }
-    internal void NextNote(int pos) => notes.noteIndex[pos]++;
+    internal void NextNote(int pos)
+    {
+        notes.noteIndex[pos]++;
+    }
     internal void NextTouch(SensorType pos) => notes.touchIndex[pos]++;
     SimaiNoteType GetNoteType(NoteDrop note) => note switch
     {

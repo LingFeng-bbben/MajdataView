@@ -1,5 +1,13 @@
 ﻿namespace Assets.Scripts.Types
 {
+    public enum NoteLoaderStatus
+    {
+        Idle,
+        Start,
+        LodingJson,
+        ParsingNote,
+        Finished
+    }
     public enum SensorStatus
     {
         On,

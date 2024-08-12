@@ -46,7 +46,7 @@ public class NoteLongDrop : NoteDrop
     public float LastFor = 1f;
     public GameObject holdEffect;
 
-    protected float userHoldTime = 0;
+    protected float playerIdleTime = 0;
     protected Stopwatch userHold = new();
     protected float judgeDiff = -1;
 

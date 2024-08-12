@@ -275,6 +275,7 @@ public class SlideDrop : NoteLongDrop, IFlasher
         var allSensors = judgeQueue.SelectMany(x => x.GetSensorTypes())
                                    .GroupBy(x => x)
                                    .Select(x => x.Key);
+        var a = judgeQueue.Select(x => x.GetSensorTypes()).ToList();
         inputManager = GameObject.Find("Input").GetComponent<InputManager>();
         boundSensors.AddRange(allSensors);
         foreach (var sensor in allSensors)
