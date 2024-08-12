@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using Assets.Scripts.Types;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -40,6 +41,8 @@ public class HttpHandler : MonoBehaviour
         var screenRecorder = GameObject.Find("ScreenRecorder").GetComponent<ScreenRecorder>();
         var multTouchHandler = GameObject.Find("MultTouchHandler").GetComponent<MultTouchHandler>();
         var objectCounter = GameObject.Find("ObjectCounter").GetComponent<ObjectCounter>();
+
+        InputManager.Mode = (AutoPlayMode)(int)data.editorPlayMethod;
 
         switch(data.control)
         {

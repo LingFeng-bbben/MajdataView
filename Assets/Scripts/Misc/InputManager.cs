@@ -7,7 +7,7 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public Camera mainCamera;
-    public static AutoPlayMode Mode { get; private set; } = AutoPlayMode.DJAuto;
+    public static AutoPlayMode Mode { get; set; } = AutoPlayMode.Enable;
     public Dictionary<int,List<Sensor>> triggerSensors = new();
 
     Guid guid = Guid.NewGuid();

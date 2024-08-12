@@ -58,6 +58,7 @@ internal class EditRequestjson
     public float audioSpeed;
     public float backgroundCover;
     public EditorComboIndicator comboStatusType;
+    public EditorPlayMethod editorPlayMethod;
     public EditorControlMethod control;
     public string jsonPath;
     public float noteSpeed;
@@ -95,4 +96,9 @@ internal enum EditorControlMethod
     Pause,
     Continue,
     Record
+}
+
+public enum EditorPlayMethod
+{
+    Classic, DJAuto, Random, Disabled
 }
